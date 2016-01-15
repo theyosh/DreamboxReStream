@@ -1,0 +1,331 @@
+body {
+	font-family: Verdana;
+	font-size: 12px;
+	background-color: #1e1e1e;
+	color: #e1e1e1;
+	width: 100%;
+	height: 100%;
+	padding: none;
+	margin: none;
+	overflow-x: hidden;
+	margin: 0px;
+}
+object { outline:none}
+a, a:visited { color: #ffffff;}
+p {
+	padding: 0;
+	margin: 0;
+}
+a.external {
+	padding-right: 12px;
+	background: url('../images/extlink.png') no-repeat top right;
+}
+.error {
+	color: red;
+	font-weight: bold;
+}
+#updateAvailable {
+	top : 0px;
+	left: 0px;
+	height: 20px;
+	width: 100%;
+	border: solid 1px gray;
+}
+#message {
+	width: 400px;
+}
+#message p{
+	width: 100%;
+	height: 100px;
+	display: block;
+}
+#message span#zaptimer {
+	font-size:0.6em;
+	float:right;
+	margin-top: -20px;
+}
+#wrapper {
+	width: 1104px;
+	margin: 0px auto;
+	height: auto;
+	position: relative;
+}
+#wrapper h1 {
+	margin:5px 0px;
+	text-align: center;
+}
+
+#ReStreamUI {
+	width: 100%;
+	/*position: absolute;*/
+}
+
+#ReStreamUI #PlayerWrapper {
+	width: 854px;
+	float: left;
+	margin: 0px auto;
+}
+
+body.setup #ReStreamUI #PlayerWrapper {
+	float: none;
+}
+
+
+#ReStreamUI #PlayerWrapper #ReStreamPlayer {
+	width: 100%;
+	height: 480px;
+}
+#channels span.progress {
+	z-index: 2;
+	position: absolute;
+	display: block;
+	width: 50px;
+	height: 4px;
+	left: 190px;
+	top: 10px;
+}
+#EncoderStatus {
+	width: 25px;
+	display: block;
+	border: solid 1px #000000;
+	float: right;
+	height: 6px;
+	line-height: 6px;
+}
+#EncoderStatus.running {
+	background-color: green;
+	border-color:green;
+	cursor: pointer;
+}
+#EncoderStatus.stopped {
+	background-color: red;
+	border-color:red;
+}
+
+#ProgramProgress {
+	width: 825px;
+	float: left;
+}
+
+#ReStreamUI #ProgramGuide {
+	width: 250px;
+	float: left;
+	height: 100%;
+	position: relative;
+}
+.ui-progressbar {height: 6px;}
+#ReStreamUI #ProgramGuide h3 {
+	padding: 0.2em 0em 0.2em 2.0em;
+}
+#epg div.program {
+	width: 100%;
+	float: left;
+	margin-bottom: 10px;
+}
+#epg div.program span {
+	display: block;
+	width: 45%;
+}
+#epg div.program span.title {
+	float:left;
+	font-size: 1.2em;
+}
+#epg div.program span.time {
+	float:right;
+	font-size: 0.7em;
+	text-align: right;
+}
+#epg div.program span.description {
+	float:left;
+	width: 100%;
+	font-size: 0.8em;
+	border-bottom: solid 2px #0B3E6F;
+}
+#ProgramGuide ul li.separator,
+#updateAvailable.separator {
+	background-color: #0B3E6F;
+	font-weight: bold;
+	padding: 0;
+	text-align: center;
+}
+#ProgramGuide ul {
+	margin: 0;
+	padding: 0;
+}
+#ProgramGuide ul li {
+	font-size: 0.8em;
+	list-style: none;
+	border-bottom: solid 1px gray;
+	padding: 1px 0px 2px 20px;
+	overflow: hidden;
+}
+#ProgramGuide ul li.about {
+	padding-top: 20px;
+	text-align: center;
+	font-size: 12px;
+	padding: 20px 0px;
+}
+#ProgramGuide ul li p.programs {
+	font-size: 0.8em;
+}
+#ProgramGuide ul li p.programs span {
+	float: left;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;              /* "overflow" value must be different from "visible" */
+	text-overflow: ellipsis;
+}
+#ProgramGuide ul li p.programs span strong {
+	margin-right: 2px;
+}
+.ui-accordion .ui-accordion-content {
+	padding: 0;
+	background: none;
+	background-color: #111111;
+	min-height: 200px;
+	overflow-x: hidden !important;
+}
+#ProgramInfo h1 {
+	margin: 0px;
+	padding: 0px;
+	font-size: 1.25em;
+	text-align: left;
+}
+#ProgramInfo h2 {
+	margin: 0px;
+	padding: 0px;
+	font-size: 1em;
+}
+#ProgramInfo p{
+	height: 65px;
+	font-size: 0.8em;
+	overflow: auto;
+	position: relative;
+	padding-right: 100px;
+}
+#ProgramInfo p .zapicon  {
+	margin: 0;
+	bottom: 0px;
+	right: 0px;
+	position: absolute;
+}
+#search {
+	border: solid 0px black;
+	background-color: #0B3E6F;
+	width: 100%;
+	margin: 2px 0px;
+	height: 18px;
+	color: #e1e1e1;
+	font-weight: bold;
+	font-size: 12px;
+}
+#loading{
+	height: 2px;
+	width: 30px;
+	background-color: #0B3E6F;
+	border: solid 1px #0B3E6F;
+	z-index: 2;
+	position: relative;
+	float: right;
+	margin-right: 1px;
+	margin-top: 1px;
+}
+.icon {
+	display: block;
+	height: 16px;
+	width: 16px;
+	float:left;
+	cursor: pointer;
+	text-indent: -999px;
+	background-repeat: no-repeat;
+	margin: 1px;
+	background-size: 100%;
+}
+.zap {
+	background: url('../images/icons-sprite.png') 0px 1px;
+	z-index: 99;
+	position: relative;
+}
+
+.hd {
+	background-image: url('../images/hd.png');
+	margin: 20px 0px 0px -19px;
+	height: 18px;
+	width: 18px;
+	cursor: default !important;
+}
+li .zap {
+	margin-left: -19px
+}
+.subtitle {
+	float:right;
+	background: url('../images/icons-sprite.png') -34px -1px;
+}
+.tvguide {
+	float:right;
+	background: url('../images/icons-sprite.png') -17px 0px;
+}
+
+.webkit .tvguide {
+	margin-right: 10px;
+}
+.current {
+	background-color: #0B3E6F;
+	/* for IE */
+  	filter:alpha(opacity=60);
+  	/* CSS3 standard */
+  	opacity:0.6;
+}
+
+#errorWrapper {
+	position: relative;
+	height: 300px;
+/*	float: left;*/
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 100%;
+	border: solid 1px red;
+}
+
+#errorTitle{
+	width: 100%;
+	position: relative;
+	top: 0px;
+	left: 0px;
+	z-index: 99;
+	text-align: right;
+	padding-right: 20px;
+}
+
+#errorLog {
+	font-size: 9px;
+	font-family: monospace;
+}
+
+#installationWizard h2 { margin: 10px;}
+.ui-formwizard-content p {padding: 10px;}
+.ui-formwizard-content label {
+	display: block;
+	margin-top: 3px;
+}
+.ui-formwizard-content input {width: 40%;}
+.ui-formwizard-content {clear: left;}
+form.setup {
+	background: url('../images/Dreambox_DM7020HD_Front.jpg') no-repeat 50% 50%;
+}
+form.setup table {
+	width: 100%;
+}
+
+form.setup label {
+	width: 185px;
+	display: block;
+	float: left;
+	font-weight: bold;
+	color: rgb(117, 171, 255);
+}
+form.setup td {
+	vertical-align: top;
+	padding: 0px 10px;
+	width: 50%;
+}

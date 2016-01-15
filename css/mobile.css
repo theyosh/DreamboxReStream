@@ -1,0 +1,102 @@
+a.external {
+	padding-right: 12px;
+	background: url('../images/extlink.png') no-repeat scroll right center transparent;
+}
+
+li.channel p.now,
+li.channel span.now {
+	font-weight: bold;
+}
+span.languages {
+	float: right;
+	margin-top: -40px;
+	margin-right: -45px;
+}
+
+.ui-li-has-count .ui-li-count {
+	position: relative !important;
+}
+
+.ui-li-has-arrow.ui-li-has-count .ui-li-count {
+	right: 0px;
+	margin-right: 3px;
+}
+
+#about p {
+	text-align: center;
+	margin-top: 60px;
+}
+
+#about form {
+	text-align: center;
+}
+.ui-field-contain label.ui-slider {
+	width: auto !important;
+}
+
+.stopped {
+	box-shadow: 0px 0px 10px red;
+}
+
+.running {
+	box-shadow: 0px 0px 10px green;
+}
+
+.icon.hd {
+	height: 20px;
+	vertical-align: text-bottom;
+	margin-left: 5px;
+}
+#zaptimer {
+	float:right;
+	font-size: 0.8em;
+	margin-top: 15px;
+}
+#ProgramInfo p {
+	padding-right: 100px;
+}
+li.current > div {
+	border: solid 2px #5F9CC5;
+}
+#ReStreamPlayer {
+	position: relative;
+}
+#ReStreamPlayer img {
+	width: 100%;
+}
+#ReStreamPlayer a {
+	position: absolute;
+	z-index: 2;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+  top: 0px;
+	display: none;
+	background-image: url('../images/play_icon.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 10%;
+}
+
+/* Overrule some jQuery Mobile style settings */
+.ui-collapsible-set {
+    margin: 0em 0;
+}
+
+.ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+li.channel p.ui-li-aside {
+	width: 50px;
+	white-space: nowrap;
+}
+
+label#epg-label {
+	width: auto;
+}
+.ui-loader-verbose {
+	/*white-space: nowrap;*/
+        width: 15em;
+}

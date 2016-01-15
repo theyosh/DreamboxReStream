@@ -1,0 +1,263 @@
+Dreambox ReStream Change Log - http://theyosh.nl/projects/dreambox-restream -
+dreambox@theyosh.nl - ©2007 - 2015
+
+version [VERSION] ([RELEASEDATE])
+ * Fixed a caching bug after upgrading. The cache is now cleaned by force. Thanks to Marco Molinari
+ * Fixed an issue with playing recordings from the Dreambox when the authentication is enabled on the Dreambox. Thanks to Marco Molinari
+ * Changed recording to HD streams, in order to get the transcoding more stable. Thanks to Marco Molinari
+ * Added a new link in the About page to the setup page. It is below the CHANGELOG link in the Desktop interface.
+ * Added a new option in the options menu in the mobile interface to force a cache purge.
+ * Added a new link in the About page to the purge command. It is below the CHANGELOG link
+ * Updated the setup page. Now it is nicely centred
+ * Added a new setting: ‘Additional buffer time in seconds’. This setting will at extra buffer time to the stream. Increase this value when the stream is not smooth.
+ * Updated jQuery to version 2.1.4 (http://jquery.com/)
+ * Updated humanize-duration to version 3.0.0 (https://github.com/EvanHahn/HumanizeDuration.js)
+ * Updated Flashls to version 0.4.1.1 (https://github.com/mangui/flashls)
+ * Updated Add to home screen to version 3.2.2 (https://github.com/cubiq/add-to-homescreen)
+ * Updated jQuery.ScrollTo to version 2.1.1 (https://github.com/flesler/jquery.scrollTo)
+
+version 2.3.7 (12-04-2015)
+* Fixed web url parsing in EPG text.
+* Fixed Enigma1 issue.
+* Fixed issue with subtitling when none selected. Now subtitles are not shown when not selected.
+* Updated debug code to hide the DM password for the webinterface
+* Updated jQuery to version 2.1.3 (http://jquery.com/)
+* Updated jQuery UI to version 1.11.4 (http://jqueryui.com/)
+* Updated jQuery Mobile to version 1.4.5 (http://jquerymobile.com)
+* Updated humanize-duration to version 2.6.0 (https://github.com/EvanHahn/HumanizeDuration.js)
+* Updated jQuery.ScrollTo to version 2.1.0 (https://github.com/flesler/jquery.scrollTo)
+* Updated JW Player to version 6.12 (http://www.jwplayer.com)
+* Updated Flashls to version 0.4.0.5 (https://github.com/mangui/flashls)
+* Updated Add to home screen to version 3.1.1 (https://github.com/cubiq/add-to-homescreen)
+* Updated Grind player (http://osmfhls.kutu.ru/docs/grind/)
+
+version 2.3.6 (22-09-2014)
+* Added an option to purge the cache. Add the query param ?cachepurge=1 to the url to force a cache purge. (Thanks to Marco Molinari)
+* Added HD source indicator to the channels. Now it is visible which channel is in HD or SD.
+* Added new way of stopping VLC when there are no viewers anymore. A 120 seconds timer will stop VLC if there is nobody watching.
+* Updated code for detecting if a channels is an HD channel. Now using a regex comparison.
+* Fixed url encoding for recordings. The '&' was not escaped correctly. (Thanks to Marco Molinari)
+* Updated the EPG loading code. Should now be less intensive and faster. Dropped support for Enigma1
+* Updated jQuery UI to version 1.11.1 (http://jqueryui.com/)
+* Updated humanize-duration to version 2.0 (https://github.com/EvanHahn/HumanizeDuration.js)
+* Updated jQuery.ScrollTo to version 1.4.13 (https://github.com/flesler/jquery.scrollTo)
+* Updated JW Player to version 6.10 (http://www.jwplayer.com)
+* Updated Flashls to version 0.2.0 (http://hlsprovider.org/)
+
+version 2.3.5 (06-07-2014)
+* Removed the HLS Flash plugin for OSMF players by denivip. Size does matter...
+* Set the chunking time interval to 4 seconds. This will give smaller chunks and smoother bandwidth switching
+* Fixed Webinterface check for enigma1 devices. (Thanks to Milenko and Cato)
+* Fixed some javascript escaping errors
+* Fixed desktop search code. Now zapping from the searchlist is working again.
+* Fixed the update checker. It was disabled :( So a manually update is needed
+* Updated VLC transcoding command to support experimental codecs (mp4 audio / aac)
+* Updated jQuery to version 2.1.1 (http://jquery.com)
+* Updated jQuery UI to version 1.11.0 (http://jqueryui.com/)
+* Updated jQuery Mobile to version 1.4.3 (http://jquerymobile.com)
+* Updated humanize-duration to version 0.8.2 (https://github.com/EvanHahn/HumanizeDuration.js)
+* Updated Add to home screen to version 3.0.7 (https://github.com/cubiq/add-to-homescreen)
+* Updated jQuery.ScrollTo to version 1.4.12 (https://github.com/flesler/jquery.scrollTo)
+* Small bug fixes
+
+version 2.3.4 (25-03-2014)
+* Fixed iOS streaming when Dreambox ReStream is installed in a sub directory. (Thanks to Radek Zima)
+* Added extra parameter in the update check. This way we can see the amount of Enigma1 users that are still left. We are thinking of stopping support for Enigma1 devices.
+* Added a javascript that provides human readable duration times. https://github.com/EvanHahn/HumanizeDuration.js
+* Added a new check to see if the new Webinterface plugin is running. From now on, this plugin should be installed and running: https://github.com/E2OpenPlugins/e2openplugin-OpenWebif
+* Updated jQuery Mobile to version 1.4.2 (http://jquerymobile.com)
+
+version 2.3.3 (16-02-2014)
+* Added flv streaming output as an alternative for HLS streaming. (Thanks to Bostjan)
+* Updated the EPG loading code for Enigma2 devices. It now uses the newer multi EPG page of the Dreambox WebInterface. Engima1 users will still have heavy loading problems. This will _NOT_ be fixed! Buy a better box! ;)
+* Updated loading Dreambox Recordings. The recurring code did not work. Now it is fully working and using the already new JSON api.
+* Updated HLS plugin for OSMF players (https://github.com/denivip/osmf-hls-plugin)
+* Updated JW Player to version 6.8 (http://www.jwplayer.com)
+* Updated jQuery to version 2.1.0 (http://jquery.com)
+* Updated jQuery UI to version 1.10.4 (http://jqueryui.com)
+* Updated jQuery Mobile to version 1.4.0 (http://jquerymobile.com)
+* Updated how time durations are shown in the interface. Now the are more readable.
+* Updated all Engima2 based data retrieval to JSON format. This reduces a lot of code.
+* Fixed some iOS mobile interface issues.
+* Empty bouquets are now deleted. This should increase the load speed, where less data has to be retrieved.
+
+version 2.3.2 (13-11-2013)
+* EMERGENCY RELEASE. Due to some inefficient javascript coding, the page freezes a lot. That is now all disabled. This means no EPG data is loaded or updated. In a next release this will be fixed.
+* Updated how the desktop player is loaded and started. This will reduce a lot of flickering in the screen. It looks more smooth now.
+* Updated the Debug log. It is not sorted on time with the newest event on top
+* Updated the code for getting the recordings from the Dreambox. Now it is looking recursively through sub folders. (Thanks to Matteo Vicini and open source code!!!)
+
+version 2.3.1 (10-11-2013)
+* Added extra debug information. These are mostly loading time indicators.
+* Updated the now and next EPG loading procedure. With a lot of bouquets it could case the browser to hang. Now if there are more than 5 bouquets loaded, the now and next EPG call is skipped and the EPG data is retrieved per channel. (Thanks to Zema)
+* Updated CSS for the program names in the channel lists
+* Updated HLS plugin for OSMF players (https://github.com/denivip/osmf-hls-plugin)
+* Updated Grind player (http://osmfhls.kutu.ru/docs/grind/)
+* Updated JW Player to version 6.7 (http://www.jwplayer.com)
+
+version 2.3 (04-10-2013)
+* Added disk based caching. All data that is retrieved from the Dreambox will now be cached on disk. This will speed up of loading Dreambox ReStream after the cache is updated. The cache is valid two hours less then the EPG limit
+* Added PayPal donation button on the About page. Liking the software, please donate :)
+* Added dvr option to the basic OSMF player
+* Updated the Javascript parsing function for smaller Javascript code
+* Updated Grind player (http://osmfhls.kutu.ru/docs/grind/)
+
+version 2.2.4 (12-09-2013)
+* Fixed javascript error when MediaInfo was not installed or configured. Thanks to Marco Molinari
+* Fixed VLC transcoding, so VLC should be more stable and fix the error #2032
+* Added VLC logging in debug modus.
+* Added option to download the VLC Logging from the browser in Debug modus
+* Added option to download the Debug Logging from the browser in Debug modus
+* Added release date and change log link in the About screen.
+* Updated Grind player (http://osmfhls.kutu.ru/docs/grind/)
+* Updated JW Player to version 6.6 (http://www.longtailvideo.com/jw-player/)
+* Updated some small HTML code changes to improve the webpage speed.
+
+Version 2.2.3 (07-08-2013)
+* Added some PHP checks to make sure that all the PHP settings are correct. Should at least test the PHP_SAFE_MODE setting.
+* Added new settings for selecting the bit rate profiles. Now it is easier to switch. Also the HD only bit rate can be set.
+* Fixed streaming url for Live images that had been forwarded trough ADSL/Cable modems. Thanks to Mark Belch
+* Fixed setup code when there is no Settings.class.php file available. The error message was wrong. Thanks to Erik Andre Aabrekk
+* Fixed dream box port problem. Now the port number is used in the code at all places. Thanks to Marco Molinari
+* Fixed zapping problem with a Single Tuner Enigma2 device. A new zap url is used and should work better. Thanks to Marco Molinari
+* Updated the setup. The movie folder and media info location are removed. You can change them manually in the Settings.class.php file.
+* Updated the VLC IP number finding code. Should now always find an IP number.
+* Updated the iOS streaming urls. Now it should also work with port forwarding and dyndns setups.
+* Updated the code for checking new versions when the Dreambox ReStream is not yet configured. Should fix the black screens during setups
+* Updated Grind player (http://osmfhls.kutu.ru/docs/grind/)
+* Updated HLS plugin for OSMF players (https://github.com/denivip/osmf-hls-plugin)
+* Updated jQuery to version 2.0.3 (http://jquery.com)
+* Updated jQuery Mobile to version 1.3.2 (http://jquerymobile.com)
+
+Version 2.2.2 (21-06-2013)
+* Fixed update message when no Settings.class.php file available
+* Fixed channel loading in the mobile interface. Due to some different setups in dreamboxes the channel list was not showing in the mobile interface. Thanks to Anderson Fábio Costa Bandeira
+* Fixed Android playing issues. Now the player won't give an error. Added HLS alternative link to the player page
+* Fixed zapping message in the mobile interface when the stream is already running
+* Updated the mobile interface to make it a bit more compact.
+
+Version 2.2.1 (16-06-2013)
+* Added Grind player (http://osmfhls.kutu.ru/docs/grind/)
+* Added OSMF 2.0 player (http://osmf.org/dev/2.0gm/)
+* Added HLS plugin for OSMF players (https://github.com/denivip/osmf-hls-plugin)
+* Added a new setting to limit the amount of EPG data being loaded. You can now specify the amount of hours in the future and limit the amount of EPG data. Saves bandwidth between server and client
+* Added zap timer message in the mobile interface
+* Added about page in both GUIs
+* Updated the HTML link parser regex. More links should be founded and made clickable
+* Updated JW Player to version 6.5 (http://www.longtailvideo.com/jw-player/)
+* Updated the setup page for the new settings and added information per field about what it means and what a valid value is
+* Fixed Small CSS issues with Safari. Epg icon was not clickable due to a scroll bar
+* Fixed programs loading so that the order is always based on starting time
+* Fixed some wrong javascript loops. Should reduce the load a bit during loading. Also this will make the stream more smooth playing when not all program data is loaded.
+* Fixed duplicate program loading. The first two programs of a channel where loaded twice.
+* Fixed the iOS stream path. It was not possible to work from a subdirectory on the web server
+* Fixed minimal height in the channel list
+* Fixed private auto login in the mobile interface
+
+Version 2.2.0 (05-06-2013)
+* Completely rewritten the GUI interfaces. This is for the Desktop as for the Mobile GUI. Less calls to the server and more client side javascript. Makes it easier to maintain
+* This also improved the backend code. It is much cleaner now.
+* Removed a lot of HTML traffic during initialization
+* Improved the speed of iOS movie transcoding. The player starts much faster now.
+* Better Mobile interface. Does need a bit more CPU power :(
+* Support for HD sources should be improved. As a down side only one bit rate will be used while watching a HD channel. This is the 'SD' profile in VLCServer.class.php file
+* Fixed the RTSP link for mobile devices. Thanks to B.F.
+* Added more information about movies from disk like duration, file size, bit rate and resolution
+* Added Android and iOS 'Add to Home Screen' icon
+* Added transcoding status in the mobile interface. The 'check' icon on the left top shows the transcoding status.
+* Updated jQuery to version 2.0.2 (http://jquery.com)
+* Added option to re-run the setup. Add ?setup=1 to the url to start the Dreambox ReStream setup
+* Added more debug information if there are problems. More to come….
+* Rewritten the EPG code. It is all client side now
+* Rewritten the current and next program information per channel. It is all client side now. This is for mobile and desktop version
+
+Version 2.1.3 (12-05-2013):
+* Fixed channel ID that contains spaces and or quotes
+* Fixed Enigma1 bouquets loading. Thanks to Milenko Atkinson and Kostantinos Hatzikostas for reporting the bug
+* Added iOS DVR option. Minimum DVR length is 30 seconds. This can be changed during the setup.
+* Updated JW Player to version 6.4 (http://www.longtailvideo.com/jw-player/)
+* Updated jQuery to version 2.0 (http://jquery.com)
+* Updated jQuery UI to version 1.10.3 (http://jqueryui.com)
+* Updated jQuery Mobile to version 1.3.1 (http://jquerymobile.com)
+
+Version 2.1.2 (11-02-2013):
+* New JW Player version 6.2 (http://www.longtailvideo.com/jw-player/)
+* New jQuery version. 1.9.1 (http://jquery.com)
+* New jQuery UI version 1.10.0 (http://jqueryui.com)
+* New jQuery Mobile version 1.3.0-rc.1 (http://jquerymobile.com)
+* Small update in the Setup page. You can now chose to enable/disable private modus
+
+Version 2.1.1 (21-12-2012):
+* Fixed iPhone stream. A wrong playlist file was generated for the iPhone.
+* Fixed private modus authentication for NGINX web server.
+* Skip Apple meta files for movies. So only playable files are shown.
+* Added support for srt subtitle files for the movies. The format for the subtitles files is: [Movie_file_name][Anything][language].srt where the language is the two letter country name. It uses the setting $vlcSubtitleLanguage. When not set, the first found subtitle is loaded.
+* Better VLC transcoding. A bit better image and better bandwidth switching
+* Zapping countdown. Takes about 30 seconds to zap to a channel. This is due to the encoding to iPhone chunks.
+* Fixed automatic updating system. It did to much requests.
+* Small fixes.
+* New jQuery version. 1.8.3 (http://jquery.com)
+* New jQuery Mobile version 1.2.0 (http://jquerymobile.com)
+* New jQuery UI version 1.9.1 (http://jqueryui.com)
+
+Version 2.1.0 (07-08-2012):
+* New setup system. Now there are less settings, and they are all in one form. With the new setup system, from 2.1.0 old settings will be red from disk, and used in the setup form. New settings will automatically added. Manual changed settings will be respected. The setup system will detect if the configuration is outdated.
+* New update system. Dreambox ReStream will check once a day if there is an update, and can update it in a few seconds from the web interface.
+* Droped all Windows and Mac OSX support. Due to the different kind of problems mostly on Windows, I dropped the support for other OSes than Linux. There is a Virtual Box image with a running Dreambox ReStream.
+* Some clean up of the code, and logical variable names in the Settings file
+* Skipped version 2.0.9 :)
+
+Version 2.0.8 (16-07-2012):
+* Fixed EPG loading of channels which has no EPG loaded yet.
+* Small css change in the program names in the channel list. The program titles don't wrap anymore.
+* Picons support. Now the pico is loaded from the Dreambox.
+* Some other small CSS fixes
+* Fix for the .htaccess file. Check if the headers module is loaded before trying to change the headers. This will make sure that m3u8 playlists and ts files are not cached by the browser
+* Updated JW Player to version 5.10
+* Updated jQuery UI to version 1.8.21
+
+Version 2.0.7 (20-06-2012):
+* Removed the VLC flash streaming. JW Player can support iPhone streaming. No more extra port numbers to open in a firewall or extra port forwarding! VLC 2.X required
+* Improved logic for VLC streaming command
+* New jQuery version. 1.7.2 (http://jquery.com)
+* New jQuery Mobile version 1.1.0 (http://jquerymobile.com)
+* Support for Enigma2 based encoders with a single tuner
+* iPad detection
+* Small updates in the mobile code.
+* Fix for online/offline detection of the Dreambox decoder
+* Added RTSP streaming with VLC. Now all RTSP enabled Mobiles are supported without a Wowza server. Tested with a Nokia N9.
+* Updated the installer for single tuner question and some small fixes
+
+Version 2.0.6 (18-02-2012):
+* Rewritten the VLC transcoding command. The CPU usage is reduced by 50% compared to 2.0.5 version. It only transcodes once for each bit rate in stead of each output. Also streaming of HD sources works better now!
+* Removed the Linux iPhone chunker software and code because VLC 2.0 can chunk for iPhone now.
+
+Version 2.0.5 (17-02-2012):
+* Added default audio language option. You can now specify which audio language you want to stream.
+* Added default subtitle option. Just like the audio channel, you can specify the subtitle language.
+* Added option for bookmarking TV channels. After each zap, you will see the location url is changing. By bookmarking that url, you can directly go the desired channel.
+* Make VLC stops when you leave the Dreambox ReStream page. No useless VLC encoding anymore. (It does not look if there are more people watching..)
+* Speedup the Mobile interface by using nested listings for channels and boutiques.
+* Speedup the initial EPG loading. The current next coming programs are shown almost instantly now.
+* iPhone support with VLC 2.X version (http://www.videolan.org)
+* New jQuery version. 1.7.1 (http://jquery.com)
+* New jQuery UI version 1.8.18 (http://jqueryui.com)
+* New jQuery Mobile version 1.1.0RC1 (http://jquerymobile.com)
+* New JW Player version 5.9 (http://www.longtailvideo.com/players)
+* Updated XAJAX from 0.5 to 0.6b1. This should also improve the loading times and responsivenese.
+
+Version 2.0.4 (10-05-2011):
+* Added a change log file (finally :))
+* Fixed mktime issue with timezones. Now use different code that should not give an error.
+* Fixed issue that boutiques where not opening when you had more than 10 boutiques. This fix needs a CCS3 capable browser
+* Fixed authentication error when running in private modus.
+* Better url parsing in program descriptions.
+* New executing code for Windows systems. Hope this fixes the starting problem with VLC and Windows 7 / 2008.
+* Small javascript fix for loading the Flash player
+* New jQuery version. 1.6.1 (http://jquery.com)
+* New jQuery UI version 1.8.13 (http://jqueryui.com)
+* New jQuery Mobile version 1.0 alpha 4.1 (http://jquerymobile.com)
+* New JW Player version 5.6 (http://www.longtailvideo.com/players)
+* Added icon to external links in the program description
+* Update the installation wizard with new jQuery Form wizard version 3.0.5 (http://thecodemine.org)
+* Update mobile version. Works for RTSP enabled mobile phones.
