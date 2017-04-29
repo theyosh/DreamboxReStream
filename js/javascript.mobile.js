@@ -180,31 +180,22 @@ DreamboxObj.showProgram = function(channelid,programObj) {
 
 DreamboxObj.play = function(url) {
 	var channelObj = DreamboxObj.getChannel(DreamboxObj.activechannel);
-	if (url != '' || channelObj != false) {
+	if (url !== '' || channelObj !== false) {
 		if (url.substr(0,4) == 'rtsp') {
 			var player = jQuery('#ReStreamPlayer a');
 			player.attr('href',url);
 			player.css('display','block');
 		} else {
-		  	DreamboxObj.hls = url;
-			url = location.protocol + '//' + location.host + (url != '' ? url : '/images/empty.m3u8');
-			if (navigator.userAgent.toLowerCase().indexOf("iphone") != -1 || navigator.userAgent.toLowerCase().indexOf("ipad") != -1) {
-        		var videoHTML5 = jQuery('<video>').attr({'poster':jQuery('#ReStreamPlayer').css('background-image'),'width':jQuery('#ReStreamPlayer').width(),'height':jQuery('#ReStreamPlayer').width()/16*9,'controls':'controls'}).append(jQuery('<source>').attr({'src':url,'type':'video/mp4'}));
-				jwplayer('ReStreamPlayer').setup({
-		          file:url,
-		          type: 'hls',
-		          image: 'images/dreambox.jpg',
-		          width: '100%',
-		          aspectratio: '16:9',
-		          autostart: true
-		        });
-
-		        setTimeout(function(){
-		        	jQuery('video').play();
-		        },500);
- 			} else {
-				var link = jQuery('<a>').attr({'href':url,'title':'Watch ' + channelObj.name,'target':'_blank'}).text('Watch ' + channelObj.name + ' with a HLS enabled player');
-				jQuery('#rtsplink').html(link);
+		  DreamboxObj.hls = url;
+			url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
+			if(Hls.isSupported() && DreamboxObj.hls !== '') {
+				var video = document.getElementById('videoPlayer');
+				var hls = new Hls();
+				hls.loadSource(url);
+				hls.attachMedia(video);
+				hls.on(Hls.Events.MANIFEST_PARSED,function() {
+					video.play();
+				});
 			}
 		}
 	}

@@ -20,13 +20,13 @@
   <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
   <link rel="stylesheet" href="css/addtohomescreen.css" />
   <link rel="stylesheet" href="css/mobile.css" />
-  <script type="text/javascript">var gSetup = <?php echo ($gSetupObj->configOutDated() ? '1' : '0');?>;var gPlayer = 'jw';</script>
+  <script type="text/javascript">var gSetup = <?php echo ($gSetupObj->configOutDated() ? '1' : '0');?></script>
   <script type="text/javascript">
 gAdditionalTimeout = 0;
 <?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
 </script>
 
-  <script type="text/javascript" src="jwplayer/jwplayer.js" ></script>
+  <script src="hls.js/dist/hls.min.js"></script>
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
   <script type="text/javascript" src="js/date.format.js" ></script>
@@ -75,8 +75,7 @@ gAdditionalTimeout = 0;
 	<div data-role="content" >
 		<div id="ProgramInfo">
 			<div id="ReStreamPlayer">
-				<img src="../images/dreambox.jpg" />
-				<a href="#" ></a>
+        <video id="videoPlayer" controls="true"></video>
 			</div>
 			<h1>[Channel Name]</h1>
 			<h2>[Start] [Stop] [Program Name]</h2>
