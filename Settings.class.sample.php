@@ -39,7 +39,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $dreamboxUserName = "root";
+	private static $dreamboxUserName = "username";
 
 	/**
 	* Set the password for the dreambox webinterface. Leave empty when no authentication is required.
@@ -47,7 +47,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $dreamboxPassword = "Jos24Kin80";
+	private static $dreamboxPassword = "password";
 
 	/**
 	* Set the enigma version of the dreambox. Valid values are enigma1 of enigma2
@@ -66,6 +66,8 @@ class Settings {
 	* @var boolean
 	*/
 	private static $dreamboxDualTuner = 1;
+	
+	private static $bouqetsFilter = array();
 
 
 	/**
@@ -241,14 +243,6 @@ class Settings {
 	*/
 	private static $AdditionalBufferTime = 5;
 
-	/**
-	*
-	* Specify the desktop player to use. Possible options are: JW, OSMF, Grind.
-	* @access private
-	* @var string
-	*/
-	private static $DesktopPlayer = "jw";
-
 /* MediaInfo configration */
 
 	/**
@@ -336,6 +330,10 @@ class Settings {
 	static public function isDualTuner() {
 		return (Settings::$dreamboxDualTuner);
 	}
+	
+	static public function getBouqetsFilter() {
+		return (Settings::$bouqetsFilter);
+	}
 
 	static public function getEPGLimit() {
 		if (!is_numeric(Settings::$EPGLimit)) Settings::$EPGLimit = 24;
@@ -419,14 +417,6 @@ class Settings {
 		$AdditionalBufferTime = 0; // Min Length = 0 seconds
 		if (is_numeric(Settings::$AdditionalBufferTime) && Settings::$AdditionalBufferTime > $AdditionalBufferTime) $AdditionalBufferTime = Settings::$AdditionalBufferTime;
 		return $AdditionalBufferTime;
-	}
-
-	static public function getDesktopPlayer() {
-		$lValidPlayers = array('jw','osmf','grind');
-		if (in_array(strtolower(Settings::$DesktopPlayer),$lValidPlayers)) {
-			return trim(strtolower(Settings::$DesktopPlayer));
-		}
-		return 'jw'; // Default player
 	}
 
 	static public function getMediaInfoxecutable() {

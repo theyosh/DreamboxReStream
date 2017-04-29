@@ -103,7 +103,7 @@ if (!$gSetupObj->configOutDated()) {
   <link rel="shortcut icon" type="image/png" href="images/dreamboxrestream_icon.png" />
   <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.min.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
-  <script type="text/javascript">var gSetup = <?php echo ($gSetupObj->configOutDated() ? '1' : '0');?>;var gPlayer = '<?php if (!$gSetupObj->configOutDated()) echo Settings::getDesktopPlayer();?>';</script>
+  <script type="text/javascript">var gSetup = <?php echo ($gSetupObj->configOutDated() ? '1' : '0');?>;</script>
   <?php $xajax->printJavascript(); // XAJAX part 2 ?>
 </head>
 <body <?php echo($gSetupObj->configOutDated() ? 'class="setup"' : '') ?> >
@@ -154,6 +154,9 @@ if (!$gSetupObj->configOutDated()) {
 					<input type="button" onclick="xajax_action('updateConfig',xajax.getFormValues('setup'))" value="Write config" style="margin: 50px 50%;"/>
 				</form>
 				<?php } ?>
+				<div>
+            <video id="videoPlayer" controls="true"></video>
+        </div>
 			</div>
 
 			<?php if (!$gSetupObj->configOutDated()) { ?>
@@ -182,27 +185,11 @@ if (!$gSetupObj->configOutDated()) {
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollTo.min.js"></script>
 <script type="text/javascript" src="js/date.format.js" ></script>
-<?php
-if(!$gSetupObj->configOutDated()) {
-	switch (Settings::getDesktopPlayer()) {
-		  case 'grind':
-		  	echo '<script type="text/javascript" src="js/swfobject.js" ></script>';
-		  break;
-
-		  case 'osmf':
-		  	echo '<script type="text/javascript" src="js/swfobject.js" ></script>';
-		  break;
-
-		  case 'jw':
-		  	echo '<script type="text/javascript" src="jwplayer/jwplayer.js" ></script>';
-		  break;
-	  }
-  }
-?>
 <script type="text/javascript">
 gAdditionalTimeout = 0;
 <?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
 </script>
+<script src="hls.js/dist/hls.min.js"></script>
 <script type="text/javascript" src="js/javascript.js" ></script>
 </body>
 </html>

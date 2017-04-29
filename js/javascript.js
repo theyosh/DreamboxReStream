@@ -1,8 +1,8 @@
 var DreamboxObj = {
-	bouquets 		: new Array(),
+	bouquets 		: [],
 	activechannel	: null,
 	bouquetsDiv		: null,
-	programTimer 	: new Array(),
+	programTimer 	: [],
 	searchTimeout	: null,
 	zapTimer 		: null,
 	zapDone: false,
@@ -40,7 +40,7 @@ var DreamboxObj = {
 			if (DreamboxObj.isWebkit) jQuery('#ReStreamUI').addClass('webkit');
 			jQuery('#ProgramGuide').height(590);
 			DreamboxObj.bouquetsDiv = jQuery('#channels').accordion({ heightStyle: "fill" });
-			jQuery('#EncoderStatus').bind('click',function(){ DreamboxObj.toggleEncoderStatus() });
+			jQuery('#EncoderStatus').bind('click',function(){ DreamboxObj.toggleEncoderStatus(); });
 		} else {
 			DreamboxObj.bouquetsDiv = jQuery('#channels div[data-role="content"]');
 		}
@@ -55,7 +55,7 @@ var DreamboxObj = {
 
 	log: function(caller,message) {
 		if (DreamboxObj.debug == 1) {
-			if (DreamboxObj.debugDiv == null) {
+			if (DreamboxObj.debugDiv === null) {
 				DreamboxObj.debugDiv = jQuery('<div>').attr({'id':'errorLog','title':'Debug window'});
 				var debugWindow = jQuery('<div>').attr({'id':'errorWrapper'});
 					debugWindow.append(jQuery('<div>').attr({'id':'errorTitle'}).html('<a href="VLCLog.php">Download VLC Log</a>, <a href="javascript:void(0);" onclick="downloadDebug();">Download Debug Log</a>'));
@@ -73,13 +73,11 @@ var DreamboxObj = {
 		xajax_action('loadNowAndNextEPGData',jQuery('#channels h3:first').attr('id'));
 		var params = location.href.substr(location.href.indexOf('#')+1).split(':');
 		if (params.length >= 2) {
-			if (params.length == 2) {
-				var lBouquet = decodeURIComponent(params[0]);
-				var lChannel = decodeURIComponent(params[1]);
-			} else {
-				var lBbouquet = decodeURIComponent(params[0]);
+			var lBouquet = decodeURIComponent(params[0]);
+			var lChannel = decodeURIComponent(params[1]);
+			if (params.length != 2) {
 				params.shift();
-				var lChannel = decodeURIComponent(params.join(':'));
+				lChannel = decodeURIComponent(params.join(':'));
 			}
 
 			DreamboxObj.log('start','Auto start data: ' + lBouquet + ', ' + lChannel);
@@ -107,7 +105,7 @@ var DreamboxObj = {
 
 	dialog: function(text) {
 		jQuery('#message').dialog({modal: true,closeOnEscape: false, width: 300, draggable: false});
-		if (text == '') {
+		if (text === '') {
 			// Close the dialog
 			jQuery('#message').dialog('close');
 		} else {
@@ -151,7 +149,7 @@ var DreamboxObj = {
 		  DreamboxObj.dialog('Zapping to channel <strong>' + channelObj.name + '</strong>');
 		}
 
-		jQuery('#message').append(jQuery('<span>').attr({'id':'zaptimer'}))
+		jQuery('#message').append(jQuery('<span>').attr({'id':'zaptimer'}));
 		DreamboxObj.zaptimer(30 + gAdditionalTimeout);
 		DreamboxObj.log('zap','Zapping to channel: ' + channelObj.name + ' waiting for ' + (30 + gAdditionalTimeout) + ' seconds now....');
 		DreamboxObj.zapDone = true;
@@ -163,124 +161,26 @@ var DreamboxObj = {
 		jQuery('#zaptimer').text('Waiting... ' + duration);
 		duration--;
 		if (duration > -10){
-			DreamboxObj.zapTimer = setTimeout(function(){DreamboxObj.zaptimer(duration)}, 1000);
+			DreamboxObj.zapTimer = setTimeout(function(){DreamboxObj.zaptimer(duration);}, 1000);
 		}
 	},
 
 	play: function(url) {
-		stop = (url == '');
-		url = location.protocol + '//' + location.host + (url != '' ? url : '/images/empty.m3u8');
+		stop = (url === '');
+		url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
 		DreamboxObj.log('play','Starting playing the url: \'' + url + '\'');
-		if (DreamboxObj.playerLoaded != null) {
-			if (gPlayer == 'grind' || gPlayer == 'osmf') {
-				if (!stop) {
-					DreamboxObj.playerLoaded.setMediaResourceURL(url);
-					setTimeout(function() {DreamboxObj.playerLoaded.play2()},1000) ;
-				} else {
-					DreamboxObj.playerLoaded.stop2();
-				}
-			} else {
-				if (!stop) {
-				  DreamboxObj.playerLoaded.load({file: url});
-				  DreamboxObj.playerLoaded.play();
-				} else {
-				  DreamboxObj.playerLoaded.stop();
-				}
-			}
-		} else if (DreamboxObj.playerLoaded == null) {
-			if (gPlayer == 'grind') {
-				DreamboxObj.initGrind();
-			} else if (gPlayer == 'osmf') {
-				DreamboxObj.initOSMF();
-			} else {
-				DreamboxObj.initJW();
-			}
-		}
+		if(Hls.isSupported() && !stop) {
+	    var video = document.getElementById('videoPlayer');
+	    var hls = new Hls();
+	    hls.loadSource(url);
+	    hls.attachMedia(video);
+	    hls.on(Hls.Events.MANIFEST_PARSED,function() {
+	      video.play();
+	    });
+	  }		
 		clearTimeout(DreamboxObj.zapTimer);
 		DreamboxObj.dialog('');
 		DreamboxObj.startProgressBar();
-	},
-
-	onJSBridge: function(playerId, event, data) {
-		if (event == 'onJavaScriptBridgeCreated') {
-			DreamboxObj.playerLoaded = document.getElementById(playerId);
-		}
-	},
-
-	initOSMF: function() {
-		var parameters = {
-                showVideoInfoOverlayOnStartUp: DreamboxObj.debug == true,
-                verbose: true,
-            };
-            DreamboxObj.initOSMFFlash('osmf',parameters);
-	},
-
-	initGrind: function() {
-		var parameters = {
-                bufferTime: 4,
-            };
-            DreamboxObj.initOSMFFlash('grind',parameters);
-	},
-
-	initOSMFFlash: function(player,addparameters) {
-		var parameters = {
-                src: 'images/empty.m3u8',
-                autoPlay: false,
-                verbose: true,
-                streamType: 'dvr',
-                controlBarAutoHide: true,
-                controlBarMode: "floating",
-                poster: "images/dreambox.jpg",
-                showVideoInfoOverlayOnStartUp: false,
-                plugin_hls: "osmf/flashlsOSMF.swf",
-                javascriptCallbackFunction: "DreamboxObj.onJSBridge",
-
-                hls_minbufferlength: -1,
-                hls_maxbufferlength: 100,
-                hls_lowbufferlength: 2,
-                hls_seekmode: "SEGMENT_SEEK",
-                hls_startfromlevel: -1,
-                hls_seekfromlevel: -1,
-                hls_live_flushurlcache: false,
-                hls_info: true,
-                hls_debug: false,
-                hls_debug2: false,
-                hls_warn: false,
-                hls_error: false,
-                hls_fragmentloadmaxretry : -1,
-                hls_manifestloadmaxretry : -1,
-                hls_capleveltostage : false
-            };
-        parameters = jQuery.extend({}, parameters, addparameters);
-        player = (player == 'osmf' ? 'osmf/StrobeMediaPlayback.swf' : 'osmf/GrindPlayer.swf' );
-        swfobject.embedSWF(
-				player ,
-				'ReStreamPlayer' ,
-				854 ,
-				480 ,
-				'10.1.0' ,
-				'expressInstall.swf' ,
-				parameters ,
-				{
-	            	allowFullScreen: 'true',
-	                wmode: 'direct'
-	            } ,
-				{
-	                name: 'ReStreamPlayer'
-	            }
-	    );
-	},
-
-	initJW: function() {
-	  DreamboxObj.playerLoaded = jwplayer("ReStreamPlayer").setup({
-		image: 'images/dreambox.jpg',
-		width: '100%',
-		aspectratio: '16:9',
-		autostart: false,
-	    file: 'images/empty.m3u8',
-	    type: 'hls',
-	    primary: 'flash'
-	  });
 	},
 
 	showActiveProgramInfo: function() {
@@ -352,7 +252,7 @@ var DreamboxObj = {
 					DreamboxObj.startProgressBar();
 				}, 30 * 1000);
 			}
-		} else if (DreamboxObj.activechannel != ''){
+		} else if (DreamboxObj.activechannel !== ''){
 			DreamboxObj.log('startProgressBar','Channel \'' + DreamboxObj.activechannel + '\'not found. Trying again in 30 seconds');
 				DreamboxObj.progressBarTimer = setTimeout(function(){
 					DreamboxObj.startProgressBar();
@@ -363,7 +263,7 @@ var DreamboxObj = {
 	encodingStatus: function(channelid) {
 		DreamboxObj.log('encodingStatus','Clear timer');
 		clearTimeout(DreamboxObj.encoderTimer);
-		running = (channelid != '');
+		running = (channelid !== '');
 
 		jQuery('#EncoderStatus').removeClass('stopped').removeClass('running');
 		jQuery('#EncoderStatus').addClass((running ? 'running' : 'stopped'));
@@ -406,8 +306,8 @@ var DreamboxObj = {
 			id: id,
 			name: name,
 			amount: 0,
-			channels: new Array()
-		}
+			channels: []
+		};
 	},
 
 	removeBouquet: function(id) {
@@ -417,7 +317,7 @@ var DreamboxObj = {
 		} else {
 			jQuery('h3[id="' + id + '"]').next('div').remove();
 	                jQuery('h3[id="' + id + '"]').remove();
-			setTimeout(function() {DreamboxObj.bouquetsDiv.accordion('refresh') } , 500);
+			setTimeout(function() {DreamboxObj.bouquetsDiv.accordion('refresh'); } , 500);
 		}
 		DreamboxObj.log('removeBouquet','Removed bouquetid: ' + id);
 	},
@@ -431,7 +331,7 @@ var DreamboxObj = {
 	},
 
 	getBouquetByName: function(name) {
-		for(bouquetid in DreamboxObj.bouquets) {
+		for(var bouquetid in DreamboxObj.bouquets) {
 			if (DreamboxObj.bouquets[bouquetid].name == name) {
 				return DreamboxObj.bouquets[bouquetid];
 			}
@@ -441,8 +341,10 @@ var DreamboxObj = {
 
 	showBouquets: function() {
 		DreamboxObj.bouquetsDiv.html('');
-		for(bouquetID in DreamboxObj.bouquets) {
-			DreamboxObj.showBouquet(DreamboxObj.bouquets[bouquetID]);
+		for(var bouquetID in DreamboxObj.bouquets) {
+			if (bouquetID !== '') {
+				DreamboxObj.showBouquet(DreamboxObj.bouquets[bouquetID]);
+			}
 		}
 		DreamboxObj.bouquetsDiv.accordion('refresh');
 	},
@@ -451,7 +353,7 @@ var DreamboxObj = {
 		var div = jQuery('<div>');
 		var ul = jQuery('<ul>');
 		if (bouquetObj.id == '_search') {
-			div.append(jQuery('<input>').attr({'name':'search','id':'search'}).bind('keyup',function(){ DreamboxObj.search(this.value)}));
+			div.append(jQuery('<input>').attr({'name':'search','id':'search'}).bind('keyup',function(){ DreamboxObj.search(this.value);}));
 			ul.attr('id','result');
 		}
 		div.append(ul);
@@ -472,8 +374,8 @@ var DreamboxObj = {
 		} else {
 			// Load the bouguete queue
 			DreamboxObj.log('loadChannels','Filling the boutique queue');
-			DreamboxObj.bouqueteQueue = new Array();
-			for(bouquetID in DreamboxObj.bouquets) {
+			DreamboxObj.bouqueteQueue = [];
+			for(var bouquetID in DreamboxObj.bouquets) {
 				if (bouquetID.substr(0,1) != '_') {
 					DreamboxObj.bouqueteQueue[DreamboxObj.bouqueteQueue.length] = bouquetID;
 				}
@@ -485,12 +387,12 @@ var DreamboxObj = {
 
 	addChannel: function(id,bouquetid,name,type,hd) {
 		DreamboxObj.bouquets[bouquetid].channels[id] = {
-			id			: id,
+			id			  : id,
 			bouquetid	: bouquetid,
-			name		: name,
-			type		: type,
-			hd			: hd,
-			programs	: new Array(),
+			name		  : name,
+			type		  : type,
+			hd			  : hd,
+			programs  : [],
 
 			currentProgram: function() {
 				var now = Math.round((new Date()).getTime() / 1000); // GMT timestamp
@@ -510,21 +412,26 @@ var DreamboxObj = {
 	},
 
 	getChannel: function(channelid) {
-		for(bouquetid in DreamboxObj.bouquets) {
-			for (channel in DreamboxObj.bouquets[bouquetid].channels) {
-				if (channel == channelid) {
-					return DreamboxObj.bouquets[bouquetid].channels[channelid];
+		for(var bouquetid in DreamboxObj.bouquets) {
+			if (DreamboxObj.bouquets[bouquetid] !== undefined) {
+				for (var channel in DreamboxObj.bouquets[bouquetid].channels) {
+					if (channel == channelid) {
+						return DreamboxObj.bouquets[bouquetid].channels[channelid];
+					}
 				}
 			}
+			
 		}
 		return false;
 	},
 
 	getChannelByName: function(name) {
-		for(bouquetid in DreamboxObj.bouquets) {
-			for (channelid in DreamboxObj.bouquets[bouquetid].channels) {
-				if (DreamboxObj.bouquets[bouquetid].channels[channelid].name == name) {
-					return DreamboxObj.bouquets[bouquetid].channels[channelid];
+		for(var bouquetid in DreamboxObj.bouquets) {
+			if (DreamboxObj.bouquets[bouquetid] !== undefined) {
+				for (var channelid in DreamboxObj.bouquets[bouquetid].channels) {
+					if (DreamboxObj.bouquets[bouquetid].channels[channelid].name == name) {
+						return DreamboxObj.bouquets[bouquetid].channels[channelid];
+					}
 				}
 			}
 		}
@@ -532,8 +439,10 @@ var DreamboxObj = {
 	},
 
 	showAllChannels: function() {
-		for(bouquetid in DreamboxObj.bouquets) {
-			DreamboxObj.showChannels(bouquetid);
+		for(var bouquetid in DreamboxObj.bouquets) {
+			if (bouquetid !== '') {
+				DreamboxObj.showChannels(bouquetid);
+			}
 		}
 	},
 
@@ -580,7 +489,7 @@ var DreamboxObj = {
 	},
 
 	addRecording : function(id,name,start,channel,duration,description,long_description,filesize) {
-		DreamboxObj.bouquets['_recordings'].channels[id] = {
+		DreamboxObj.bouquets._recordings.channels[id] = {
 			id: id,
 			name: name,
 			bouquetid	: '_recordings',
@@ -599,29 +508,31 @@ var DreamboxObj = {
 
 			},
 		};
-		DreamboxObj.bouquets['_recordings'].amount++;
+		DreamboxObj.bouquets_recordings.amount = DreamboxObj.bouquets._recordings.channels.length;
 	},
 
 	getRecordings: function() {
-		return DreamboxObj.bouquets['_recordings'].channels;
+		return DreamboxObj.bouquets._recordings.channels;
 	},
 
 	showRecordings: function() {
-		for(recordingid in DreamboxObj.bouquets['_recordings'].channels) {
-			DreamboxObj.showRecording(recordingid);
+		for(var recordingid in DreamboxObj.bouquets._recordings.channels) {
+			if (recordingid !== '') {
+				DreamboxObj.showRecording(recordingid);
+			}
 		}
 		DreamboxObj.bouquetsDiv.accordion('refresh');
 	},
 
 	showRecording: function(recordingid) {
-		var recordingObj = DreamboxObj.bouquets['_recordings'].channels[recordingid];
+		var recordingObj = DreamboxObj.bouquets._recordings.channels[recordingid];
 		var channelDiv = jQuery("#channels > h3[id='_recordings'] + div > ul");
 		var li = jQuery('<li>').text(recordingObj.name).attr('title',recordingObj.shortdescription);
 
 		li.attr({'id':recordingObj.id,'class':'channel'});
 		li.append(jQuery('<span>').attr({'class':'icon zap','title':'Watch recording ' + recordingObj.name}).bind('click',function(){ DreamboxObj.zap(jQuery(this).parent().attr('id')); }));
 		var p = jQuery('<p>').attr('class','programs');
-		p.append(jQuery('<span>').attr('class','now').html('<strong>' + dateFormat(new Date(recordingObj.start * 1000),'dd-mm-yyyy') + '</strong>' + (recordingObj.duration > 0 ? ' - ' + humanizeDuration(recordingObj.duration * 1000) : '') + (recordingObj.channel != '' ? ', ' + recordingObj.channel : '')));
+		p.append(jQuery('<span>').attr('class','now').html('<strong>' + dateFormat(new Date(recordingObj.start * 1000),'dd-mm-yyyy') + '</strong>' + (recordingObj.duration > 0 ? ' - ' + humanizeDuration(recordingObj.duration * 1000) : '') + (recordingObj.channel !== '' ? ', ' + recordingObj.channel : '')));
 		li.append(p);
 		channelDiv.append(li);
 	},
@@ -633,8 +544,8 @@ var DreamboxObj = {
 	},
 
 	addMovie : function(id,name,duration,filesize,bitrate,resolution,languages,hd) {
-		if (languages[0] == '') languages = new Array();
-		DreamboxObj.bouquets['_movies'].channels[id] = {
+		if (languages[0] === '') languages = [];
+		DreamboxObj.bouquets._movies.channels[id] = {
 			id: id,
 			name: name,
 			bouquetid	: '_movies',
@@ -655,22 +566,24 @@ var DreamboxObj = {
 			sortOnStartTime: function() {
 			},
 		};
-		DreamboxObj.bouquets['_movies'].amount++;
+		DreamboxObj.bouquets._movies.amount = DreamboxObj.bouquets._movies.channels.length;
 	},
 
 	getMovies: function() {
-		return DreamboxObj.bouquets['_movies'].channels;
+		return DreamboxObj.bouquets._movies.channels;
 	},
 
 	showMovies: function() {
-		for(movieid in DreamboxObj.bouquets['_movies'].channels) {
-			DreamboxObj.showMovie(movieid);
+		for(var movieid in DreamboxObj.bouquets._movies.channels) {
+			if (movieid !== '') {
+				DreamboxObj.showMovie(movieid);
+			}
 		}
 		DreamboxObj.bouquetsDiv.accordion('refresh');
 	},
 
 	showMovie: function(movieid) {
-		var movieObj = DreamboxObj.bouquets['_movies'].channels[movieid];
+		var movieObj = DreamboxObj.bouquets._movies.channels[movieid];
 		var channelDiv = jQuery("#channels > h3[id='_movies'] + div > ul");
 		var li = jQuery('<li>');
 		li.attr({'id':movieObj.id,'class':'channel'});
@@ -683,7 +596,7 @@ var DreamboxObj = {
 		}
 		li.append(movieObj.name);
 		var p = jQuery('<p>').attr('class','programs');
-		var movieParts = new Array();
+		var movieParts = [];
 		if (movieObj.duration > -1) {
 			movieParts[movieParts.length] = '<strong>' + humanizeDuration(movieObj.duration*1000) + '</strong>';
 		}
@@ -705,8 +618,8 @@ var DreamboxObj = {
 
 	// WebCam Functions
 	addWebCam : function(id,name) {
-		if (languages[0] == '') languages = new Array();
-		DreamboxObj.bouquets['_webcams'].channels[id] = {
+		if (languages[0] === '') languages = [];
+		DreamboxObj.bouquets._webcams.channels[id] = {
 			id: id,
 			name: name,
 			bouquetid	: '_webcams',
@@ -718,22 +631,24 @@ var DreamboxObj = {
 			sortOnStartTime: function() {
 			},
 		};
-		DreamboxObj.bouquets['_webcams'].amount++;
+		DreamboxObj.bouquets._webcams.amount = DreamboxObj.bouquets._webcams.channels.length;
 	},
 
 	getWebCams: function() {
-		return DreamboxObj.bouquets['_webcams'].channels;
+		return DreamboxObj.bouquets._webcams.channels;
 	},
 
 	showWebCams: function() {
-		for(movieid in DreamboxObj.bouquets['_webcams'].channels) {
-			DreamboxObj.showWebCam(movieid);
+		for(var movieid in DreamboxObj.bouquets._webcams.channels) {
+			if (movieid !== '') {
+				DreamboxObj.showWebCam(movieid);
+			}
 		}
 		DreamboxObj.bouquetsDiv.accordion('refresh');
 	},
 
 	showWebCam: function(webcamid) {
-		var webCamObj = DreamboxObj.bouquets['_webcams'].channels[movieid];
+		var webCamObj = DreamboxObj.bouquets._webcams.channels[webcamid];
 		var channelDiv = jQuery("#channels > h3[id='_webcams'] + div > ul");
 		var li = jQuery('<li>').text(webCamObj.name);
 
@@ -773,7 +688,7 @@ var DreamboxObj = {
 		var now = Math.round((new Date()).getTime() / 1000); // GMT timestamp
 		var diff = 999999999;
 		DreamboxObj.log('showCurrentPrograms','Updating current programs in bouquet \'' + DreamboxObj.bouquets[bouquetid].name + '\'');
-		for(channelid in DreamboxObj.bouquets[bouquetid].channels) {
+		for(var channelid in DreamboxObj.bouquets[bouquetid].channels) {
 			var showNext = false;
 			var deleteIds = [];
 			for (var i = 0; i < DreamboxObj.bouquets[bouquetid].channels[channelid].programs.length; i++) {
@@ -793,10 +708,9 @@ var DreamboxObj = {
 					}
 				}
 			}
-			deleteIds.sort(function(a,b){return b - a});
+			deleteIds.sort(function(a,b){return b - a;});
 			for (var i = 0; i < deleteIds.length; i++) {
 			  DreamboxObj.log('showCurrentPrograms','Deleted program \'' + DreamboxObj.bouquets[bouquetid].channels[channelid].programs[i].name + '\' on channel \'' + DreamboxObj.bouquets[bouquetid].channels[channelid].name + '\' from bouquet \'' + DreamboxObj.bouquets[bouquetid].name + '\'');
-
 				DreamboxObj.bouquets[bouquetid].channels[channelid].programs.splice(deleteIds[i],1);
 			}
 		}
@@ -817,7 +731,7 @@ var DreamboxObj = {
 		var channelObj = DreamboxObj.getChannel(channelid);
 		var div = jQuery('<div>').attr({'id':'epglist'});
 
-		for (programid in channelObj.programs) {
+		for (var programid in channelObj.programs) {
 			var programObj = channelObj.programs[programid];
 			var programDiv = jQuery('<div>').attr('class','program');
 
@@ -838,21 +752,22 @@ var DreamboxObj = {
 	},
 
 	loadPrograms: function() {
+		var bouquetid = null;
 		DreamboxObj.log('loadPrograms','Loading all program data');
-		if (DreamboxObj.bouquetQueue != null && DreamboxObj.running == 0) {
+		if (DreamboxObj.bouquetQueue !== null && DreamboxObj.running === 0) {
 		  if (DreamboxObj.bouquetQueue.length > 0) {
-  		  var bouquetid = DreamboxObj.bouquetQueue.shift();
+  		  bouquetid = DreamboxObj.bouquetQueue.shift();
   		  DreamboxObj.log('loadPrograms','Loading EPG for bouguet \'' + bouquetid + '\'');
   		  xajax_action('loadChannelEPGData',bouquetid);
 		  }
 		} else {
-			if (DreamboxObj.running == 0) {
+			if (DreamboxObj.running === 0) {
 				DreamboxObj.running = 1;
 				// Load the channel queue
 				DreamboxObj.log('loadPrograms','Loading all program data starting with empty queue');
-				DreamboxObj.bouquetQueue = new Array();
+				DreamboxObj.bouquetQueue = [];
 				for(bouquetid in DreamboxObj.bouquets) {
-				  if (bouquetid.substr(0,1) != '_') {
+				  if (bouquetid.substr(0,1) !== '_') {
   				  DreamboxObj.bouquetQueue.push(bouquetid);
   				  DreamboxObj.log('loadPrograms','Queued bouguet \'' + bouquetid + '\'');
 				  }
@@ -865,15 +780,11 @@ var DreamboxObj = {
 	},
 	// End program functions
 };
-if (gPlayer == 'jw') {
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('j 2=["\\i\\h\\f","\\g\\4\\a\\p\\n\\m\\b\\q\\o\\k\\b\\9\\a\\8\\3\\9\\6\\l\\B\\A\\z\\8\\c\\d\\6\\r\\e\\3\\7\\5\\4\\C\\7\\5\\c\\d\\D\\y\\x\\t\\e\\s\\u\\v"];w[2[0]]=2[1];',40,40,'||_0x4530|x51|x68|x67|x69|x76|x57|x70|x34|x74|x5A|x45|x62|x79|x32|x65|x6B|var|x58|x6D|x46|x54|x78|x37|x55|x4D|x4C|x35|x41|x3D|jwplayer|x2B|x66|x4B|x6A|x44|x75|x7A'.split('|'),0,{}));
-}
 xajax.callback.global.onRequest  = function(){jQuery("#loading").show();};
 xajax.callback.global.onComplete = function(){jQuery("#loading").hide();};
 
 function downloadDebug() {
 	// Parsing the log data to change the order of the messages in a chronocal way
-
 	var logData = {};
 	var logDataSortOrder = [];
 	var logDataSource = jQuery('#errorLog').html().split('<br>');
@@ -896,13 +807,12 @@ function downloadDebug() {
 				logData[indexTime] = value + "<br/>\n" + logData[indexTime];
 			} else {
 				logData[indexTime] = value + "<br/>\n";
-
 			}
 		}
 	});
 
 	var logHTML = '';
-	logDataSortOrder.sort(function(a,b){return b-a});
+	logDataSortOrder.sort(function(a,b){return b-a;});
 	for (var i = 0; i < logDataSortOrder.length; i++) {
 		logHTML += logData[logDataSortOrder[i]];
 	}
@@ -923,7 +833,7 @@ function getUrlParam(name) {
 	var regexS = "[\\?&]"+name+"=([^&#]*)";
 	var regex = new RegExp( regexS );
 	var results = regex.exec( window.location.href );
-	if( results == null )
+	if( results === null )
 		return "";
 	else
 		return decodeURIComponent(results[1].replace(/\+/g, " "));
@@ -965,7 +875,7 @@ function getBytesWithUnit(bytes, useSI, precision, useSISuffix) {
 };
 
 jQuery(document).ready(function() {
-	if (gSetup == 0) {
+	if (gSetup === 0) {
 		DreamboxObj.init(getUrlParam('debug') == 1);
 	} else if (gSetup == 1) {
 		jQuery('#ProgramGuide').height(jQuery('#PlayerWrapper').height());

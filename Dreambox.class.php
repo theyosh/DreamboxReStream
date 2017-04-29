@@ -220,7 +220,7 @@ class Dreambox
 	/**
 	* Load the data from the Dreambox. Here all youre boutiques will be collected and saved in the dreambox object.
 	*/
-	public function loadBouquets()
+	public function loadBouquets($pBouqetsFilter = array())
 	{
 		global $gDebugObj;
 		if (!$this->isOnline()) return;
@@ -260,12 +260,14 @@ class Dreambox
 						foreach ($lServices->services as $lService) {
 						  $lBouquetId = $lService->servicereference;
 						  $lBouquetTitle = $lService->servicename;
-						  preg_match('/\\"(?P<bouquet>.*)\\"/', $lBouquetId, $matches);
-						  $lBouquetId = $matches['bouquet'];
-							$this->lBouquets[$lBouquetId] = new Bouquet(
-								$lBouquetId,
-								$lBouquetTitle
-							);
+							if (empty($pBouqetsFilter) || in_array($lBouquetTitle,$pBouqetsFilter)) {
+								preg_match('/\\"(?P<bouquet>.*)\\"/', $lBouquetId, $matches);
+								$lBouquetId = $matches['bouquet'];
+								$this->lBouquets[$lBouquetId] = new Bouquet(
+									$lBouquetId,
+									$lBouquetTitle
+								);
+							}
 						}
 						//$lChange = true;
 					break;

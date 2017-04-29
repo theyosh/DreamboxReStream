@@ -32,7 +32,7 @@ function action($pAction,$pArgs = null) {
 		break;
 
 		case 'loadBouqetData':
-			$lDreamBoxObj->loadBouquets();
+			$lDreamBoxObj->loadBouquets(Settings::getBouqetsFilter());
 			foreach($lDreamBoxObj->getBouquets() as $lBouquet) {
 				$lReturnValue->script("DreamboxObj.addBouquet('" . Utils::JSSave($lBouquet->getID()) . "','" . Utils::JSSave($lBouquet->getName()) . "')");
 			}

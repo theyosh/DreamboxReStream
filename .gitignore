@@ -4,3 +4,4 @@ picon/*
 iphone/stream/*
 dreambox.cache
 *.AppleDouble*
+.autoKiller
