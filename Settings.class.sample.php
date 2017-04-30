@@ -67,7 +67,7 @@ class Settings {
 	*/
 	private static $dreamboxDualTuner = 1;
 	
-	private static $bouqetsFilter = array();
+	private static $bouqetsFilter = "";
 
 
 	/**
@@ -116,9 +116,9 @@ class Settings {
 	*/
 	private static $privateModus = "0";
 
-	private static $privateModusUsername = "aap";
+	private static $privateModusUsername = "someone";
 
-	private static $privateModusPassword = "aap";
+	private static $privateModusPassword = "somewhat";
 
 /* VLC configuration */
 
@@ -332,7 +332,7 @@ class Settings {
 	}
 	
 	static public function getBouqetsFilter() {
-		return (Settings::$bouqetsFilter);
+		return explode(',',Settings::$bouqetsFilter);
 	}
 
 	static public function getEPGLimit() {

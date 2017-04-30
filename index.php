@@ -145,18 +145,17 @@ if (!$gSetupObj->configOutDated()) {
 								<label for="EPGLimit" title="Limit the amount of EPG data by setting a future time limit. The amount is in hours">EPG future limit</label><input type="text" name="EPGLimit" value="<?php echo $gSetupObj->getVariable('EPGLimit'); ?>"/><br />
 								<label for="DVRLength" title="Set the DVR length of the stream. Minimum length is 30 seconds. The amount is in seconds">DVR Length in seconds</label><input type="text" name="DVRLength" value="<?php echo $gSetupObj->getVariable('DVRLength'); ?>"/><br />
 								<label for="AdditionalBufferTime" title="Set extra buffer timeout for streaming. This can create a smoother stream. The amount is in seconds">Additional buffer time in seconds</label><input type="text" name="AdditionalBufferTime" value="<?php echo $gSetupObj->getVariable('AdditionalBufferTime'); ?>"/><br /><br />
-								<label for="DesktopPlayer" title="Choose the player to use in the Desktop Version. jw = Longtail JW Player, osmf = Adobe OSMF player, grind = Grind player based on OSMF">Desktop Player</label>
-								<select name="DesktopPlayer"><?php foreach($gSetupObj->getVariable('DesktopPlayer') as $lType) echo '<option value="' . $lType['value'] . '" ' . ($lType['selected'] == 1 ? 'selected="selected"' : '') . '>' . $lType['name'] . '</option>' ?></select>
 								<br />
 							</td>
 						</tr>
 					</table>
 					<input type="button" onclick="xajax_action('updateConfig',xajax.getFormValues('setup'))" value="Write config" style="margin: 50px 50%;"/>
 				</form>
-				<?php } ?>
+				<?php } else { ?>
 				<div>
             <video id="videoPlayer" controls="true" poster="images/dreambox.jpg"></video>
         </div>
+				<?php } ?>
 			</div>
 
 			<?php if (!$gSetupObj->configOutDated()) { ?>

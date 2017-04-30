@@ -18,8 +18,6 @@ class Setup {
 										'vlcSubtitleLanguage' 	=> array('type' => 'string','required' => false),
 										'DVRLength' 			=> array('type' => 'int','required' => false),
 										'AdditionalBufferTime' 	=> array('type' => 'int','required' => false),
-										'DesktopPlayer'			=> array('type' => 'string','required' => false),
-
 									);
 	private $lCurrentSettings;
 	private $needsUpdate;
@@ -131,14 +129,7 @@ class Setup {
 						$lOptions[] = array('name' => 'Enigma 2','value'=>'enigma2','selected' => ($lReturnValue == 'enigma2' ? 1 : 0));
 						$lReturnValue = $lOptions;
 					break;
-					case 'DesktopPlayer':
-						$lOptions = array();
-						$lOptions[] = array('name' => 'JW Player','value'=>'jw','selected' => ($lReturnValue == 'jw' ? 1 : 0));
-						$lOptions[] = array('name' => 'OSMF','value'=>'osmf','selected' => ($lReturnValue == 'osmf' ? 1 : 0));
-						$lOptions[] = array('name' => 'Grind','value'=>'grind','selected' => ($lReturnValue == 'grind' ? 1 : 0));
-						$lReturnValue = $lOptions;
-					break;
-
+					
 					case 'vlcLocation':
 						if ($lReturnValue == '') {
 							$lReturnValue = $this->findVLC();
