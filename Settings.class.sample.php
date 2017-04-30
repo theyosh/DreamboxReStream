@@ -7,7 +7,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $version = '2.3.7';
+	private static $version = '2.4.0';
 
 	/**
 	* Set the name of the dreambox. Anything is allowed :P
@@ -67,7 +67,7 @@ class Settings {
 	*/
 	private static $dreamboxDualTuner = 1;
 	
-	private static $bouqetsFilter = "";
+	private static $bouqetsFilter = '';
 
 
 	/**
@@ -116,9 +116,9 @@ class Settings {
 	*/
 	private static $privateModus = "0";
 
-	private static $privateModusUsername = "someone";
+	private static $privateModusUsername = "aap";
 
-	private static $privateModusPassword = "somewhat";
+	private static $privateModusPassword = "aap";
 
 /* VLC configuration */
 

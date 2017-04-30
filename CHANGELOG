@@ -1,7 +1,7 @@
 Dreambox ReStream Change Log - http://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2017
 
-version [VERSION] ([RELEASEDATE])
+version 2.4.0 (30-04-2017)
  * Removed all old flash players and replaced with hls.js player. (https://github.com/video-dev/hls.js)
  * Fixed a caching bug after upgrading. The cache is now cleaned by force. Thanks to Marco Molinari
  * Fixed an issue with playing recordings from the Dreambox when the authentication is enabled on the Dreambox. Thanks to Marco Molinari
