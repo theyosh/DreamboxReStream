@@ -256,7 +256,7 @@ class Dreambox
 					break;
 					case "enigma2";
 					  $lServices = json_decode($lData);
-					  if (Settings::getDebug()) $gDebugObj->setDebugMessage('loadBouquets',count($lServices->services) . ' bouquets loaded');
+					  if (Settings::getDebug()) $gDebugObj->setDebugMessage('loadBouquets',count($lServices->services) . ' bouquets found');
 						foreach ($lServices->services as $lService) {
 						  $lBouquetId = $lService->servicereference;
 						  $lBouquetTitle = $lService->servicename;
@@ -267,8 +267,12 @@ class Dreambox
 									$lBouquetId,
 									$lBouquetTitle
 								);
+							} else {
+								if (Settings::getDebug()) $gDebugObj->setDebugMessage('loadBouquets','Skip "' . $lBouquetTitle .'" based on filter');
 							}
 						}
+						if (Settings::getDebug()) $gDebugObj->setDebugMessage('loadBouquets',count($this->lBouquets) . ' bouquets loaded');
+
 						//$lChange = true;
 					break;
 				}
