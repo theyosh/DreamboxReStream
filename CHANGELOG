@@ -1,20 +1,22 @@
 Dreambox ReStream Change Log - http://theyosh.nl/projects/dreambox-restream -
-dreambox@theyosh.nl - ©2007 - 2015
+dreambox@theyosh.nl - ©2007 - 2017
 
 version [VERSION] ([RELEASEDATE])
+ * Removed all old flash players and replaced with hls.js player. (https://github.com/video-dev/hls.js)
  * Fixed a caching bug after upgrading. The cache is now cleaned by force. Thanks to Marco Molinari
  * Fixed an issue with playing recordings from the Dreambox when the authentication is enabled on the Dreambox. Thanks to Marco Molinari
  * Changed recording to HD streams, in order to get the transcoding more stable. Thanks to Marco Molinari
  * Added a new link in the About page to the setup page. It is below the CHANGELOG link in the Desktop interface.
  * Added a new option in the options menu in the mobile interface to force a cache purge.
  * Added a new link in the About page to the purge command. It is below the CHANGELOG link
- * Updated the setup page. Now it is nicely centred
+ * Added a new setting: '$bouqetsFilter' for filtering bouquets that should be loaded by DreamboxReStream
  * Added a new setting: ‘Additional buffer time in seconds’. This setting will at extra buffer time to the stream. Increase this value when the stream is not smooth.
- * Updated jQuery to version 2.1.4 (http://jquery.com/)
- * Updated humanize-duration to version 3.0.0 (https://github.com/EvanHahn/HumanizeDuration.js)
- * Updated Flashls to version 0.4.1.1 (https://github.com/mangui/flashls)
- * Updated Add to home screen to version 3.2.2 (https://github.com/cubiq/add-to-homescreen)
- * Updated jQuery.ScrollTo to version 2.1.1 (https://github.com/flesler/jquery.scrollTo)
+ * Updated the setup page. Now it is nicely centred
+ * Updated jQuery to version 3.2.1 (https://jquery.com/)
+ * Updated humanize-duration to version 3.10.0 (https://github.com/EvanHahn/HumanizeDuration.js)
+ * Updated Add to home screen to version 3.2.3 (https://github.com/cubiq/add-to-homescreen)
+ * Updated jQuery.ScrollTo to version 2.1.2 (https://github.com/flesler/jquery.scrollTo)
+ * Updated jQuery UI to version 1.12.1 (https://jqueryui.com/)
 
 version 2.3.7 (12-04-2015)
 * Fixed web url parsing in EPG text.

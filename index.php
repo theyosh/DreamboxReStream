@@ -180,7 +180,7 @@ if (!$gSetupObj->configOutDated()) {
 </div>
 <div id="message" title="Message..."></div>
 <div id="epg" title="EPG Channel ..."></div>
-<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="js/humanize-duration.js" ></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollTo.min.js"></script>
