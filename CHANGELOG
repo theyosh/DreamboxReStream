@@ -1,5 +1,5 @@
 Dreambox ReStream Change Log - http://theyosh.nl/projects/dreambox-restream -
-dreambox@theyosh.nl - ©2007 - 2017
+dreambox@theyosh.nl - ©2006 - 2017
 
 version [VERSION] ([RELEASEDATE])
  * Removed all old flash players and replaced with hls.js player. (https://github.com/video-dev/hls.js)

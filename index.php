@@ -97,7 +97,7 @@ if (!$gSetupObj->configOutDated()) {
   <title><?php echo (!$gSetupObj->configOutDated() ? Settings::getDreamboxName() . " - " . Settings::getProgramName() : "Dreambox ReStream Setup" ) . " (" . VERSION . ")"; ?></title>
   <meta charset="utf-8">
   <meta name="author" content="Joshua (TheYOSH) Rubingh"/>
-  <meta name="copyright" content="2008 - <?php echo date("Y") ?> TheYOSH" />
+  <meta name="copyright" content="2006 - <?php echo date("Y") ?> TheYOSH" />
   <meta name="keywords" content="Restream video from a Dreambox/AZBox/VU+/Enigma based Satelite receiver" />
   <meta name="description" content="Restream video from a Dreambox/AZBox/VU+/Enigma based Satelite receiver" />
   <link rel="shortcut icon" type="image/png" href="images/dreamboxrestream_icon.png" />

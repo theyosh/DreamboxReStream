@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="author" content="Joshua (TheYOSH) Rubingh" />
-  <meta name="copyright" content="<?php echo date("Y"); ?> TheYOSH" />
+  <meta name="copyright" content="2006 - <?php echo date("Y") ?> TheYOSH" />
   <meta name="keywords" content="Restream video from a Dreambox over the internet and mobile phones" />
   <meta name="description" content="Restream video from a Dreambox over the internet and mobile phones" />
   <link rel="shortcut icon" type="image/png" href="images/dreamboxrestream_icon.png" />
@@ -25,8 +25,7 @@
 gAdditionalTimeout = 0;
 <?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
 </script>
-
-  <script src="hls.js/dist/hls.min.js"></script>
+  <script type="text/javascript" src="hls.js/dist/hls.min.js"></script>
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
   <script type="text/javascript" src="js/date.format.js" ></script>
