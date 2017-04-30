@@ -75,7 +75,7 @@ gAdditionalTimeout = 0;
 	<div data-role="content" >
 		<div id="ProgramInfo">
 			<div id="ReStreamPlayer">
-        <video id="videoPlayer" controls="true"></video>
+        <video id="videoPlayer" controls="true" poster="images/dreambox.jpg"></video>
 			</div>
 			<h1>[Channel Name]</h1>
 			<h2>[Start] [Stop] [Program Name]</h2>

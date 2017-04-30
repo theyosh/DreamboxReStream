@@ -155,7 +155,7 @@ if (!$gSetupObj->configOutDated()) {
 				</form>
 				<?php } ?>
 				<div>
-            <video id="videoPlayer" controls="true"></video>
+            <video id="videoPlayer" controls="true" poster="images/dreambox.jpg"></video>
         </div>
 			</div>
 

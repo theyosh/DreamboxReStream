@@ -15,6 +15,7 @@ var DreamboxObj = {
 	bouquetQueue	: null,
 	baseurl			: location.href,
 	playerLoaded	: null,
+	player:      null,
 	isWebkit 		: 'webkitRequestAnimationFrame' in window,
 
 	// Basic functions
@@ -22,7 +23,7 @@ var DreamboxObj = {
 		DreamboxObj.running = 0;
 		DreamboxObj.debug = debug;
 		DreamboxObj.log('init','Initializing Dreambox ReStream');
-
+		
 		if (DreamboxObj.baseurl.indexOf('?') != -1) {
 			DreamboxObj.baseurl = DreamboxObj.baseurl.substr(0,DreamboxObj.baseurl.indexOf('?')-1);
 		}
@@ -31,7 +32,7 @@ var DreamboxObj = {
 		}
 
 		DreamboxObj.dialog('Loading dreambox');
-		DreamboxObj.play('');
+		//DreamboxObj.play('');
 
 		DreamboxObj.log('init','Starting Dreambox ReStream');
 		DreamboxObj.encodingStatus('');
@@ -170,14 +171,18 @@ var DreamboxObj = {
 		url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
 		DreamboxObj.log('play','Starting playing the url: \'' + url + '\'');
 		if(Hls.isSupported() && !stop) {
-	    var video = document.getElementById('videoPlayer');
-	    var hls = new Hls();
-	    hls.loadSource(url);
-	    hls.attachMedia(video);
-	    hls.on(Hls.Events.MANIFEST_PARSED,function() {
-	      video.play();
-	    });
-	  }		
+			DreamboxObj.player = new Hls();
+			DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
+			DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
+				document.getElementById('videoPlayer').play();
+			});
+			DreamboxObj.player.loadSource(url);
+	  }	else {
+			try{
+				DreamboxObj.player.destroy();
+			} catch (e) {
+			}
+		}
 		clearTimeout(DreamboxObj.zapTimer);
 		DreamboxObj.dialog('');
 		DreamboxObj.startProgressBar();

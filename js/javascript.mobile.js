@@ -1,8 +1,9 @@
 DreamboxObj.mobile = true;
 DreamboxObj.hls = '';
+DreamboxObj.player = null;
 
 DreamboxObj.dialog = function(text) {
-	if (text == '') {
+	if (text === '') {
 		// Close the dialog
 		$.mobile.loading('hide');
 	} else {
@@ -22,14 +23,14 @@ DreamboxObj.showBouquets = function() {
 	tmp.append(DreamboxObj.bouquetsDiv);
 	tmp = null;
 
-	for(bouquetID in DreamboxObj.bouquets) {
-		if (DreamboxObj.bouquets[bouquetID].id.substring(0,1) != '_') {
+	for(var bouquetID in DreamboxObj.bouquets) {
+		if (DreamboxObj.bouquets[bouquetID].id.substring(0,1) !== '_') {
 			DreamboxObj.showBouquet(DreamboxObj.bouquets[bouquetID]);
 		}
 	}
 	DreamboxObj.bouquetsDiv.children('div:first').attr('data-collapsed','false');
 	DreamboxObj.bouquetsDiv.collapsibleset();
-}
+};
 
 DreamboxObj.showBouquet = function(bouquetObj) {
 	DreamboxObj.bouquetsDiv.append(
@@ -40,7 +41,7 @@ DreamboxObj.showBouquet = function(bouquetObj) {
 };
 
 DreamboxObj.showAllChannels = function() {
-	for(bouquetid in DreamboxObj.bouquets) {
+	for(var bouquetid in DreamboxObj.bouquets) {
 		DreamboxObj.showChannels(bouquetid);
 	}
 };
@@ -48,7 +49,7 @@ DreamboxObj.showAllChannels = function() {
 DreamboxObj.showChannels = function(bouquetid) {
 	jQuery('h3[id="' + bouquetid + '"] + div').append('<ul>');
 
-	for(channelid in DreamboxObj.bouquets[bouquetid].channels) {
+	for(var channelid in DreamboxObj.bouquets[bouquetid].channels) {
 		DreamboxObj.showChannel(bouquetid,channelid);
 	}
 	jQuery('h3[id="' + bouquetid + '"] + div ul').listview({ filter: true ,filterPlaceholder: 'Search in channels...'});
@@ -70,7 +71,7 @@ DreamboxObj.showChannel	= function(bouquetid,channelid) {
 																		'data-filter':'true',
 																		'data-filter-placeholder':'Search in channels...'}));
 		var firstUL = jQuery('h3[id="' + bouquetid + '"] + div ul:first');
-		if (firstUL.children('li').length == 0) {
+		if (firstUL.children('li').length === 0) {
 			firstUL.replaceWith(div);
 		}
 		jQuery('h3[id="' + bouquetid + '"] + div div:first').append(divContent);
@@ -82,7 +83,7 @@ DreamboxObj.showChannel	= function(bouquetid,channelid) {
 		});
 		var title = jQuery('<h2>').text(channelObj.name);
 		if (channelObj.hd) {
-			title.append(jQuery('<img src="images/hd.png" class="icon hd" alt="HD Channel"/>'))
+			title.append(jQuery('<img src="images/hd.png" class="icon hd" alt="HD Channel"/>'));
 		}
 		a.append(title);
 
@@ -101,16 +102,16 @@ DreamboxObj.showChannel	= function(bouquetid,channelid) {
 };
 
 DreamboxObj.showRecordings = function() {
-	if (DreamboxObj.bouquets['_recordings'].amount > 0) {
+	if (DreamboxObj.bouquets._recordings.amount > 0) {
 		jQuery('#recordings > div[data-role="content"]').append(jQuery('<ul>').attr({'data-role':'listview','data-autodividers':'true'}));
-		for(recordingid in DreamboxObj.bouquets['_recordings'].channels) {
+		for(var recordingid in DreamboxObj.bouquets._recordings.channels) {
 			DreamboxObj.showRecording(recordingid);
 		}
 	}
 };
 
 DreamboxObj.showRecording = function(recordingid) {
-	var recordingObj = DreamboxObj.bouquets['_recordings'].channels[recordingid];
+	var recordingObj = DreamboxObj.bouquets._recordings.channels[recordingid];
 	var channelDiv = jQuery('#recordings div[data-role="content"] ul');
 	var li = jQuery('<li>').attr({'class':'channel'});
 
@@ -119,22 +120,22 @@ DreamboxObj.showRecording = function(recordingid) {
 			DreamboxObj.zap(jQuery(this).parents('li.channel').attr('id'));
 		});
 	a.append(jQuery('<h2>').text(recordingObj.name));
-    a.append(jQuery('<p>').html('<strong>' + dateFormat(new Date(recordingObj.start * 1000),'dd-mm-yyyy') + '</strong>' + (recordingObj.duration > 0 ? ', ' + humanizeDuration(recordingObj.duration * 1000) : '') + (recordingObj.channel != '' ? ', ' + recordingObj.channel : '')));
+    a.append(jQuery('<p>').html('<strong>' + dateFormat(new Date(recordingObj.start * 1000),'dd-mm-yyyy') + '</strong>' + (recordingObj.duration > 0 ? ', ' + humanizeDuration(recordingObj.duration * 1000) : '') + (recordingObj.channel !== '' ? ', ' + recordingObj.channel : '')));
 	li.append(a);
 	channelDiv.append(li);
 };
 
 DreamboxObj.showMovies = function() {
-	if (DreamboxObj.bouquets['_movies'].amount > 0) {
+	if (DreamboxObj.bouquets._movies.amount > 0) {
 		jQuery('#movies div[data-role="content"]').append(jQuery('<ul>').attr({'data-role':'listview','data-autodividers':'true'}));
-		for(movieid in DreamboxObj.bouquets['_movies'].channels) {
+		for(var movieid in DreamboxObj.bouquets['_movies'].channels) {
 			DreamboxObj.showMovie(movieid);
 		}
 	}
 };
 
 DreamboxObj.showMovie = function(movieid) {
-	var movieObj = DreamboxObj.bouquets['_movies'].channels[movieid];
+	var movieObj = DreamboxObj.bouquets._movies.channels[movieid];
 	var channelDiv = jQuery('#movies div[data-role="content"] ul');
 	var li = jQuery('<li>').attr({'class':'channel'});
 
@@ -144,7 +145,7 @@ DreamboxObj.showMovie = function(movieid) {
 		});
 	a.append(jQuery('<h2>').text(movieObj.name));
 
-	var movieParts = new Array();
+	var movieParts = [];
 	if (movieObj.duration > -1) {
 		movieParts[movieParts.length] = '<strong>' + humanizeDuration(movieObj.duration * 1000) + '</strong>';
 	}
@@ -176,7 +177,7 @@ DreamboxObj.showProgram = function(channelid,programObj) {
 
 	jQuery("#channels li[id='" + channelid.replace("'","\\'") + "'] a p." + spanClass).text(programObj.name);
 	jQuery("#channels li[id='" + channelid.replace("'","\\'") + "'] a p.ui-li-aside span." + spanClass).text(dateFormat(new Date(programObj.start * 1000),'HH:MM'));
-}
+};
 
 DreamboxObj.play = function(url) {
 	var channelObj = DreamboxObj.getChannel(DreamboxObj.activechannel);
@@ -189,12 +190,11 @@ DreamboxObj.play = function(url) {
 		  DreamboxObj.hls = url;
 			url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
 			if(Hls.isSupported() && DreamboxObj.hls !== '') {
-				var video = document.getElementById('videoPlayer');
-				var hls = new Hls();
-				hls.loadSource(url);
-				hls.attachMedia(video);
-				hls.on(Hls.Events.MANIFEST_PARSED,function() {
-					video.play();
+				DreamboxObj.player = new Hls();
+				DreamboxObj.player.loadSource(url);
+				DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
+				DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
+					document.getElementById('videoPlayer').play();
 				});
 			}
 		}
@@ -209,18 +209,17 @@ DreamboxObj.start = function() {
 };
 
 jQuery(document).on( "pagehide", function( event ,data) {
-	if (jQuery(data.nextPage).attr('id') == 'watch' && DreamboxObj.activechannel != '') {
+	if (jQuery(data.nextPage).attr('id') === 'watch' && DreamboxObj.activechannel !== '') {
 	  channelObj = DreamboxObj.getChannel(DreamboxObj.activechannel);
 	  DreamboxObj.dialog('Zapping to channel: ' + channelObj.name);
-	  if (DreamboxObj.hls != '') {
-      	jwplayer('ReStreamPlayer').load({file: DreamboxObj.hls,image: 'images/dreambox.jpg'});
-      	DreamboxObj.dialog('');
-      }
+	  if (DreamboxObj.hls !== '') {
+			  DreamboxObj.play(DreamboxObj.hls);
+    }
 	} else if (jQuery(data.nextPage).attr('id') == 'about') {
 		addToHomescreen();
 	}
 
 	if(jQuery(data.nextPage).attr('id') != 'watch') {
-  		try { jwplayer('ReStreamPlayer').remove(); } catch (e) {};
+  		try { DreamboxObj.player.destroy(); } catch (e) {};
 	}
 });
