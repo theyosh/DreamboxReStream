@@ -71,7 +71,7 @@ class VLCServer {
 											"videobitrate" => 1500,
 											"videofps" => 25,
 											"audiocodec" => "mp4a",
-											"audiobitrate" => 192,
+											"audiobitrate" => 160,
 											"audiosamplerate" => 48000);
 
 		// Main Profile
