@@ -452,8 +452,10 @@ var DreamboxObj = {
 	},
 
 	showChannels: function(bouquetid) {
-		for(channelid in DreamboxObj.bouquets[bouquetid].channels) {
-		  DreamboxObj.showChannel(bouquetid,channelid);
+		for(var channelid in DreamboxObj.bouquets[bouquetid].channels) {
+			if (channelid !== '') {
+				DreamboxObj.showChannel(bouquetid,channelid);
+			}
 		}
 		DreamboxObj.bouquetsDiv.accordion('refresh');
 	},
@@ -513,7 +515,7 @@ var DreamboxObj = {
 
 			},
 		};
-		DreamboxObj.bouquets_recordings.amount = DreamboxObj.bouquets._recordings.channels.length;
+		DreamboxObj.bouquets._recordings.amount = DreamboxObj.bouquets._recordings.channels.length;
 	},
 
 	getRecordings: function() {
