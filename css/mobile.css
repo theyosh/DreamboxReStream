@@ -61,7 +61,8 @@ li.current > div {
 #ReStreamPlayer {
 	position: relative;
 }
-#ReStreamPlayer img {
+#ReStreamPlayer img,
+#ReStreamPlayer video {
 	width: 100%;
 }
 #ReStreamPlayer a {
