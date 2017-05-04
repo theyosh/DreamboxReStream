@@ -189,14 +189,19 @@ DreamboxObj.play = function(url) {
 		} else {
 		  DreamboxObj.hls = url;
 			url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
+			document.getElementById('videoPlayer').src = url;
+			document.getElementById('videoPlayer').play();
+			
+			/*
 			if(Hls.isSupported() && DreamboxObj.hls !== '') {
 				DreamboxObj.player = new Hls();
 				DreamboxObj.player.loadSource(url);
 				DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
 				DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
-					document.getElementById('videoPlayer').play();
+					
 				});
 			}
+			*/
 		}
 	}
 	clearTimeout(DreamboxObj.zapTimer);

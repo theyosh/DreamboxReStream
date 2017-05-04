@@ -149,8 +149,7 @@ class VLCServer {
 			if (is_object($pChannelObj) && get_class($pChannelObj) == 'Movie' && (($lSubTitleFile = $pChannelObj->getSubtitle(Settings::getVLCSubtitleLanguage())) != '')) {
 				$lCMD .= ' --sub-file=' . $pChannelObj->getSubtitle(Settings::getVLCSubtitleLanguage());
 			}
-
-                        $lCMD .= " \"" . $pStreamURL . "\" vlc://quit --sout-transcode-deinterlace ";
+      $lCMD .= " \"" . $pStreamURL . "\" vlc://quit --sout-transcode-deinterlace ";
 
 			$lPortNumbers = 20000;
 			$lTransCode = "#duplicate{";
@@ -223,7 +222,8 @@ class VLCServer {
 		}
 
 		if (Utils::isMobileDevice() && !Utils::isiPhone()) {
-			$lReturnValue[] = "rtsp://" . Settings::getVLCPlayerIP(true) . ":" . Settings::getVLCPort() . str_replace('//','/', "/" . $this->vlcStreamUrlFormat($pChannelObj->getName()) . "_" . Settings::getRTSPOnlyProfile() . ".sdp");
+			// Disabled
+			//$lReturnValue[] = "rtsp://" . Settings::getVLCPlayerIP(true) . ":" . Settings::getVLCPort() . str_replace('//','/', "/" . $this->vlcStreamUrlFormat($pChannelObj->getName()) . "_" . Settings::getRTSPOnlyProfile() . ".sdp");
 		}
 		return $lReturnValue;
 	}

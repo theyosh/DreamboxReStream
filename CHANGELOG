@@ -1,6 +1,12 @@
 Dreambox ReStream Change Log - http://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2017
 
+version [VERSION] ([RELEASEDATE])
+ * Fixed javascript error during loading Dreambox ReStream
+ * Fixed video width in mobile modus
+ * Fixed audio track selection in transcoding
+ * Fixed programm information box so that the text is not overlapping picon
+
 version 2.4.0 (30-04-2017)
  * Removed all old flash players and replaced with hls.js player. (https://github.com/video-dev/hls.js)
  * Fixed a caching bug after upgrading. The cache is now cleaned by force. Thanks to Marco Molinari

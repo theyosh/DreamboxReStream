@@ -63,7 +63,7 @@ li.current > div {
 }
 #ReStreamPlayer img,
 #ReStreamPlayer video {
-	width: 100%;
+	max-width: 100%;
 }
 #ReStreamPlayer a {
 	position: absolute;
@@ -71,7 +71,7 @@ li.current > div {
 	width: 100%;
 	height: 100%;
 	left: 0px;
-  top: 0px;
+        top: 0px;
 	display: none;
 	background-image: url('../images/play_icon.png');
 	background-position: center center;
