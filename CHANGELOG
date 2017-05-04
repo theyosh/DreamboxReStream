@@ -6,6 +6,7 @@ version [VERSION] ([RELEASEDATE])
  * Fixed video width in mobile modus
  * Fixed audio track selection in transcoding
  * Fixed programm information box so that the text is not overlapping picon
+ * Fixed update url
 
 version 2.4.0 (30-04-2017)
  * Removed all old flash players and replaced with hls.js player. (https://github.com/video-dev/hls.js)

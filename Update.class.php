@@ -1,7 +1,7 @@
 <?php
 class Update {
 	private $lLastUpdateCheck = 'restream.current.version.txt';
-	private $lUpdateCheckUrl = 'http://theyosh.nl/restream.dev.version.txt';
+	private $lUpdateCheckUrl = 'https://theyosh.nl/restream.version.txt';
 	private $lUpdateTimeOut = 86400; // 24 hours
 	private $lUpdateFolder = '.update';
 
