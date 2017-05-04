@@ -1,7 +1,7 @@
 Dreambox ReStream Change Log - http://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2017
 
-version [VERSION] ([RELEASEDATE])
+version 2.4.1 (04-05-2017)
  * Fixed javascript error during loading Dreambox ReStream
  * Fixed video width in mobile modus
  * Fixed audio track selection in transcoding

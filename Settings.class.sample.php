@@ -7,7 +7,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $version = '2.4.0';
+	private static $version = '2.4.1';
 
 	/**
 	* Set the name of the dreambox. Anything is allowed :P
@@ -66,7 +66,7 @@ class Settings {
 	* @var boolean
 	*/
 	private static $dreamboxDualTuner = 1;
-	
+
 	private static $bouqetsFilter = '';
 
 
@@ -213,7 +213,7 @@ class Settings {
 	* @var string
 	*
 	*/
-	private static $vlcAudioLanguage = "";
+	private static $vlcAudioLanguage = 1;
 
 	/**
 	*
