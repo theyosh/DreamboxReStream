@@ -23,7 +23,12 @@ var DreamboxObj = {
 		DreamboxObj.running = 0;
 		DreamboxObj.debug = debug;
 		DreamboxObj.log('init','Initializing Dreambox ReStream');
-		
+		DreamboxObj.player = new Hls();
+                DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
+                DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
+                  document.getElementById('videoPlayer').play();
+                });
+
 		if (DreamboxObj.baseurl.indexOf('?') != -1) {
 			DreamboxObj.baseurl = DreamboxObj.baseurl.substr(0,DreamboxObj.baseurl.indexOf('?')-1);
 		}
