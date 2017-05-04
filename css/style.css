@@ -210,7 +210,7 @@ body.setup #ReStreamUI #PlayerWrapper {
 	font-size: 0.8em;
 	overflow: auto;
 	position: relative;
-	padding-right: 100px;
+	padding-right: 120px;
 }
 #ProgramInfo p .zapicon  {
 	margin: 0;
