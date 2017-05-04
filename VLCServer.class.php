@@ -128,12 +128,12 @@ class VLCServer {
 		$lCurrentStatus = $this->getCurrentStatus();
 		if ($lCurrentStatus["streamurl"] != $pStreamURL) {
 			$this->stopServer();
-			$lCMD = $this->lVLCExecutable . " \"" . $pStreamURL . "\" vlc://quit --sout-transcode-deinterlace ";
+			$lCMD = $this->lVLCExecutable;
 			// --sout-deinterlace-mode=bob
 			if (Settings::getVLCAudioLanguage() != '') {
 				$lAudioTracks = explode(',',Settings::getVLCAudioLanguage());
 				if (is_numeric($lAudioTracks[0])) {
-					$lCMD .= ' --audio-track=' . $lAudioTracks[0];
+					$lCMD .= ' --audio-track-id=' . $lAudioTracks[0];
 				} else {
 					$lCMD .= ' --audio-language=' . Settings::getVLCAudioLanguage();
 				}
@@ -149,6 +149,8 @@ class VLCServer {
 			if (is_object($pChannelObj) && get_class($pChannelObj) == 'Movie' && (($lSubTitleFile = $pChannelObj->getSubtitle(Settings::getVLCSubtitleLanguage())) != '')) {
 				$lCMD .= ' --sub-file=' . $pChannelObj->getSubtitle(Settings::getVLCSubtitleLanguage());
 			}
+
+                        $lCMD .= " \"" . $pStreamURL . "\" vlc://quit --sout-transcode-deinterlace ";
 
 			$lPortNumbers = 20000;
 			$lTransCode = "#duplicate{";
