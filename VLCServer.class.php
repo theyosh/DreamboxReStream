@@ -114,7 +114,6 @@ class VLCServer {
 		$this->lDVRLength = Settings::getDVRLength();
 		$this->lActiveProfiles = Settings::getActiveProfiles();
 		$this->lVLCExecutable = Settings::getVLCExecutable();
-		$this->liPhoneDir = getcwd();
 	}
 
 	/**
@@ -124,6 +123,7 @@ class VLCServer {
 	*/
 	public function startServer($pStreamURL,$pChannelObj) {
 		global $gDebugObj;
+		$this->liPhoneDir = getcwd();
 		$pStreamURL = str_replace('name=zap','name=' . $pChannelObj->getName() ,$pStreamURL);
 		$lCurrentStatus = $this->getCurrentStatus();
 		if ($lCurrentStatus["streamurl"] != $pStreamURL) {
@@ -238,7 +238,7 @@ class VLCServer {
 		$lData = trim(shell_exec("ps ax | grep vlc://quit | grep -v grep"));
 		if ($lData != '') {
 			$lReturnArray["procesid"] = substr($lData,0,stripos($lData,' '));
-			$lStartPos = stripos($lData,'dummy') + 6;
+			$lStartPos = stripos($lData,'http');
 			$lEndPos = stripos($lData,'vlc://quit');
 			$lReturnArray["streamurl"] = trim(substr($lData,$lStartPos,$lEndPos-$lStartPos));
 			if (substr($lReturnArray["streamurl"],0,7) == "http://") {
@@ -269,7 +269,7 @@ class VLCServer {
 		// Start new kill timer...
 		$lCMD = '(sleep 120;killall -9 vlc)';
 		$pid = Utils::execute($lCMD);
-		file_put_contents('.autoKiller', $pid);
+		@file_put_contents('.autoKiller', $pid);
 	}
 
 	/**

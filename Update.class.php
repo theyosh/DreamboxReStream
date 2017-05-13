@@ -55,11 +55,11 @@ class Update {
 	private function downloadUpdate() {
 		$lReturnErrors = array();
 		Utils::execute('rm -Rf "' . $this->lUpdateFolder . '"','',true);
-		if (mkdir($this->lUpdateFolder)) {
+		if (@mkdir($this->lUpdateFolder)) {
 			$this->lUpdateFile = $this->lUpdateFolder . '/' . $this->lUpdateFile;
 			if (($lUpdateZip = file_get_contents($this->lUpdateDownloadUrl)) !== false) {
-				if (file_put_contents($this->lUpdateFile,$lUpdateZip) !== false) {
-					if (sha1_file($this->lUpdateFile) == $this->lUpdateHash) {
+				if (@file_put_contents($this->lUpdateFile,$lUpdateZip) !== false) {
+					if (@sha1_file($this->lUpdateFile) == $this->lUpdateHash) {
 						return true;
 					} else {
 						$lReturnErrors[] = 'Sha1 Hash is invalid.';

@@ -121,7 +121,9 @@ body.setup #ReStreamUI #PlayerWrapper {
 }
 .ui-progressbar {height: 6px;}
 #ReStreamUI #ProgramGuide h3 {
-	padding: 0.2em 0em 0.2em 2.0em;
+	padding: 0.2em 0em 0.2em 0.5em;
+	white-space: nowrap;
+	overflow: hidden;
 }
 #epg div.program {
 	width: 100%;
