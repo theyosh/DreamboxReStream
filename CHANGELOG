@@ -1,7 +1,7 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2017
 
-version [VERSION] ([RELEASEDATE])
+version 2.4.2 (13-05-2017)
  * Fixed update process. Error messages are now shown again when there is an error.
  * Fixed bouqet filter. Better empty list detection.
  * Fixed bouqet list titles. No more text wrapping.

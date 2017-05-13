@@ -7,7 +7,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $version = '2.4.1';
+	private static $version = '2.4.2';
 
 	/**
 	* Set the name of the dreambox. Anything is allowed :P
@@ -332,6 +332,7 @@ class Settings {
 	}
 	
 	static public function getBouqetsFilter() {
+		if (trim(Settings::$bouqetsFilter) === "") return [];
 		return explode(',',Settings::$bouqetsFilter);
 	}
 
