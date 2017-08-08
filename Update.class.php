@@ -31,6 +31,7 @@ class Update {
 		}
 
 		if ($pLoad && $lCheckOnline) {
+			// Make sure IPv6 is working... else disable IPv6 on server
 			if (($lUpdateData = file_get_contents($this->lUpdateCheckUrl . "?" . Settings::getEnigmaVersion())) === false) {
 				$lUpdateData = '';
 			}

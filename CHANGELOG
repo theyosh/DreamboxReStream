@@ -1,6 +1,11 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2017
 
+version 2.4.3 (08-08-2017)
+ * Fixed PHP Settings error when running for the first time
+ * Updated humanize-duration to version 3.10.1 (https://github.com/EvanHahn/HumanizeDuration.js)
+ * Updated hls.js to version 0.7.11 (https://github.com/video-dev/hls.js)
+
 version 2.4.2 (13-05-2017)
  * Fixed update process. Error messages are now shown again when there is an error.
  * Fixed bouqet filter. Better empty list detection.

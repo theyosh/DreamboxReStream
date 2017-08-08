@@ -174,6 +174,10 @@ if (!$gSetupObj->configOutDated()) {
 				<div><p style="text-align:center; margin-top: 50px;">Loading....</p></div>
 			</div>
 		</div>
+		<script type="text/javascript">
+			gAdditionalTimeout = 0;
+			<?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
+		</script>
 		<?php } ?>
 	</div>
 </div>
@@ -184,11 +188,7 @@ if (!$gSetupObj->configOutDated()) {
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollTo.min.js"></script>
 <script type="text/javascript" src="js/date.format.js" ></script>
-<script type="text/javascript">
-gAdditionalTimeout = 0;
-<?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
-</script>
-<script src="hls.js/dist/hls.min.js"></script>
+<script type="text/javascript" src="js/hls.min.js"></script>
 <script type="text/javascript" src="js/javascript.js" ></script>
 </body>
 </html>
