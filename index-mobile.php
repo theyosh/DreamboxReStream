@@ -25,7 +25,7 @@
 gAdditionalTimeout = 0;
 <?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
 </script>
-  <script type="text/javascript" src="hls.js/dist/hls.min.js"></script>
+  <script type="text/javascript" src="js/hls.min.js"></script>
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
   <script type="text/javascript" src="js/date.format.js" ></script>
