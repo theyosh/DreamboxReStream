@@ -13,6 +13,17 @@
       ms: function (c) { return c === 1 ? 'جزء من الثانية' : 'أجزاء من الثانية' },
       decimal: ','
     },
+    bg: {
+      y: function (c) { return ['години', 'година', 'години'][getSlavicForm(c)] },
+      mo: function (c) { return ['месеца', 'месец', 'месеца'][getSlavicForm(c)] },
+      w: function (c) { return ['седмици', 'седмица', 'седмици'][getSlavicForm(c)] },
+      d: function (c) { return ['дни', 'ден', 'дни'][getSlavicForm(c)] },
+      h: function (c) { return ['часа', 'час', 'часа'][getSlavicForm(c)] },
+      m: function (c) { return ['минути', 'минута', 'минути'][getSlavicForm(c)] },
+      s: function (c) { return ['секунди', 'секунда', 'секунди'][getSlavicForm(c)] },
+      ms: function (c) { return ['милисекунди', 'милисекунда', 'милисекунди'][getSlavicForm(c)] },
+      decimal: ','
+    },
     ca: {
       y: function (c) { return 'any' + (c === 1 ? '' : 's') },
       mo: function (c) { return 'mes' + (c === 1 ? '' : 'os') },
@@ -25,14 +36,14 @@
       decimal: ','
     },
     cs: {
-      y: function (c) { return ['rok', 'roku', 'roky', 'let'][getCzechForm(c)] },
-      mo: function (c) { return ['měsíc', 'měsíce', 'měsíce', 'měsíců'][getCzechForm(c)] },
-      w: function (c) { return ['týden', 'týdne', 'týdny', 'týdnů'][getCzechForm(c)] },
-      d: function (c) { return ['den', 'dne', 'dny', 'dní'][getCzechForm(c)] },
-      h: function (c) { return ['hodina', 'hodiny', 'hodiny', 'hodin'][getCzechForm(c)] },
-      m: function (c) { return ['minuta', 'minuty', 'minuty', 'minut'][getCzechForm(c)] },
-      s: function (c) { return ['sekunda', 'sekundy', 'sekundy', 'sekund'][getCzechForm(c)] },
-      ms: function (c) { return ['milisekunda', 'milisekundy', 'milisekundy', 'milisekund'][getCzechForm(c)] },
+      y: function (c) { return ['rok', 'roku', 'roky', 'let'][getCzechOrSlovakForm(c)] },
+      mo: function (c) { return ['měsíc', 'měsíce', 'měsíce', 'měsíců'][getCzechOrSlovakForm(c)] },
+      w: function (c) { return ['týden', 'týdne', 'týdny', 'týdnů'][getCzechOrSlovakForm(c)] },
+      d: function (c) { return ['den', 'dne', 'dny', 'dní'][getCzechOrSlovakForm(c)] },
+      h: function (c) { return ['hodina', 'hodiny', 'hodiny', 'hodin'][getCzechOrSlovakForm(c)] },
+      m: function (c) { return ['minuta', 'minuty', 'minuty', 'minut'][getCzechOrSlovakForm(c)] },
+      s: function (c) { return ['sekunda', 'sekundy', 'sekundy', 'sekund'][getCzechOrSlovakForm(c)] },
+      ms: function (c) { return ['milisekunda', 'milisekundy', 'milisekundy', 'milisekund'][getCzechOrSlovakForm(c)] },
       decimal: ','
     },
     da: {
@@ -78,6 +89,17 @@
       s: function (c) { return 'segundo' + (c === 1 ? '' : 's') },
       ms: function (c) { return 'milisegundo' + (c === 1 ? '' : 's') },
       decimal: ','
+    },
+    fa: {
+      y: 'سال',
+      mo: 'ماه',
+      w: 'هفته',
+      d: 'روز',
+      h: 'ساعت',
+      m: 'دقیقه',
+      s: 'ثانیه',
+      ms: 'میلی ثانیه',
+      decimal: '.'
     },
     fi: {
       y: function (c) { return c === 1 ? 'vuosi' : 'vuotta' },
@@ -235,7 +257,7 @@
     },
     pt: {
       y: function (c) { return 'ano' + (c === 1 ? '' : 's') },
-      mo: function (c) { return c !== 1 ? 'meses' : 'mês' },
+      mo: function (c) { return c === 1 ? 'mês' : 'meses' },
       w: function (c) { return 'semana' + (c === 1 ? '' : 's') },
       d: function (c) { return 'dia' + (c === 1 ? '' : 's') },
       h: function (c) { return 'hora' + (c === 1 ? '' : 's') },
@@ -258,12 +280,34 @@
     uk: {
       y: function (c) { return ['років', 'рік', 'роки'][getSlavicForm(c)] },
       mo: function (c) { return ['місяців', 'місяць', 'місяці'][getSlavicForm(c)] },
-      w: function (c) { return ['неділь', 'неділя', 'неділі'][getSlavicForm(c)] },
+      w: function (c) { return ['тижнів', 'тиждень', 'тижні'][getSlavicForm(c)] },
       d: function (c) { return ['днів', 'день', 'дні'][getSlavicForm(c)] },
       h: function (c) { return ['годин', 'година', 'години'][getSlavicForm(c)] },
       m: function (c) { return ['хвилин', 'хвилина', 'хвилини'][getSlavicForm(c)] },
       s: function (c) { return ['секунд', 'секунда', 'секунди'][getSlavicForm(c)] },
       ms: function (c) { return ['мілісекунд', 'мілісекунда', 'мілісекунди'][getSlavicForm(c)] },
+      decimal: ','
+    },
+    ur: {
+      y: 'سال',
+      mo: function (c) { return c === 1 ? 'مہینہ' : 'مہینے' },
+      w: function (c) { return c === 1 ? 'ہفتہ' : 'ہفتے' },
+      d: 'دن',
+      h: function (c) { return c === 1 ? 'گھنٹہ' : 'گھنٹے' },
+      m: 'منٹ',
+      s: 'سیکنڈ',
+      ms: 'ملی سیکنڈ',
+      decimal: '.'
+    },
+    sk: {
+      y: function (c) { return ['rok', 'roky', 'roky', 'rokov'][getCzechOrSlovakForm(c)] },
+      mo: function (c) { return ['mesiac', 'mesiace', 'mesiace', 'mesiacov'][getCzechOrSlovakForm(c)] },
+      w: function (c) { return ['týždeň', 'týždne', 'týždne', 'týždňov'][getCzechOrSlovakForm(c)] },
+      d: function (c) { return ['deň', 'dni', 'dni', 'dní'][getCzechOrSlovakForm(c)] },
+      h: function (c) { return ['hodina', 'hodiny', 'hodiny', 'hodín'][getCzechOrSlovakForm(c)] },
+      m: function (c) { return ['minúta', 'minúty', 'minúty', 'minút'][getCzechOrSlovakForm(c)] },
+      s: function (c) { return ['sekunda', 'sekundy', 'sekundy', 'sekúnd'][getCzechOrSlovakForm(c)] },
+      ms: function (c) { return ['milisekunda', 'milisekundy', 'milisekundy', 'milisekúnd'][getCzechOrSlovakForm(c)] },
       decimal: ','
     },
     sv: {
@@ -477,19 +521,6 @@
     return destination
   }
 
-  // Internal helper function for Czech language.
-  function getCzechForm (c) {
-    if (c === 1) {
-      return 0
-    } else if (Math.floor(c) !== c) {
-      return 1
-    } else if (c % 10 >= 2 && c % 10 <= 4 && c % 100 < 10) {
-      return 2
-    } else {
-      return 3
-    }
-  }
-
   // Internal helper function for Polish language.
   function getPolishForm (c) {
     if (c === 1) {
@@ -515,6 +546,19 @@
       return 2
     } else {
       return 0
+    }
+  }
+
+    // Internal helper function for Slovak language.
+  function getCzechOrSlovakForm (c) {
+    if (c === 1) {
+      return 0
+    } else if (Math.floor(c) !== c) {
+      return 1
+    } else if (c % 10 >= 2 && c % 10 <= 4 && c % 100 < 10) {
+      return 2
+    } else {
+      return 3
     }
   }
 

@@ -46,43 +46,17 @@ class VLCServer {
 
 		/*
 			Here you can change some codec settings.
-			Possible Audio codecs:
-				1. mp4a
-				2. mp3
-				3. mpga
 		*/
 
-		// Full HD Profile
-		$this->lProfiles['FullHD'] = array(	"name" => "Full HD 1080p",
-											"width" => 1920,
-											"height" => 1080,
+		// Mobile Profile 2
+		$this->lProfiles['Mobile2'] = array("name" => "Mobile2",
+											"width" => 320,
+											"height" => 180,
 											"videocodec" => "h264",
-											"videobitrate" => 2048,
-											"videofps" => 25,
+											"videobitrate" => 250,
+											"videofps" => 20,
 											"audiocodec" => "mp4a",
-											"audiobitrate" => 192,
-											"audiosamplerate" => 48000);
-
-		// HD Ready Profile
-		$this->lProfiles['HDReady'] = array("name" => "HD Ready 720p",
-											"width" => 1280,
-											"height" => 720,
-											"videocodec" => "h264",
-											"videobitrate" => 1500,
-											"videofps" => 25,
-											"audiocodec" => "mp4a",
-											"audiobitrate" => 160,
-											"audiosamplerate" => 48000);
-
-		// Main Profile
-		$this->lProfiles['SD'] = array(		"name" => "SD",
-											"width" => 854,
-											"height" => 480,
-											"videocodec" => "h264",
-											"videobitrate" => 800,
-											"videofps" => 25,
-											"audiocodec" => "mp4a",
-											"audiobitrate" => 128,
+											"audiobitrate" => 32,
 											"audiosamplerate" => 48000);
 
 		// Mobile Profile 1
@@ -93,24 +67,46 @@ class VLCServer {
 											"videobitrate" => 500,
 											"videofps" => 25,
 											"audiocodec" => "mp4a",
+											"audiobitrate" => 64,
+											"audiosamplerate" => 48000);
+
+		// Main Profile
+		$this->lProfiles['SD'] = array(		"name" => "SD",
+											"width" => 854,
+											"height" => 480,
+											"videocodec" => "h264",
+											"videobitrate" => 800,
+											"videofps" => 25,
+											"audiocodec" => "mp4a",
 											"audiobitrate" => 92,
 											"audiosamplerate" => 48000);
 
-		// Mobile Profile 2
-		$this->lProfiles['Mobile2'] = array("name" => "Mobile2",
-											"width" => 320,
-											"height" => 180,
+		// HD Ready Profile
+		$this->lProfiles['HDReady'] = array("name" => "HD Ready 720p",
+											"width" => 1280,
+											"height" => 720,
 											"videocodec" => "h264",
-											"videobitrate" => 250,
-											"videofps" => 20,
+											"videobitrate" => 1400,
+											"videofps" => 25,
 											"audiocodec" => "mp4a",
-											"audiobitrate" => 64,
+											"audiobitrate" => 128,
+											"audiosamplerate" => 48000);
+
+		// Full HD Profile
+		$this->lProfiles['FullHD'] = array(	"name" => "Full HD 1080p",
+											"width" => 1920,
+											"height" => 1080,
+											"videocodec" => "h264",
+											"videobitrate" => 2400,
+											"videofps" => 25,
+											"audiocodec" => "mp4a",
+											"audiobitrate" => 160,
 											"audiosamplerate" => 48000);
 
 		$this->lVolume = 80;
 		$this->lScale = 0.75;
 		$this->lChannels = 2;
-		$this->lSegmentLength = 10; // In seconds
+		$this->lSegmentLength = 4; // In seconds
 		$this->lDVRLength = Settings::getDVRLength();
 		$this->lActiveProfiles = Settings::getActiveProfiles();
 		$this->lVLCExecutable = Settings::getVLCExecutable();

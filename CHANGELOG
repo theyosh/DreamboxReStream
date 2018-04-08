@@ -1,5 +1,13 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
-dreambox@theyosh.nl - ©2006 - 2017
+dreambox@theyosh.nl - ©2006 - 2018
+
+version 2.4.5 (08-04-2018)
+ * Updated hls.js to version 0.9.1 (https://github.com/video-dev/hls.js)
+ * Updated humanize-duration to version 3.14.0 (https://github.com/EvanHahn/HumanizeDuration.js)
+
+version 2.4.4 (14-10-2017)
+ * Updated hls.js to version 0.8.4 (https://github.com/video-dev/hls.js)
+ * Changed to 4 seconds chunks. Increased player starting
 
 version 2.4.3 (08-08-2017)
  * Fixed PHP Settings error when running for the first time

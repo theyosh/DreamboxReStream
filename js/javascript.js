@@ -176,10 +176,12 @@ var DreamboxObj = {
 		url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
 		DreamboxObj.log('play','Starting playing the url: \'' + url + '\'');
 		if(Hls.isSupported() && !stop) {
-			DreamboxObj.player = new Hls();
-			DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
-			DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
-				document.getElementById('videoPlayer').play();
+			var video = document.getElementById('videoPlayer');
+			var config = {autoStartLoad: true};
+			DreamboxObj.player = new Hls(config);
+			DreamboxObj.player.attachMedia(video);
+			DreamboxObj.player.on(Hls.Events.MANIFEST_LOADED,function() {
+				video.play();
 			});
 			DreamboxObj.player.loadSource(url);
 	  }	else {
@@ -430,7 +432,7 @@ var DreamboxObj = {
 					}
 				}
 			}
-			
+
 		}
 		return false;
 	},
@@ -884,7 +886,7 @@ function getBytesWithUnit(bytes, useSI, precision, useSISuffix) {
 		bytes = bytes.toFixed(precision);
 	}
 	return bytes + " " + suffix;
-};
+}
 
 jQuery(document).ready(function() {
 	if (gSetup === 0) {
