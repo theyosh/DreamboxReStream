@@ -7,7 +7,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $version = '2.4.3';
+	private static $version = '2.4.5';
 
 	/**
 	* Set the name of the dreambox. Anything is allowed :P
@@ -39,7 +39,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $dreamboxUserName = "username";
+	private static $dreamboxUserName = "";
 
 	/**
 	* Set the password for the dreambox webinterface. Leave empty when no authentication is required.
@@ -47,7 +47,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $dreamboxPassword = "password";
+	private static $dreamboxPassword = "";
 
 	/**
 	* Set the enigma version of the dreambox. Valid values are enigma1 of enigma2
@@ -330,7 +330,7 @@ class Settings {
 	static public function isDualTuner() {
 		return (Settings::$dreamboxDualTuner);
 	}
-	
+
 	static public function getBouqetsFilter() {
 		if (trim(Settings::$bouqetsFilter) === "") return [];
 		return explode(',',Settings::$bouqetsFilter);
