@@ -1,6 +1,10 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2018
 
+version 2.4.6 (05-09-2018)
+ * Updated hls.js to version 0.11.1 (https://github.com/video-dev/hls.js)
+ * Fixed picon fetcher
+
 version 2.4.5 (08-04-2018)
  * Updated hls.js to version 0.9.1 (https://github.com/video-dev/hls.js)
  * Updated humanize-duration to version 3.14.0 (https://github.com/EvanHahn/HumanizeDuration.js)

@@ -967,7 +967,12 @@ class Dreambox
 		$lImage = 'picon/' . $pChannelID . '.png';
 		if (!file_exists($lImage) || filesize($lImage) == 0 || (filemtime($lImage) < time() - 24 * 3600 )) { // Check once every day for an update...
 			// Get from the Dreambox source.
-			if (@file_put_contents($lImage,file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage)) === false) @unlink($lImage);
+			if (@file_put_contents($lImage,file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage)) === false) {
+        // Failed downloading first try...
+        if (@file_put_contents($lImage,file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . preg_replace('/picon\/([^_]+_[^_]+)_19_/', 'picon\\/$1_1_', $lImage,1))) === false) {
+          @unlink($lImage);
+        }
+      }
 		}
 		return $lImage;
 	}
