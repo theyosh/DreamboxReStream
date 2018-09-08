@@ -176,8 +176,10 @@ var DreamboxObj = {
 		url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
 		DreamboxObj.log('play','Starting playing the url: \'' + url + '\'');
 		if(Hls.isSupported() && !stop) {
+
 			var video = document.getElementById('videoPlayer');
 			var config = {autoStartLoad: true};
+
 			DreamboxObj.player = new Hls(config);
 			DreamboxObj.player.attachMedia(video);
 			DreamboxObj.player.on(Hls.Events.MANIFEST_LOADED,function() {
