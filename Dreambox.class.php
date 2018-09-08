@@ -962,16 +962,24 @@ class Dreambox
 	}
 
 	public function getChannelImage($pChannelID) {
+    global $gDebugObj;
 		$pChannelID = str_replace(':','_',substr($pChannelID,0,-1));
 
 		$lImage = 'picon/' . $pChannelID . '.png';
 		if (!file_exists($lImage) || filesize($lImage) == 0 || (filemtime($lImage) < time() - 24 * 3600 )) { // Check once every day for an update...
 			// Get from the Dreambox source.
-			if (@file_put_contents($lImage,file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage)) === false) {
+      if (Settings::getDebug()) $gDebugObj->setDebugMessage('getChannelImage',"Download picon: '"."http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage . "'");
+      $lPNG = file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage);
+      if ($lPNG === false) {
         // Failed downloading first try...
-        if (@file_put_contents($lImage,file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . preg_replace('/picon\/([^_]+_[^_]+)_19_/', 'picon\\/$1_1_', $lImage,1))) === false) {
-          @unlink($lImage);
-        }
+        // Try again with SD image
+        if (Settings::getDebug()) $gDebugObj->setDebugMessage('getChannelImage',"Download picon second attempt: '"."http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . str_ireplace('_19_','_1_',$lImage) . "'");
+        $lPNG = file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . str_ireplace('_19_','_1_',$lImage));
+      }
+
+      if ($lPNG !== false) {
+        @file_put_contents($lImage,$lPNG);
+        if (Settings::getDebug()) $gDebugObj->setDebugMessage('getChannelImage',"Writing picon: '". $lImage . "' with filesize: " . filesize($lImage) . " bytes");
       }
 		}
 		return $lImage;
