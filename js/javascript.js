@@ -23,12 +23,7 @@ var DreamboxObj = {
 		DreamboxObj.running = 0;
 		DreamboxObj.debug = debug;
 		DreamboxObj.log('init','Initializing Dreambox ReStream');
-		DreamboxObj.player = new Hls();
-                DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
-                DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
-                  document.getElementById('videoPlayer').play();
-                });
-
+    DreamboxObj.player = null;
 		if (DreamboxObj.baseurl.indexOf('?') != -1) {
 			DreamboxObj.baseurl = DreamboxObj.baseurl.substr(0,DreamboxObj.baseurl.indexOf('?')-1);
 		}
@@ -37,8 +32,6 @@ var DreamboxObj = {
 		}
 
 		DreamboxObj.dialog('Loading dreambox');
-		//DreamboxObj.play('');
-
 		DreamboxObj.log('init','Starting Dreambox ReStream');
 		DreamboxObj.encodingStatus('');
 
@@ -126,7 +119,7 @@ var DreamboxObj = {
 				jQuery('#result li').remove();
 				var re = new RegExp(text, 'ig');
 				var noResults = true;
-				jQuery('#channels li').each(function(i){
+				jQuery('#channels li').each(function(){
 					if (jQuery(this).text().match(re)) {
 						noResults = false;
 						jQuery('#result').append(jQuery(this).clone(true));
@@ -171,21 +164,40 @@ var DreamboxObj = {
 		}
 	},
 
-	play: function(url) {
+  play: function(url) {
 		stop = (url === '');
 		url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
 		DreamboxObj.log('play','Starting playing the url: \'' + url + '\'');
-		if(Hls.isSupported() && !stop) {
 
-			var video = document.getElementById('videoPlayer');
-			var config = {autoStartLoad: true};
+    if (!stop) {
+      jQuery('#rtsplink').html('<a href="' + url + '" target="_blank">' + url + '</a>');
+      DreamboxObj.player = new Clappr.Player({
+        parentId: '#videoPlayer',
+        autoPlay: true,
+        poster : 'images/dreambox.jpg',
+        mediacontrol: {seekbar: "#0B3E6F", buttons: "#75abff"},
+        plugins: [LevelSelector, ClapprNerdStats, ClapprStats],
+        source: url,
+        height: '100%',
+        width: '100%',
+        clapprNerdStats: {
+          // Optional: provide multiple combination of keyboard shortcuts to show/hide the statistics.
+          // For reference, visit: https://github.com/ccampbell/mousetrap.
+          // Default: ['command+shift+s', 'ctrl+shift+s']
+          shortcut: ['command+shift+s', 'ctrl+shift+s'],
 
-			DreamboxObj.player = new Hls(config);
-			DreamboxObj.player.attachMedia(video);
-			DreamboxObj.player.on(Hls.Events.MANIFEST_LOADED,function() {
-				video.play();
-			});
-			DreamboxObj.player.loadSource(url);
+          // Optional: position of the icon to show/hide the statistics.
+          // Values: 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'none'
+          // Default: 'top-right'
+          iconPosition: 'top-right'
+        },
+        levelSelectorConfig: {
+          title: 'Quality',
+          labelCallback: function(playbackLevel) {
+            return playbackLevel.level.height+'p'; // High 720p
+          }
+        },
+      });
 	  }	else {
 			try{
 				DreamboxObj.player.destroy();

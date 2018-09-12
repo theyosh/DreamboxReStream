@@ -22,10 +22,13 @@
   <link rel="stylesheet" href="css/mobile.css" />
   <script type="text/javascript">var gSetup = <?php echo ($gSetupObj->configOutDated() ? '1' : '0');?></script>
   <script type="text/javascript">
-gAdditionalTimeout = 0;
-<?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
-</script>
-  <script type="text/javascript" src="js/hls.min.js"></script>
+    var gAdditionalTimeout = 0;
+    <?php echo "gAdditionalTimeout += " . Settings::getAdditionalTimeout() . ";"; ?>
+  </script>
+  <script type="text/javascript" src="js/clappr.min.js"></script>
+  <script type="text/javascript" src="js/clappr-stats.min.js"></script>
+  <script type="text/javascript" src="js/clappr-nerd-stats.min.js"></script>
+  <script type="text/javascript" src="js/level-selector.min.js"></script>
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
   <script type="text/javascript" src="js/date.format.js" ></script>
@@ -74,7 +77,8 @@ gAdditionalTimeout = 0;
 	<div data-role="content" >
 		<div id="ProgramInfo">
 			<div id="ReStreamPlayer">
-        <video id="videoPlayer" playsinline controls="true" poster="images/dreambox.jpg"></video>
+        <div id="videoPlayer">
+        </div>
 			</div>
 			<h1>[Channel Name]</h1>
 			<h2>[Start] [Stop] [Program Name]</h2>

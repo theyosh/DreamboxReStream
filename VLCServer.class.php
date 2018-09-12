@@ -295,7 +295,7 @@ class VLCServer {
 			foreach ($this->lProfiles as $lProfileName => $lProfile) {
 				if (!in_array($lProfileName,$this->lActiveProfiles)) continue;
 				if (file_exists($this->liPhoneDir . "/iphone/stream/" . $this->vlcStreamUrlFormat($pChannelObj->getName()) . "_" . $lProfileName . ".m3u8")) {
-					$lMultiBitrate .= "#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=" . round(($lProfile["videobitrate"]+$lProfile["audiobitrate"]) * 1024) . ",RESOLUTION=" . $lProfile["width"] . "x" . $lProfile["height"] . "\n";
+					$lMultiBitrate .= "#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS=\"avc1.64001f,mp4a.40.2\",BANDWIDTH=" . round(($lProfile["videobitrate"]+$lProfile["audiobitrate"]) * 1024) . ",RESOLUTION=" . $lProfile["width"] . "x" . $lProfile["height"] . "\n";
 					$lMultiBitrate .=  $this->vlcStreamUrlFormat($pChannelObj->getName()) . "_" . $lProfileName . ".m3u8\n";
 					$lProfilesCounter++;
 				}

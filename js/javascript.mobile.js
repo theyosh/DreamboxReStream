@@ -178,46 +178,6 @@ DreamboxObj.showProgram = function(channelid,programObj) {
 	jQuery("#channels li[id='" + channelid.replace("'","\\'") + "'] a p." + spanClass).text(programObj.name);
 	jQuery("#channels li[id='" + channelid.replace("'","\\'") + "'] a p.ui-li-aside span." + spanClass).text(dateFormat(new Date(programObj.start * 1000),'HH:MM'));
 };
-
-/*
-DreamboxObj.play = function(url) {
-	var channelObj = DreamboxObj.getChannel(DreamboxObj.activechannel);
-	if (url !== '' || channelObj !== false) {
-		if (url.substr(0,4) == 'rtsp') {
-			var player = jQuery('#ReStreamPlayer a');
-			player.attr('href',url);
-			player.css('display','block');
-		} else {
-		  DreamboxObj.hls = url;
-			url = location.protocol + '//' + location.host + (url !== '' ? url : '/images/empty.m3u8');
-			document.getElementById('videoPlayer').src = url;
-			document.getElementById('videoPlayer').play();
-
-			*/
-
-
-			/*
-			if(Hls.isSupported() && DreamboxObj.hls !== '') {
-				DreamboxObj.player = new Hls();
-				DreamboxObj.player.loadSource(url);
-				DreamboxObj.player.attachMedia(document.getElementById('videoPlayer'));
-				DreamboxObj.player.on(Hls.Events.MANIFEST_PARSED,function() {
-
-				});
-			}
-			*/
-
-
-
-
-			/*
-		}
-	}
-	clearTimeout(DreamboxObj.zapTimer);
-  DreamboxObj.dialog('');
-};
-*/
-
 DreamboxObj.start = function() {
 	DreamboxObj.dialog('');
 	xajax_action('loadNowAndNextEPGData',jQuery('#channels h3:first').attr('id'));

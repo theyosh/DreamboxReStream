@@ -109,7 +109,7 @@ if (!$gSetupObj->configOutDated()) {
 <body <?php echo($gSetupObj->configOutDated() ? 'class="setup"' : '') ?> >
 <?php if ($gUpdateObj->updateAvailable()) echo '<div id="updateAvailable" class="separator">There is an update available of Dreambox ReStream. Click here to <a href="javascript:void(0);" onclick="DreamboxObj.update()" title="Update Dreambox ReStream to version ' . $gUpdateObj->getLatestUpdateVersion() . '">update to the latest version ' . $gUpdateObj->getLatestUpdateVersion() . '</a><span style="float:right; height: 20px; width:20px; display:block;"><a href="javascript:void(0);" onclick="jQuery(\'#updateAvailable\').hide();" title="Close">X</a></span></div>';?>
 <div id="wrapper">
-	<h1><script type="text/javascript">document.write(document.title)</script></h1>
+	<h1><script type="text/javascript">document.write(document.title);</script></h1>
 	<div id="ReStreamUI">
 <?php if (date("m") == 12 && (date('d') == 25 || date('d') == 26)) echo '<div id="christmashat" style="background: url(\'images/christmashat.png\') no-repeat;width: 76px; height: 88px;background-size:100%;position:absolute;z-index:99;left: 910px;top:-30px;float:right;"></div>'; ?>
 		<div id="PlayerWrapper">
@@ -149,15 +149,12 @@ if (!$gSetupObj->configOutDated()) {
 							</td>
 						</tr>
 					</table>
-					<input type="button" onclick="xajax_action('updateConfig',xajax.getFormValues('setup'))" value="Write config" style="margin: 50px 50%;"/>
+					<input type="button" onclick="xajax_action('updateConfig',xajax.getFormValues('setup'));" value="Write config" style="margin: 50px 50%;"/>
 				</form>
 				<?php } else { ?>
-				<div>
-            <video id="videoPlayer" controls="true" poster="images/dreambox.jpg"></video>
-        </div>
+				<div id="videoPlayer"></div>
 				<?php } ?>
 			</div>
-
 			<?php if (!$gSetupObj->configOutDated()) { ?>
 			<div id="loading"></div>
 			<div id="ProgramInfo">
@@ -188,7 +185,10 @@ if (!$gSetupObj->configOutDated()) {
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollTo.min.js"></script>
 <script type="text/javascript" src="js/date.format.js" ></script>
-<script type="text/javascript" src="js/hls.min.js"></script>
+<script type="text/javascript" src="js/clappr.min.js"></script>
+<script type="text/javascript" src="js/clappr-stats.min.js"></script>
+<script type="text/javascript" src="js/clappr-nerd-stats.min.js"></script>
+<script type="text/javascript" src="js/level-selector.min.js"></script>
 <script type="text/javascript" src="js/javascript.js" ></script>
 </body>
 </html>

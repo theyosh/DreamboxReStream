@@ -785,7 +785,6 @@ class Dreambox
 		if ($lChange) $this->serializeMe();
 	}
 
-
 	public function getMovie($pMovieID) {
 		foreach ($this->lMovies as $lMovie) {
 			if ($pMovieID == $lMovie->getID()) return $lMovie;
@@ -969,12 +968,12 @@ class Dreambox
 		if (!file_exists($lImage) || filesize($lImage) == 0 || (filemtime($lImage) < time() - 24 * 3600 )) { // Check once every day for an update...
 			// Get from the Dreambox source.
       if (Settings::getDebug()) $gDebugObj->setDebugMessage('getChannelImage',"Download picon: '"."http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage . "'");
-      $lPNG = file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage);
+      $lPNG = @file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . $lImage);
       if ($lPNG === false) {
         // Failed downloading first try...
         // Try again with SD image
         if (Settings::getDebug()) $gDebugObj->setDebugMessage('getChannelImage',"Download picon second attempt: '"."http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . str_ireplace('_19_','_1_',$lImage) . "'");
-        $lPNG = file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . str_ireplace('_19_','_1_',$lImage));
+        $lPNG = @file_get_contents("http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber . "/" . str_ireplace('_19_','_1_',$lImage));
       }
 
       if ($lPNG !== false) {
@@ -1013,8 +1012,6 @@ class Dreambox
 		if (!(@touch('picon/test.txt') && unlink('picon/test.txt'))) {
 			$lReturnMessage .= 'The folder picon is not writable for the web server.';
 		}
-
-
 
 		return ($lReturnMessage == '' ? true : $lReturnMessage);
 	}
