@@ -1,6 +1,10 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2018
 
+version 2.4.7 (21-09-2018)
+ * Changed player to Clappr.io player
+ * Fixed some EPG information and picons
+
 version 2.4.6 (05-09-2018)
  * Updated hls.js to version 0.11.1 (https://github.com/video-dev/hls.js)
  * Fixed picon fetcher

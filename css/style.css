@@ -224,7 +224,7 @@ body.setup #ReStreamUI #PlayerWrapper {
 	overflow-x: hidden !important;
 }
 #ProgramInfo {
-  background-size: auto 100% !important;
+  background-size: auto 100px !important;
 }
 #ProgramInfo h1 {
 	margin: 0px;
@@ -238,11 +238,12 @@ body.setup #ReStreamUI #PlayerWrapper {
 	font-size: 1em;
 }
 #ProgramInfo p{
-	height: 65px;
+	min-height: 65px;
+  max-height: 300px;
 	font-size: 0.8em;
 	overflow: auto;
 	position: relative;
-	padding-right: 160px;
+	padding-right: 190px;
 }
 #ProgramInfo p .zapicon  {
 	margin: 0;
