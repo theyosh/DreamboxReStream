@@ -175,22 +175,12 @@ var DreamboxObj = {
         parentId: '#videoPlayer',
         autoPlay: true,
         poster : 'images/dreambox.jpg',
-        mediacontrol: {seekbar: "#0B3E6F", buttons: "#75abff"},
+        mediacontrol: {buttons: "#75abff"},
         plugins: [LevelSelector, ClapprNerdStats, ClapprStats],
         source: url,
         height: '100%',
         width: '100%',
-        clapprNerdStats: {
-          // Optional: provide multiple combination of keyboard shortcuts to show/hide the statistics.
-          // For reference, visit: https://github.com/ccampbell/mousetrap.
-          // Default: ['command+shift+s', 'ctrl+shift+s']
-          shortcut: ['command+shift+s', 'ctrl+shift+s'],
 
-          // Optional: position of the icon to show/hide the statistics.
-          // Values: 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'none'
-          // Default: 'top-right'
-          iconPosition: 'top-right'
-        },
         levelSelectorConfig: {
           title: 'Quality',
           labelCallback: function(playbackLevel) {
