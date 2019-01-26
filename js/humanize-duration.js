@@ -1,6 +1,22 @@
-// HumanizeDuration.js - http://git.io/j0HgmQ
+// HumanizeDuration.js - https://git.io/j0HgmQ
 
 ;(function () {
+  // This has to be defined separately because of a bug: we want to alias
+  // `gr` and `el` for backwards-compatiblity. In a breaking change, we can
+  // remove `gr` entirely.
+  // See https://github.com/EvanHahn/HumanizeDuration.js/issues/143 for more.
+  var greek = {
+    y: function (c) { return c === 1 ? 'χρόνος' : 'χρόνια' },
+    mo: function (c) { return c === 1 ? 'μήνας' : 'μήνες' },
+    w: function (c) { return c === 1 ? 'εβδομάδα' : 'εβδομάδες' },
+    d: function (c) { return c === 1 ? 'μέρα' : 'μέρες' },
+    h: function (c) { return c === 1 ? 'ώρα' : 'ώρες' },
+    m: function (c) { return c === 1 ? 'λεπτό' : 'λεπτά' },
+    s: function (c) { return c === 1 ? 'δευτερόλεπτο' : 'δευτερόλεπτα' },
+    ms: function (c) { return c === 1 ? 'χιλιοστό του δευτερολέπτου' : 'χιλιοστά του δευτερολέπτου' },
+    decimal: ','
+  }
+
   var languages = {
     ar: {
       y: function (c) { return c === 1 ? 'سنة' : 'سنوات' },
@@ -8,7 +24,9 @@
       w: function (c) { return c === 1 ? 'أسبوع' : 'أسابيع' },
       d: function (c) { return c === 1 ? 'يوم' : 'أيام' },
       h: function (c) { return c === 1 ? 'ساعة' : 'ساعات' },
-      m: function (c) { return c === 1 ? 'دقيقة' : 'دقائق' },
+      m: function (c) {
+        return ['دقيقة', 'دقائق'][getArabicForm(c)]
+      },
       s: function (c) { return c === 1 ? 'ثانية' : 'ثواني' },
       ms: function (c) { return c === 1 ? 'جزء من الثانية' : 'أجزاء من الثانية' },
       decimal: ','
@@ -68,6 +86,7 @@
       ms: function (c) { return 'Millisekunde' + (c === 1 ? '' : 'n') },
       decimal: ','
     },
+    el: greek,
     en: {
       y: function (c) { return 'year' + (c === 1 ? '' : 's') },
       mo: function (c) { return 'month' + (c === 1 ? '' : 's') },
@@ -123,15 +142,62 @@
       ms: function (c) { return 'milliseconde' + (c >= 2 ? 's' : '') },
       decimal: ','
     },
-    gr: {
-      y: function (c) { return c === 1 ? 'χρόνος' : 'χρόνια' },
-      mo: function (c) { return c === 1 ? 'μήνας' : 'μήνες' },
-      w: function (c) { return c === 1 ? 'εβδομάδα' : 'εβδομάδες' },
-      d: function (c) { return c === 1 ? 'μέρα' : 'μέρες' },
-      h: function (c) { return c === 1 ? 'ώρα' : 'ώρες' },
-      m: function (c) { return c === 1 ? 'λεπτό' : 'λεπτά' },
-      s: function (c) { return c === 1 ? 'δευτερόλεπτο' : 'δευτερόλεπτα' },
-      ms: function (c) { return c === 1 ? 'χιλιοστό του δευτερολέπτου' : 'χιλιοστά του δευτερολέπτου' },
+    gr: greek,
+    hr: {
+      y: function (c) {
+        if (c % 10 === 2 || c % 10 === 3 || c % 10 === 4) {
+          return 'godine'
+        }
+        return 'godina'
+      },
+      mo: function (c) {
+        if (c === 1) {
+          return 'mjesec'
+        } else if (c === 2 || c === 3 || c === 4) {
+          return 'mjeseca'
+        }
+        return 'mjeseci'
+      },
+      w: function (c) {
+        if (c % 10 === 1 && c !== 11) {
+          return 'tjedan'
+        }
+        return 'tjedna'
+      },
+      d: function (c) { return c === 1 ? 'dan' : 'dana' },
+      h: function (c) {
+        if (c === 1) {
+          return 'sat'
+        } else if (c === 2 || c === 3 || c === 4) {
+          return 'sata'
+        }
+        return 'sati'
+      },
+      m: function (c) {
+        var mod10 = c % 10
+        if ((mod10 === 2 || mod10 === 3 || mod10 === 4) && (c < 10 || c > 14)) {
+          return 'minute'
+        }
+        return 'minuta'
+      },
+      s: function (c) {
+        if ((c === 10 || c === 11 || c === 12 || c === 13 || c === 14 || c === 16 || c === 17 || c === 18 || c === 19) || (c % 10 === 5)) {
+          return 'sekundi'
+        } else if (c % 10 === 1) {
+          return 'sekunda'
+        } else if (c % 10 === 2 || c % 10 === 3 || c % 10 === 4) {
+          return 'sekunde'
+        }
+        return 'sekundi'
+      },
+      ms: function (c) {
+        if (c === 1) {
+          return 'milisekunda'
+        } else if (c % 10 === 2 || c % 10 === 3 || c % 10 === 4) {
+          return 'milisekunde'
+        }
+        return 'milisekundi'
+      },
       decimal: ','
     },
     hu: {
@@ -200,6 +266,17 @@
       ms: '밀리 초',
       decimal: '.'
     },
+    lo: {
+      y: 'ປີ',
+      mo: 'ເດືອນ',
+      w: 'ອາທິດ',
+      d: 'ມື້',
+      h: 'ຊົ່ວໂມງ',
+      m: 'ນາທີ',
+      s: 'ວິນາທີ',
+      ms: 'ມິນລິວິນາທີ',
+      decimal: ','
+    },
     lt: {
       y: function (c) { return ((c % 10 === 0) || (c % 100 >= 10 && c % 100 <= 20)) ? 'metų' : 'metai' },
       mo: function (c) { return ['mėnuo', 'mėnesiai', 'mėnesių'][getLithuanianForm(c)] },
@@ -264,6 +341,17 @@
       m: function (c) { return 'minuto' + (c === 1 ? '' : 's') },
       s: function (c) { return 'segundo' + (c === 1 ? '' : 's') },
       ms: function (c) { return 'milissegundo' + (c === 1 ? '' : 's') },
+      decimal: ','
+    },
+    ro: {
+      y: function (c) { return c === 1 ? 'an' : 'ani' },
+      mo: function (c) { return c === 1 ? 'lună' : 'luni' },
+      w: function (c) { return c === 1 ? 'săptămână' : 'săptămâni' },
+      d: function (c) { return c === 1 ? 'zi' : 'zile' },
+      h: function (c) { return c === 1 ? 'oră' : 'ore' },
+      m: function (c) { return c === 1 ? 'minut' : 'minute' },
+      s: function (c) { return c === 1 ? 'secundă' : 'secunde' },
+      ms: function (c) { return c === 1 ? 'milisecundă' : 'milisecunde' },
       decimal: ','
     },
     ru: {
@@ -331,6 +419,17 @@
       s: 'saniye',
       ms: 'milisaniye',
       decimal: ','
+    },
+    th: {
+      y: 'ปี',
+      mo: 'เดือน',
+      w: 'อาทิตย์',
+      d: 'วัน',
+      h: 'ชั่วโมง',
+      m: 'นาที',
+      s: 'วินาที',
+      ms: 'มิลลิวินาที',
+      decimal: '.'
     },
     vi: {
       y: 'năm',
@@ -400,6 +499,30 @@
   // The main function is just a wrapper around a default humanizer.
   var humanizeDuration = humanizer({})
 
+  // Build dictionary from options
+  function getDictionary (options) {
+    var languagesFromOptions = [options.language]
+
+    if (options.hasOwnProperty('fallbacks')) {
+      if (isArray(options.fallbacks) && options.fallbacks.length) {
+        languagesFromOptions = languagesFromOptions.concat(options.fallbacks)
+      } else {
+        throw new Error('fallbacks must be an array with at least one element')
+      }
+    }
+
+    for (var i = 0; i < languagesFromOptions.length; i++) {
+      var languageToTry = languagesFromOptions[i]
+      if (options.languages.hasOwnProperty(languageToTry)) {
+        return options.languages[languageToTry]
+      } else if (languages.hasOwnProperty(languageToTry)) {
+        return languages[languageToTry]
+      }
+    }
+
+    throw new Error('No language found.')
+  }
+
   // doHumanization does the bulk of the work.
   function doHumanization (ms, options) {
     var i, len, piece
@@ -408,11 +531,7 @@
     // Has the nice sideffect of turning Number objects into primitives.
     ms = Math.abs(ms)
 
-    var dictionary = options.languages[options.language] || languages[options.language]
-    if (!dictionary) {
-      throw new Error('No language ' + dictionary + '.')
-    }
-
+    var dictionary = getDictionary(options)
     var pieces = []
 
     // Start at the top and keep removing units, bit by bit.
@@ -549,7 +668,7 @@
     }
   }
 
-    // Internal helper function for Slovak language.
+  // Internal helper function for Slovak language.
   function getCzechOrSlovakForm (c) {
     if (c === 1) {
       return 0
@@ -573,10 +692,23 @@
     }
   }
 
+  // Internal helper function for Arabic language.
+  function getArabicForm (c) {
+    if (c <= 2) { return 0 }
+    if (c > 2 && c < 11) { return 1 }
+    return 0
+  }
+
+  // We need to make sure we support browsers that don't have
+  // `Array.isArray`, so we define a fallback here.
+  var isArray = Array.isArray || function (arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]'
+  }
+
   humanizeDuration.getSupportedLanguages = function getSupportedLanguages () {
     var result = []
     for (var language in languages) {
-      if (languages.hasOwnProperty(language)) {
+      if (languages.hasOwnProperty(language) && language !== 'gr') {
         result.push(language)
       }
     }
@@ -594,4 +726,4 @@
   } else {
     this.humanizeDuration = humanizeDuration
   }
-})();  // eslint-disable-line semi
+})(); // eslint-disable-line semi
