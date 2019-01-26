@@ -1,5 +1,11 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
-dreambox@theyosh.nl - ©2006 - 2018
+dreambox@theyosh.nl - ©2006 - 2019
+
+version 2.4.8 (26-01-2019)
+ * Updated humanize-duration to version 3.17.0 (https://github.com/EvanHahn/HumanizeDuration.js)
+ * Updated jQuery to version 3.3.1 (https://jquery.com/)
+ * Updated Clapper.io to version 0.3.2 (https://clapper.io/)
+ * Fixed setup CSS
 
 version 2.4.7 (21-09-2018)
  * Changed player to Clappr.io player

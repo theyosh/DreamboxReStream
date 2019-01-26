@@ -66,14 +66,18 @@ a.external {
 	margin: 0px auto;
 }
 
-body.setup #ReStreamUI #PlayerWrapper {
-	float: none;
-}
-
 #ReStreamUI #PlayerWrapper #ReStreamPlayer {
   position: relative;
   width: 100%;
   padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+body.setup #ReStreamUI #PlayerWrapper {
+	float: none;
+}
+
+body.setup #ReStreamUI #PlayerWrapper #ReStreamPlayer {
+	padding-top: 0px;
 }
 
 #ReStreamUI #PlayerWrapper #ReStreamPlayer #videoPlayer{
@@ -84,6 +88,10 @@ body.setup #ReStreamUI #PlayerWrapper {
   height: 100%;
   top: 0px;
   left: 0px;
+}
+
+#ReStreamPlayer #videoPlayer div.media-control-center-panel {
+  display: none;
 }
 
 #ReStreamPlayer #videoPlayer .level_selector[data-level-selector] > ul {
@@ -110,6 +118,7 @@ body.setup #ReStreamUI #PlayerWrapper {
   filter: alpha(opacity=60);
   opacity: 0.6;
 }
+
 
 #channels span.progress {
 	z-index: 2;

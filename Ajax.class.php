@@ -19,6 +19,8 @@ function action($pAction,$pArgs = null) {
 					unset($_SESSION["ReStream2.0"]["Dreambox"]);
 				}
 				if ( ($lMessage = $lDreamBoxObj->sanityCheck()) !== true) {
+          @unlink('dreambox.cache');
+					unset($_SESSION["ReStream2.0"]["Dreambox"]);
 					$lReturnValue->script("DreamboxObj.dialog('Loading dreambox<br /><span class=\"error\">Your PHP settings are not correct to work... Change the following setting(s):<br />" . $lMessage . "</span>')");
 				} else if ($lDreamBoxObj->isOnline()) {
 					$lReturnValue->script("DreamboxObj.dialog('Loading dreambox<br />Loading bouquets....')");
@@ -37,7 +39,7 @@ function action($pAction,$pArgs = null) {
 				$lReturnValue->script("DreamboxObj.addBouquet('" . Utils::JSSave($lBouquet->getID()) . "','" . Utils::JSSave($lBouquet->getName()) . "')");
 			}
 			$lReturnValue->script('DreamboxObj.showBouquets()');
-			$lReturnValue->script("jQuery('h3[id=\"_about\"] ~ div ul').append(jQuery('<li>').attr({'class':'about'}).html('" . Utils::JSSave("<img src='images/dreamboxrestream_icon.png' alt='Dreambox ReStream Logo' width='114' height='114'/><br /><br />" . Settings::getDreamboxName() . "<br />Dreambox ReStream (" . Settings::getVersionNumber() . ")<br />Released at " . date('j F Y',RELEASEDATE) . "<br /><a href=\"javascript:void(0);\" onclick=\"showChangeLog();\" title=\"Read changelog\">CHANGELOG</a><br /><a href=\"?setup=1\" title=\"Click to enter the setup page\" >Setup</a>, <a href=\"?cachepurge=1\" title=\"Purge the cache and reload the data\">Purge</a><br /><br />Desktop interface<br /><br />Copyright 2006-" . date("Y") . " - <a href='http://theyosh.nl' class='external' target='_blank' title='The YOSH'>TheYOSH</a><br /><br />Like the software?<br />Consider a donation<br /><form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\" target=\"_blank\">
+			$lReturnValue->script("jQuery('h3[id=\"_about\"] ~ div ul').append(jQuery('<li>').attr({'class':'about'}).html('" . Utils::JSSave("<img src='images/dreamboxrestream_icon.png' alt='Dreambox ReStream Logo' width='114' height='114'/><br /><br />" . Settings::getDreamboxName() . "<br />Dreambox ReStream (" . Settings::getVersionNumber() . ")<br /><a href='https://github.com/theyosh/DreamboxReStream' target='_blank' title='Github'>Released at " . date('j F Y',RELEASEDATE) . "</a><br /><a href=\"javascript:void(0);\" onclick=\"showChangeLog();\" title=\"Read changelog\">CHANGELOG</a><br /><a href=\"?setup=1\" title=\"Click to enter the setup page\" >Setup</a>, <a href=\"?cachepurge=1\" title=\"Purge the cache and reload the data\">Purge</a><br /><br />Desktop interface<br /><br />Copyright 2006-" . date("Y") . " - <a href='http://theyosh.nl' class='external' target='_blank' title='The YOSH'>TheYOSH</a><br /><br />Like the software?<br />Consider a donation<br /><form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\" target=\"_blank\">
 <input type=\"hidden\" name=\"cmd\" value=\"_donations\">
 <input type=\"hidden\" name=\"business\" value=\"paypal@theyosh.nl\">
 <input type=\"hidden\" name=\"lc\" value=\"US\">

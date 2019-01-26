@@ -77,6 +77,10 @@ li.current > div {
   left: 0px;
 }
 
+#ReStreamPlayer #videoPlayer div.media-control-center-panel {
+  display: none;
+}
+
 #ReStreamPlayer #videoPlayer .level_selector[data-level-selector] > ul {
   border: none;
   background-color: black;
