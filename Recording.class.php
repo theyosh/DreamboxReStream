@@ -41,7 +41,7 @@ class Recording {
 		$lStartPos = strripos($pFilename,"/");
 		$this->lFilename = trim(substr($pFilename,$lStartPos+1));
 		$this->lFileSize = trim($plFileSize);
-		
+
 		$this->lDuration = explode(":",$this->lDuration);
 		$this->lDuration = ($this->lDuration[0] * 60) + $this->lDuration[1];
 	}
@@ -69,11 +69,11 @@ class Recording {
 	public function getDescription() {
 		return $this->lDescription;
 	}
-	
+
 	public function getLongDescription() {
 		return $this->lLongDescription;
 	}
-	 
+
 	 /**
 	* Get the service name.
 	* @return string
@@ -81,7 +81,7 @@ class Recording {
 	public function getServiceName() {
 		 return $this->lServiceName;
 	}
-   
+
 	/**
 	* Get the start time
 	* @return int
@@ -89,7 +89,7 @@ class Recording {
 	public function getStartTime() {
 		return (is_numeric($this->lStartTime) ? $this->lStartTime : 1);
 	}
-	
+
 	public function getStopTime() {
 		return -1;
 	}
@@ -117,8 +117,8 @@ class Recording {
 	public function getFileSize() {
 		return (is_numeric($this->lFileSize) ? $this->lFileSize : 0);
 	}
-	
+
 	public function isHD() {
-		return true;
+		return Settings::getDMHDID() == -1 ? false : true;
 	}
 }
