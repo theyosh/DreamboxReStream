@@ -893,8 +893,7 @@ class Dreambox
 	}
 	*/
 
-	public function getStreamURL($pChannelID)
-	{
+	public function getStreamURL($pChannelID) {
 		global $gDebugObj;
 		if (Settings::getMoviesPath() != "" && substr($pChannelID,0,strlen(Settings::getMoviesPath())) == Settings::getMoviesPath()) {
 			$lStreamUrl = $pChannelID;
@@ -936,7 +935,7 @@ class Dreambox
 						}
 						$lStreamUrl = $recording_url;
 					} else {
-						$lStreamUrl = "http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber .  "/web/stream.m3u?ref=" . $pChannelID . '&name=zap';
+						$lStreamUrl = "http://" . $this->getAuthentication() . $this->lIPNumber .  ":" . $this->lPortNumber .  "/web/stream.m3u?ref=" . $pChannelID;
 					}
 					if (Settings::getDebug()) $gDebugObj->setDebugMessage('getStreamURL',"VLC Final Enigma2 Url: '".$lStreamUrl . "'");
 				break;
