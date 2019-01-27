@@ -3,8 +3,8 @@
 error_reporting(E_ALL);
 ini_set("display_errors","1");
 ini_set("max_execution_time","300");
-define('VERSION','2.4.7');
-define('RELEASEDATE',1541107152);
+define('VERSION','2.4.8');
+define('RELEASEDATE',1548620929);
 // End defaults
 @session_start();
 

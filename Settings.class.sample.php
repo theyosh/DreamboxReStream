@@ -7,7 +7,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $version = '2.4.7';
+	private static $version = '2.4.8';
 
 	/**
 	* Set the name of the dreambox. Anything is allowed :P
