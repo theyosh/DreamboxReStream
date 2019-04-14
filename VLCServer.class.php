@@ -152,8 +152,9 @@ class VLCServer {
 
 			if ($pChannelObj->isHD()) {
 				// Only allow one bitrate when the source is HD
-				$this->lActiveProfiles = array(Settings::getHDOnlyProfile());
+				$this->lActiveProfiles = explode(",",Settings::getHDOnlyProfile());
 			}
+
 
 			foreach ($this->lProfiles as $lProfileName => $lProfile) {
 				if (!in_array($lProfileName,$this->lActiveProfiles)) continue;
@@ -164,7 +165,13 @@ class VLCServer {
 						$lCodecParams = "venc=x264{idrint=10,bframes=16,b-adapt=1,ref=3,qpmax=51,qpmin=10,me=hex,merange=16,subq=5,subme=7,qcomp=0.6,aud,keyint=10,nocabac,profile=baseline,level=31,fps=" . ($lProfile["videofps"]) . "},";
 					break;
 				}
-				$lTransCode .= "dst={transcode{width=" . ($lProfile["width"]) . ",height=" . ($lProfile["height"]) . ",threads=4,vcodec=". $lProfile["videocodec"] . "," . $lCodecParams . "vb=". $lProfile["videobitrate"] . ",scale=". $this->lScale .",acodec=". $lProfile["audiocodec"] .",ab=" . $lProfile["audiobitrate"] . ",channels=". $this->lChannels .",samplerate=" . $lProfile["audiosamplerate"] . ",audio-sync,fps=" . ($lProfile["videofps"]) . (Settings::getVLCSubtitleLanguage() != '' ? ',soverlay' : '') . "}";
+
+				$lAspectRatio = "";
+				if (!$pChannelObj->isHD()) {
+					$lAspectRatio = ",vfilter=canvas{width=" . $lProfile["width"] .",height=" . $lProfile["height"] . ",aspect=16:9,padding=true}";
+				}
+
+				$lTransCode .= "dst={transcode{width=" . $lProfile["width"] . ",height=" . $lProfile["height"] . ",threads=4,vcodec=". $lProfile["videocodec"] . "," . $lCodecParams . "vb=". $lProfile["videobitrate"] . ",scale=". $this->lScale .",acodec=". $lProfile["audiocodec"] .",ab=" . $lProfile["audiobitrate"] . ",channels=". $this->lChannels .",samplerate=" . $lProfile["audiosamplerate"] . ",audio-sync,fps=" . ($lProfile["videofps"]) . (Settings::getVLCSubtitleLanguage() != '' ? ',soverlay' : '') . $lAspectRatio . "}";
 				$lTransCode .= ":duplicate{";
 
 				if ($lProfileName == Settings::getFLVStreamingProfile()) {
@@ -284,7 +291,7 @@ class VLCServer {
 
 		if ($pChannelObj->isHD()) {
 			// Only allow one bitrate when the source is HD
-			$this->lActiveProfiles = array(Settings::getHDOnlyProfile());
+			$this->lActiveProfiles = explode(",",Settings::getHDOnlyProfile());
 		}
 
 		if (Settings::getDebug()) $gDebugObj->setDebugMessage('setIphoneStream',"Start checking for iOS playlists... Amount of profiles: " . count($this->lActiveProfiles));
