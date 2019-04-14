@@ -7,7 +7,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $version = '2.4.8';
+	private static $version = '2.4.9';
 
 	/**
 	* Set the name of the dreambox. Anything is allowed :P
@@ -161,7 +161,7 @@ class Settings {
 	* @access private
 	* @var string
 	*/
-	private static $HDOnlyProfile = "SD";
+	private static $HDOnlyProfile = "HDReady,SD,Mobile2";
 
 	/**
 	* Select here the profiles that should be used for transcoding to RTSP enabled mobiles. This is used for Android streaming
