@@ -1,0 +1,2 @@
+/*! @name videojs-contextmenu-ui @version 5.2.0 @license Apache-2.0 */
+.vjs-contextmenu-ui-menu{position:absolute}.vjs-contextmenu-ui-menu .vjs-menu-content{background-color:#2b333f;background-color:rgba(43,51,63,.7);border-radius:.3em;padding:.25em}.vjs-contextmenu-ui-menu .vjs-menu-item{border-radius:.3em;cursor:pointer;margin:0 0 1px;padding:.5em 1em;font-size:1em;line-height:1.2;text-transform:none}.vjs-contextmenu-ui-menu .vjs-menu-item:active,.vjs-contextmenu-ui-menu .vjs-menu-item:hover{background-color:rgba(0,0,0,.5);text-shadow:0 0 1em #fff}
