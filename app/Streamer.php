@@ -13,20 +13,34 @@ class Streamer
 
     private $auto_killer_temp_file = '.autoKiller';
 
-    private $bitrates = ['HDReady' => ['video_bitrate' => 1500,
+    private $bitrates = [
+                         //'FullHD' => ['video_bitrate' => 3000,
+                         //              'width' =>  1920,
+                         //              'height' => 1280,
+                         //              'framerate'=> 25,
+                         //              'audio_bitrate' => 160,
+                         //              'h264' => '-profile:v high -level 3.2'],
+
+                         'HDReady' => ['video_bitrate' => 1500,
                                        'width' =>  1280,
                                        'height' => 720,
                                        'framerate'=> 25,
                                        'audio_bitrate' => 112,
-                                       'h264' => '-profile:v main -level 3.1'],
+                                       'h264' => '-profile:v main -level 3.2'],
 
-                         'SD' => ['video_bitrate' => 800,
+                         'SD'      => ['video_bitrate' => 800,
                                        'width' =>  858,
                                        'height' => 480,
                                        'framerate'=> 25,
                                        'audio_bitrate' => 96,
-                                       'h264' => '-profile:v baseline -level 3.1']];
+                                       'h264' => '-profile:v main -level 3.1'],
 
+                         'Mobile'  => ['video_bitrate' => 512,
+                                       'width' =>  640,
+                                       'height' => 360,
+                                       'framerate'=> 20,
+                                       'audio_bitrate' => 96,
+                                       'h264' => '-profile:v baseline -level 3.1']];
 
     private $hostname = null;
     private $port = null;
@@ -38,6 +52,7 @@ class Streamer
     private $chunktime = 2;
     private $dvrlength = 300;
 
+    private $encoder_type = 'software';
 
     function __construct($hostname, $port = 80, $authentication = null) {
         $this->hostname = $hostname;
@@ -63,6 +78,14 @@ class Streamer
     public function set_dvr($length)
     {
         $this->dvrlength = $length;
+    }
+
+    private function hardware_detection()
+    {
+        if (file_exists('/dev/dri/renderD128'))
+        {
+            $this->encoder_type = 'vaapi';
+        }
     }
 
     private function auto_killer()
@@ -122,9 +145,8 @@ class Streamer
             $this->auto_killer();
         }
 
-        //return $this->load_playlist();
         $process_data = trim(shell_exec("ps ax | grep ffmpeg | grep -v grep"));
-        $re = '/http:\/\/' . $this->hostname . '(:\d+)?\/(file\?file=)?(?P<service>[^ ]+)/m';
+        $re = '/(?P<encoder>vaapi)? -i http:\/\/' . $this->hostname . '(:\d+)?\/(file\?file=)?(?P<service>[^ ]+)/m';
         preg_match_all($re, $process_data, $matches, PREG_SET_ORDER);
         if ($matches)
         {
@@ -132,6 +154,7 @@ class Streamer
             if (!$status) {
                 $status = Recording::where('service',str_replace('%20',' ',$matches[0]['service']))->first()->loadMissing('channel');
             }
+            $status['encoder'] = $matches[0]['encoder'];
             return $status;
         }
 
@@ -162,35 +185,56 @@ class Streamer
             {
                 return false;
             }
-            $cmd = $this->executable . ' -re -i ' . $source;
+
+            if ('software' == $this->encoder_type)
+            {
+                $cmd = $this->executable . ' -i ' . $source;
+            }
+            elseif ('vaapi' == $this->encoder_type)
+            {
+                // HW VAAPI
+                $cmd = $this->executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $source;
+            }
 
             foreach ($this->bitrates as $bitrate_name => $bitrate)
             {
+                // Scale resolution
+                if ('software' == $this->encoder_type)
+                {
+                    $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\' -sws_flags lanczos';
+                }
+                elseif ('vaapi' == $this->encoder_type)
+                {
+                    // HW VAAPI
+                    $cmd .= ' -vf \'deinterlace_vaapi=rate=field:auto=1,fps=' . $bitrate['framerate'] . ',scale_vaapi=w=' . $bitrate['width'] . ':h=' . $bitrate['height'] .':format=nv12\'';
+                }
 
                 $cmd .= ' -map 0:v';
 
                 if ($this->language != null)
                 {
-                    $cmd .= ' -map 0:m:language:dut:0?';
+                    $cmd .= ' -map 0:m:language:' . $this->language . '?';
                 }
 
-                $cmd .= ' -map 0:a:1? -map 0:a:0?';
-
-                //$cmd .= ' -map 0:s:1?';
-
-                // Scale resolution
-                $cmd .= ' -s ' . $bitrate['width'] . 'x' . $bitrate['height'];
+                $cmd .= ' -map 0:a:1';
 
                 // Audio
-                $cmd .= ' -c:a aac -strict experimental -ac 2 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
+                $cmd .= ' -c:a aac -strict experimental -ac 3 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
 
                 // Video
-                $cmd .= ' -c:v libx264 -pix_fmt yuv420p ' . $bitrate['h264'] . ' -bufsize 1M -b:v ' . $bitrate['video_bitrate'] . 'k -r ' . $bitrate['framerate'] . ' -g ' . ($bitrate['framerate']*2);
-
-                //$cmd .= ' -c:s mov_text -metadata:s:s:0 language=nl';
+                if ('software' == $this->encoder_type)
+                {
+                    // -x264-params idrint=10,bframes=16,b-adapt=1,ref=3,qpmax=51,qpmin=10,me=hex,merange=16,subq=5,subme=7,qcomp=0.6,aud,keyint=10,nocabac
+                    $cmd .= ' -c:v libx264 -pix_fmt yuv420p -tune film ' . $bitrate['h264'] . ' -bufsize 1M -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize 2M -r ' . $bitrate['framerate'] . ' -g ' . ($bitrate['framerate']*2);
+                }
+                elseif ('vaapi' == $this->encoder_type)
+                {
+                    // HW VAAPI
+                    $cmd .= ' -c:v h264_vaapi -qp 18 -quality 0 -bufsize 2M -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                }
 
                 // HLS Output
-                $cmd .= ' -f hls -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($basename . '_' . $bitrate_name, '_')  . '_%06d.ts\' ' . storage_path('app/public/stream/' . Str::slug($basename . '_' . $bitrate_name, '_') . '.m3u8');
+                $cmd .= ' -f hls -strftime 1 -use_localtime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($basename . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($basename . '_' . $bitrate_name, '_') . '.m3u8');
 
                 // Main playlist info
                 $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="avc1.64001f,mp4a.40.2",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'];
