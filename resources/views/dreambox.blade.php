@@ -16,18 +16,15 @@
     <link href="{{ URL::asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
     <style>
+        a, a:active, a:focus, button, button:focus, button:active,
+        .btn, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn.active.focus {
+            outline: transparent;
+            outline: 0;
+        }
 
-
-a, a:active, a:focus,
-button, button:focus, button:active,
-.btn, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn.active.focus {
-    outline: transparent;
-    outline: 0;
-}
-
-input::-moz-focus-inner {
-    border: 0;
-}
+        input::-moz-focus-inner {
+            border: 0;
+        }
 
         .card-body {
             overflow-y:scroll;
@@ -121,6 +118,13 @@ input::-moz-focus-inner {
           </div>
         </div>
         <div class="row">
+          <div class="col">
+            <div class="progress" style="height: 0.3rem">
+              <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="col program-info">
             <div class="d-flex w-100 align-bottom">
               <h5 class="mb-1"><span></span> <small class="program-now"></small></h5>
@@ -129,11 +133,6 @@ input::-moz-focus-inner {
             <small class="program-next"></small>
           </div>
         </div>
-
-        <div class="progress" style="height: 0.3rem; margin-top: 0.5rem;">
-          <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-        </div>
-
       </div>
       <div class="col-12 col-md-4">
         <div class="accordion" id="bouquets">
@@ -747,22 +746,15 @@ input::-moz-focus-inner {
     function start_progress_bar()
     {
         if (dreambox_player.source.currentprogram != null) {
-            console.log('Update progress bar...');
             let now = moment.utc();
             let past = now - moment(+moment.utc(dreambox_player.source.currentprogram.start));
             let left = moment(+moment.utc(dreambox_player.source.currentprogram.stop)) - now;
             let duration = dreambox_player.source.currentprogram.duration * 1000;
-
-
-
             $('.progress-bar').css('width', ((past / duration) * 100) + '%');
-            //.animate({width:'100%'},left);
-
-            //$('.progress-bar').animate({'width':'100%'},left/1000);
-
+        } else {
+            $('.progress-bar').css('width','0%');
         }
     }
-
 
     $(function(){
       // Set the local to the application locale
