@@ -1,0 +1,19 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/css/nprogress.min.css": "/css/nprogress.min.css",
+    "/js/nprogress.min.js": "/js/nprogress.min.js",
+    "/css/video-js.min.css": "/css/video-js.min.css",
+    "/js/video.min.js": "/js/video.min.js",
+    "/js/moment-with-locales.min.js": "/js/moment-with-locales.min.js",
+    "/css/videojs-contextmenu-ui.min.css": "/css/videojs-contextmenu-ui.min.css",
+    "/js/videojs-contextmenu-ui.min.js": "/js/videojs-contextmenu-ui.min.js",
+    "/css/videojs-http-source-selector.min.css": "/css/videojs-http-source-selector.min.css",
+    "/js/videojs-http-source-selector.min.js": "/js/videojs-http-source-selector.min.js",
+    "/js/videojs-contrib-quality-levels.min.js": "/js/videojs-contrib-quality-levels.min.js",
+    "/css/videojs-dvr.min.css": "/css/videojs-dvr.min.css",
+    "/js/videojs-dvr.min.js": "/js/videojs-dvr.min.js",
+    "/js/videojs-titleoverlay.min.js": "/js/videojs-titleoverlay.min.js",
+    "/js/videojs.airplay.min.js": "/js/videojs.airplay.min.js",
+    "/css/videojs.airplay.min.css": "/css/videojs.airplay.min.css"
+}

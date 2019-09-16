@@ -7,12 +7,12 @@
     <link rel="shortcut icon" type="image/png" href="{{ URL::asset('images/dreamboxrestream_icon.png') }}" />
 
     <link href="{{ URL::asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/nprogress.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('css/nprogress.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('css/video-js.min.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/videojs.airplay.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/videojs-contextmenu-ui.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/videojs-http-source-selector.css') }}" rel="stylesheet">
-    <link href="{{ URL::asset('css/videojs-dvr.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('css/videojs.airplay.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('css/videojs-contextmenu-ui.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('css/videojs-http-source-selector.min.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('css/videojs-dvr.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
     <style>
@@ -324,11 +324,11 @@
     </div>
 
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/nprogress.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/moment.js') }}" ></script>
+    <script type="text/javascript" src="{{ URL::asset('js/nprogress.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/moment-with-locales.min.js') }}" ></script>
     <script type="text/javascript" src="{{ URL::asset('js/video.min.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/videojs.plugin.text-overlay.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/videojs.airplay.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/videojs-titleoverlay.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/videojs.airplay.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/videojs-contextmenu-ui.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/videojs-contrib-quality-levels.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/videojs-http-source-selector.min.js') }}"></script>
