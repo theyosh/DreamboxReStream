@@ -14,32 +14,18 @@ class Dreambox extends Model
     //
     protected $fillable = ['name', 'hostname', 'port', 'username', 'password', 'enigma','dual_tuner','audio_language','subtitle_language','epg_limit','dvr_length','buffer_time','exclude_bouquets'];
 
-    //protected $appends = array('is_online');
-
-    //public $version = '3.0.0';
-
     private $status = null;
-
-    public function init()
-    {
-        // Do a full clear when $this->epg_limit hours outdated
-        if ($this->updated_at->diffInHours(Carbon::now()) >= $this->epg_limit || $this->bouquets()->count() == 0)
-        {
-            $this->bouquets()->delete();
-            $this->channels()->delete();
-            // Load minimal data: First bouquet only
-            $this->load_bouquets(false);
-            $this->touch();
-        }
-    }
 
     public function load_data()
     {
-        $this->init();
+        if ($this->updated_at->diffInHours(Carbon::now()) >= $this->epg_limit)
+        {
+            $this->bouquets()->delete();
+            $this->channels()->delete();
+            $this->touch();
+        }
         // Load all other bouquets
         $this->load_bouquets();
-        // Clean up outdated channels
-        //$this->channels()->whereNotIn('service',$seen_channels)->delete();
     }
 
     public function is_online()
@@ -49,6 +35,7 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
+        start_measure('is_online','Dreambox online check');
         try
         {
             $response = $client->request('GET', '/api/about',['auth' => [$this->username, $this->password]]);
@@ -58,6 +45,7 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
+        stop_measure('is_online');
 
         if (200 == $response->getStatusCode())
         {
@@ -71,9 +59,7 @@ class Dreambox extends Model
                 print_r($e);
             }
         }
-
         return true;
-
     }
 
     public function load_bouquets($all = true)
@@ -83,16 +69,31 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
+        start_measure('load_bouquets','Dreambox loading bouquets');
+        try
+        {
+            $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        stop_measure('load_bouquets');
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
+                $existing_bouquets = [];
+                foreach($this->bouquets()->get() as $bouquet)
+                {
+                    $existing_bouquets[$bouquet->service] = $bouquet;
+                }
                 $position = 0;
                 $seen_bouqets = [];
                 $exclude_bouquets = array_map('trim',explode(',',strtolower($this->exclude_bouquets)));
+
                 foreach($data->services as $bouquet_data)
                 {
                     preg_match('/\\"(?P<bouquet>.*)\\"/', $bouquet_data->servicereference, $matches);
@@ -103,10 +104,9 @@ class Dreambox extends Model
                             continue;
                         }
 
-                        $bouquet = $this->bouquets()->where('service',$matches['bouquet'])->first();
-                        if ($bouquet)
+                        if (array_key_exists($matches['bouquet'],$existing_bouquets))
                         {
-                            $bouquet->touch();
+                            $bouquet = $existing_bouquets[$matches['bouquet']];
                         }
                         else
                         {
@@ -130,11 +130,8 @@ class Dreambox extends Model
 
         foreach($this->bouquets as $bouquet)
         {
-            if ($bouquet->channels()->count() == 0)
-            {
-                $this->load_channels($bouquet);
-                $this->load_programs($bouquet);
-            }
+            $this->load_channels($bouquet);
+            $this->load_programs($bouquet);
             if (!$all)
             {
                 break;
@@ -149,23 +146,36 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        $response = $client->request('GET', '/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
+        start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
+        try
+        {
+            $response = $client->request('GET', '/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        stop_measure('load_channels');
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
+                $existing_channels = [];
+                foreach($this->channels()->get() as $channel)
+                {
+                    $existing_channels[$channel->service] = $channel;
+                }
                 $position = 0;
                 $seen_channels = [];
                 foreach($data->services as $channel_data)
                 {
                     if ($channel_data->program <= 0 || '' == $channel_data->servicename) continue;
 
-                    $channel = $this->channels()->where('service',$channel_data->servicereference)->first();
-                    if ($channel)
+                    if (array_key_exists($channel_data->servicereference,$existing_channels))
                     {
-                        $channel->touch();
+                        $channel = $existing_channels[$channel_data->servicereference];
                     }
                     else
                     {
@@ -179,7 +189,7 @@ class Dreambox extends Model
                     $seen_channels[] = $channel->service;
                 }
                 // Clean up outdated channels
-                //$this->channels()->whereNotIn('service',$seen_channels)->delete();
+                //$this->channels()->whereNotIn(['bouquet' => $bouquet->id, 'service' => $seen_channels])->delete();
             }
             catch (Exception $e)
             {
@@ -195,37 +205,46 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        $response = $client->request('GET', '/api/epg' . ('now' == $type ? 'now' : 'next') . '?bRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
+        start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
+        try
+        {
+            $response = $client->request('GET', '/api/epg' . ('now' == $type ? 'now' : 'next') . '?bRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        stop_measure('load_programs');
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
+                $existing_channels = [];
+                foreach($this->channels()->get() as $channel)
+                {
+                    $existing_channels[$channel->service] = $channel;
+                }
+
+                $existing_programs = [];
+                foreach($this->programs()->get() as $program)
+                {
+                    $existing_programs[$program->channel->name . '|' . $program->name . '|' . $program->start->timestamp] = $program;
+                }
+
                 foreach($data->events as $program_data)
                 {
-                    if ('' == $program_data->title || '' == $program_data->begin_timestamp) continue;
-
-                    $channel = $this->channels()->where('service',$program_data->sref)->first();
-                    if ($channel)
+                    if ('' == $program_data->title || '' == $program_data->begin_timestamp || !array_key_exists($program_data->sref,$existing_channels)) continue;
+                    $channel = $existing_channels[$program_data->sref];
+                    if (!array_key_exists($channel->name . '|' . $program_data->title . '|' . $program_data->begin_timestamp,$existing_programs))
                     {
-                        $program = $channel->programs()->where('name',$program_data->title)
-                                                       ->where('start',Carbon::parse($program_data->begin_timestamp)->toDateTimeString())
-                                                       ->where('stop',Carbon::parse($program_data->begin_timestamp + $program_data->duration_sec)->toDateTimeString())
-                                                       ->first();
-                        if ($program)
-                        {
-                            $program->touch();
-                        }
-                        else
-                        {
-                            $program = new Program(['name'        => $program_data->title,
-                                                    'start'       => $program_data->begin_timestamp,
-                                                    'stop'        => $program_data->begin_timestamp + $program_data->duration_sec,
-                                                    'description' => $program_data->longdesc]);
+                        $program = new Program(['name'        => $program_data->title,
+                                                'start'       => $program_data->begin_timestamp,
+                                                'stop'        => $program_data->begin_timestamp + $program_data->duration_sec,
+                                                'description' => $program_data->longdesc]);
 
-                            $channel->programs()->save($program);
-                        }
+                        $channel->programs()->save($program);
                     }
                 }
             }
@@ -255,29 +274,44 @@ class Dreambox extends Model
             return;
         }
 
-        $response = $client->request('GET', '/api/epgservice?sRef=' . $channel->service,['auth' => [$this->username, $this->password]]);
+        start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
+        try
+        {
+            $response = $client->request('GET', '/api/epgservice?sRef=' . $channel->service,['auth' => [$this->username, $this->password]]);
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        stop_measure('load_epg');
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
+
+                $existing_programs = [];
+                foreach($this->programs()->get() as $program)
+                {
+                    $existing_programs[$program->channel->name . '|' . $program->name . '|' . $program->start->timestamp] = $program;
+                }
+
                 foreach($data->events as $program_data)
                 {
                     if ('' == $program_data->title || '' == $program_data->begin_timestamp) continue;
 
                     if (Carbon::now()->floatDiffInHours(Carbon::parse($program_data->begin_timestamp)) > $this->epg_limit) continue;
 
-                    $program = $channel->programs()->where('name',$program_data->title)
-                                                   ->where('start',Carbon::parse($program_data->begin_timestamp)->toDateTimeString())
-                                                   ->where('stop',Carbon::parse($program_data->begin_timestamp + $program_data->duration_sec)->toDateTimeString())
-                                                   ->first();
-
-                    if ($program)
+                    if (array_key_exists($channel->name . '|' . $program_data->title . '|' . $program_data->begin_timestamp,$existing_programs))
                     {
-                        $program->description = $program_data->longdesc;
-                        $program->save();
-                        $program->touch();
+                        $program = $existing_programs[$channel->name . '|' . $program_data->title . '|' . $program_data->begin_timestamp];
+                        if ('' == $program->description && '' != $program_data->longdesc)
+                        {
+                            $program->description = $program_data->longdesc;
+                            $program->save();
+                        }
+
                     }
                     else
                     {
@@ -291,7 +325,9 @@ class Dreambox extends Model
 
                     $picon_file = Str::slug($channel->name,'_') . '.png';
                     if (!Storage::exists('public/icon/' . $picon_file)) {
+                        start_measure('load_epg_icon','Dreambox downloading picon channel ' . $channel->name);
                         $pico_response = $client->request('GET', $program_data->picon);
+                        stop_measure('load_epg_icon');
                         if (200 == $pico_response->getStatusCode())
                         {
                           Storage::put('public/icon/' . $picon_file, $pico_response->getBody());
@@ -321,22 +357,34 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        $response = $client->request('GET', '/api/movielist',['auth' => [$this->username, $this->password]]);
+        start_measure('load_recordings','Dreambox loading recordings');
+        try
+        {
+            $response = $client->request('GET', '/api/movielist',['auth' => [$this->username, $this->password]]);
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        stop_measure('load_recordings');
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
+                $existing_recordings = [];
+                foreach($this->recordings()->get() as $recording)
+                {
+                    $existing_recordings[$recording->service] = $recording;
+                }
                 $seen_recordings = [];
                 foreach($data->movies as $recording_data)
                 {
                     if ($recording_data->eventname == 'epg.dat') continue;
-
-                    $recording = $this->recordings()->where('service',$recording_data->filename)->first();
-                    if ($recording)
+                    if (array_key_exists($recording_data->filename,$existing_recordings))
                     {
-                        $recording->touch();
+                        $recording = $existing_recordings[$recording_data->filename];
                     }
                     else
                     {
@@ -349,7 +397,6 @@ class Dreambox extends Model
                         {
                             $duration = $duration[0];
                         }
-
 
                         $recording = new Recording(['name'        => $recording_data->eventname,
                                                     'service'     => $recording_data->filename,
@@ -365,18 +412,7 @@ class Dreambox extends Model
                         {
                             $channel->recordings()->save($recording);
                         }
-
-
-
-                        //$bouquet->channels()->attach($channel,['position' => $position++]);
-
                     }
-
-
-
-
-
-
                     $seen_recordings[] = $recording->service;
                 }
             }
@@ -386,9 +422,7 @@ class Dreambox extends Model
             }
         }
         // Clean up outdated recordings
-        //$this->recordings()->whereNotIn('service',$seen_recordings)->delete();
-
-
+        $this->recordings()->whereNotIn('service',$seen_recordings)->delete();
     }
 
     static public function execute($pCommand,$pLogLocation = '',$pWait = false) {
@@ -439,7 +473,7 @@ class Dreambox extends Model
 
     public function programs()
     {
-        return $this->hasManyThrough('App\Program', 'App\Channel')->where('stop','>',Carbon::now())->orderBy('start');
+        return $this->hasManyThrough('App\Program', 'App\Channel')->with('channel')->where('stop','>',Carbon::now())->orderBy('start');
     }
 
     public function recordings()

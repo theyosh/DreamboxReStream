@@ -11,6 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
+
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
 
@@ -35,5 +36,7 @@ mix.js('resources/js/app.js', 'public/js')
    .scripts('node_modules/videojs-titleoverlay/videojs-titleoverlay.js','public/js/videojs-titleoverlay.min.js')
 
    .scripts('node_modules/videojs-airplay/dist/videojs.airplay.js','public/js/videojs.airplay.min.js')
-   .styles('node_modules/videojs-airplay/dist/videojs.airplay.css','public/css/videojs.airplay.min.css');
+   .styles('node_modules/videojs-airplay/dist/videojs.airplay.css','public/css/videojs.airplay.min.css')
+
+   .scripts('resources/js/dreambox.js', 'public/js/dreambox.min.js');
 

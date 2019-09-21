@@ -15,5 +15,6 @@
     "/js/videojs-dvr.min.js": "/js/videojs-dvr.min.js",
     "/js/videojs-titleoverlay.min.js": "/js/videojs-titleoverlay.min.js",
     "/js/videojs.airplay.min.js": "/js/videojs.airplay.min.js",
-    "/css/videojs.airplay.min.css": "/css/videojs.airplay.min.css"
+    "/css/videojs.airplay.min.css": "/css/videojs.airplay.min.css",
+    "/js/dreambox.min.js": "/js/dreambox.min.js"
 }

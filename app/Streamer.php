@@ -206,7 +206,8 @@ class Streamer
                 elseif ('vaapi' == $this->encoder_type)
                 {
                     // HW VAAPI
-                    $cmd .= ' -vf \'deinterlace_vaapi=rate=field:auto=1,fps=' . $bitrate['framerate'] . ',scale_vaapi=w=' . $bitrate['width'] . ':h=' . $bitrate['height'] .':format=nv12\'';
+                    $cmd .= ' -vf \'deinterlace_vaapi=rate=field:auto=1,fps=' . $bitrate['framerate'] . ',scale_vaapi=w=' . $bitrate['width'] . ':h=-2:format=nv12\'';
+                    //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
                 }
 
                 $cmd .= ' -map 0:v';
@@ -216,7 +217,7 @@ class Streamer
                     $cmd .= ' -map 0:m:language:' . $this->language . '?';
                 }
 
-                $cmd .= ' -map 0:a:1';
+                $cmd .= ' -map 0:a';
 
                 // Audio
                 $cmd .= ' -c:a aac -strict experimental -ac 3 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
@@ -230,7 +231,7 @@ class Streamer
                 elseif ('vaapi' == $this->encoder_type)
                 {
                     // HW VAAPI
-                    $cmd .= ' -c:v h264_vaapi -qp 18 -quality 0 -bufsize 2M -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                    $cmd .= ' -c:v h264_vaapi -qp 18 -quality 1 -bf 2 -bufsize 2M -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
                 }
 
                 // HLS Output
@@ -241,10 +242,12 @@ class Streamer
                 $main_playlist[] = Str::slug($basename . '_' . $bitrate_name, '_') . '.m3u8';
             }
 
+
+
             // Delete old/previous files
             Storage::delete(Storage::allFiles('public/stream/'));
             // Execute on background....
-            $process = Dreambox::execute($cmd);
+            $process = Dreambox::execute($cmd,storage_path('ffmpeg_log'));
 
             // Create overall playlist
             for ($i = 0; $i < 30; $i++)

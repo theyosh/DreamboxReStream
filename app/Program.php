@@ -30,5 +30,10 @@ class Program extends Model
         'stop'
     ];
 
+    public function channel()
+    {
+        return $this->belongsTo('App\Channel');
+    }
+
 
 }

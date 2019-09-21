@@ -16,14 +16,9 @@ class DreamboxController extends Controller
         $dreambox = Dreambox::first();
         if ($dreambox)
         {
-            if ($dreambox->bouquets()->count() == 0)
-            {
-                return view('loading', ['dreambox' => $dreambox]);
-            }
-            else
-            {
-                return redirect()->route('show_dreambox',['dreambox' => $dreambox->id]);
-            }
+            //$dreambox->bouquets()->delete();
+            //$dreambox->channels()->delete();
+            return view('index',['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
         }
         else
         {
@@ -34,11 +29,7 @@ class DreamboxController extends Controller
     public function new_dreambox()
     {
         $dreambox = new Dreambox();
-        return view('setup', ['dreambox' => $dreambox]);
-
-    //    return redirect()->route('setup_dreambox',['dreambox' => $dreambox->id]);
-
-        //return view('setup', ['title' => 'Create a new dreambox setup']);
+        return $this->setup($dreambox);
     }
 
     public function setup(Dreambox $dreambox)
@@ -48,7 +39,7 @@ class DreamboxController extends Controller
 
     public function show(Dreambox $dreambox)
     {
-        $dreambox->init();
+        $dreambox->load_bouquets(false);
         return view('dreambox', ['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
     }
 
