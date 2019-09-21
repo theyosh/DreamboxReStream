@@ -35,7 +35,7 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        start_measure('is_online','Dreambox online check');
+        //start_measure('is_online','Dreambox online check');
         try
         {
             $response = $client->request('GET', '/api/about',['auth' => [$this->username, $this->password]]);
@@ -45,7 +45,7 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
-        stop_measure('is_online');
+        //stop_measure('is_online');
 
         if (200 == $response->getStatusCode())
         {
@@ -69,7 +69,7 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        start_measure('load_bouquets','Dreambox loading bouquets');
+        //start_measure('load_bouquets','Dreambox loading bouquets');
         try
         {
             $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
@@ -78,7 +78,7 @@ class Dreambox extends Model
         {
             return false;
         }
-        stop_measure('load_bouquets');
+        //stop_measure('load_bouquets');
 
         if (200 == $response->getStatusCode())
         {
@@ -146,7 +146,7 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
+        //start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
         try
         {
             $response = $client->request('GET', '/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
@@ -155,7 +155,7 @@ class Dreambox extends Model
         {
             return false;
         }
-        stop_measure('load_channels');
+        //stop_measure('load_channels');
 
         if (200 == $response->getStatusCode())
         {
@@ -205,7 +205,7 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
+        //start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
         try
         {
             $response = $client->request('GET', '/api/epg' . ('now' == $type ? 'now' : 'next') . '?bRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
@@ -214,7 +214,7 @@ class Dreambox extends Model
         {
             return false;
         }
-        stop_measure('load_programs');
+        //stop_measure('load_programs');
 
         if (200 == $response->getStatusCode())
         {
@@ -274,7 +274,7 @@ class Dreambox extends Model
             return;
         }
 
-        start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
+        //start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
         try
         {
             $response = $client->request('GET', '/api/epgservice?sRef=' . $channel->service,['auth' => [$this->username, $this->password]]);
@@ -283,7 +283,7 @@ class Dreambox extends Model
         {
             return false;
         }
-        stop_measure('load_epg');
+        //stop_measure('load_epg');
 
         if (200 == $response->getStatusCode())
         {
@@ -325,9 +325,9 @@ class Dreambox extends Model
 
                     $picon_file = Str::slug($channel->name,'_') . '.png';
                     if (!Storage::exists('public/icon/' . $picon_file)) {
-                        start_measure('load_epg_icon','Dreambox downloading picon channel ' . $channel->name);
+                        //start_measure('load_epg_icon','Dreambox downloading picon channel ' . $channel->name);
                         $pico_response = $client->request('GET', $program_data->picon);
-                        stop_measure('load_epg_icon');
+                        //stop_measure('load_epg_icon');
                         if (200 == $pico_response->getStatusCode())
                         {
                           Storage::put('public/icon/' . $picon_file, $pico_response->getBody());
@@ -357,7 +357,7 @@ class Dreambox extends Model
                             'timeout'  => 5.0,
                         ]);
 
-        start_measure('load_recordings','Dreambox loading recordings');
+        //start_measure('load_recordings','Dreambox loading recordings');
         try
         {
             $response = $client->request('GET', '/api/movielist',['auth' => [$this->username, $this->password]]);
@@ -366,7 +366,7 @@ class Dreambox extends Model
         {
             return false;
         }
-        stop_measure('load_recordings');
+        //stop_measure('load_recordings');
 
         if (200 == $response->getStatusCode())
         {

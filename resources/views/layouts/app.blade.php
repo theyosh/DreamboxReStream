@@ -191,7 +191,7 @@
                         <li>Loaded {{ $dreambox->recordings_count }} recordings</li>
                       </ul>
                       <p>
-                        <a href="https://github.com/theyosh/DreamboxReStream" target="_blank" title="Github">Released at 14 April 2019</a>
+                        <a href="https://github.com/theyosh/DreamboxReStream" target="_blank" title="Github">Released at @version('timestamp-date')</a>
                         <br />
                         <a href="{{ URL::asset('CHANGELOG') }}" title="Read changelog">CHANGELOG</a>
                         <br />
