@@ -28,6 +28,13 @@ $ git clone https://github.com/theyosh/DreamboxReStream.git
 $ cd DreamboxReStream
 $ php composer.phar install
 $ touch database/restream.sqlite
-$ php artisan migrate:fresh
+$ cp .env.example .env
+$ sed -i -e 's/APP_NAME=.*/APP_NAME=DreamboxReStream/g' .env
+$ sed -i -e 's/APP_DEBUG=.*/APP_DEBUG=false/g' .env
+$ sed -i -e 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/g' .env
+$ sed -i -e 's/DB_DATABASE=.*/DB_DATABASE=\/home\/vagrant\/dreamboxrestream\/database\/restream\.sqlite/g' .env
+$ php artisan key:generate
+$ php artisan migrate
 $ php artisan storage:link
 ```
+## Configure NGINX

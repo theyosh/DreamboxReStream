@@ -32,7 +32,7 @@ class DreamboxController extends Controller
 
     public function setup(Dreambox $dreambox)
     {
-        return view('setup', ['dreambox' => $dreambox]);
+        return view('setup', ['dreambox' => $dreambox, 'profiles' => Streamer::profiles()]);
     }
 
     public function show(Dreambox $dreambox)
@@ -85,16 +85,14 @@ class DreamboxController extends Controller
         return $dreambox->status();
     }
 
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|unique:dreamboxes|max:255',
             'hostname' => 'required|max:255',
-            'port' => 'required|integer',
-            'enigma' => 'required|integer',
-            'dual_tuner' => 'required|integer',
-            'buffer_time' => 'required|integer:min:0',
+            'port' => 'required|integer|min:0',
+            'multiple_tuners' => 'required|boolean',
+            'buffer_time' => 'required|integer|min:0',
             'epg_limit' => 'integer|min:0|max:72',
             'dvr_length' => 'integer|min:0|max:900',
         ]);
@@ -108,10 +106,9 @@ class DreamboxController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:255',
             'hostname' => 'required|max:255',
-            'port' => 'required|integer',
-            'enigma' => 'required|integer',
-            'dual_tuner' => 'required|integer',
-            'buffer_time' => 'required|integer:min:0',
+            'port' => 'required|integer|min:0',
+            'multiple_tuners' => 'required|boolean',
+            'buffer_time' => 'required|integer|min:0',
             'epg_limit' => 'integer|min:0|max:72',
             'dvr_length' => 'integer|min:0|max:900',
         ]);

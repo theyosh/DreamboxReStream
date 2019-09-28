@@ -24,14 +24,16 @@ class CreateDreamboxesTable extends Migration
             $table->string('username',50)->nullable();
             $table->string('password',50)->nullable();
 
-            $table->tinyInteger('enigma');
-            $table->boolean('dual_tuner');
+            $table->boolean('multiple_tuners')->default(0);
 
             $table->string('audio_language',10)->nullable();
             $table->string('subtitle_language',10)->nullable();
             $table->integer('epg_limit')->default(36);
             $table->integer('dvr_length')->default(120);
             $table->integer('buffer_time')->default(0);
+
+            $table->string('transcoding_profiles',50)->nullable();
+            $table->string('interface_language',5)->default('en');
 
             $table->text('exclude_bouquets')->default('');
 

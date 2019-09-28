@@ -13,15 +13,18 @@ use GuzzleHttp;
 class Dreambox extends Model
 {
     //
-    protected $fillable = ['name', 'hostname', 'port', 'username', 'password', 'enigma','dual_tuner','audio_language','subtitle_language','epg_limit','dvr_length','buffer_time','exclude_bouquets'];
+    protected $fillable = ['name', 'hostname', 'port', 'username', 'password',
+                           'multiple_tuners','audio_language','subtitle_language',
+                           'epg_limit','dvr_length','buffer_time','exclude_bouquets',
+                           'transcoding_profiles','interface_language'];
 
     private $guzzle_http_timeout = 5;
     private $status = null;
 
     private function zap_first($source)
     {
-        // With dual tuner, zapping is not needed, so the 'action' is always true/valid
-        if ($this->dual_tuner)
+        // With multiple tuners, zapping is not needed, so the 'action' is always true/valid
+        if ($this->multiple_tuners)
         {
             return true;
         }
@@ -617,8 +620,13 @@ class Dreambox extends Model
         {
             return false;
         }
-
+        
         $streamer = new Streamer($source_url,$source->name);
+        if ($this->audio_language)
+        {
+            $streamer->language($this->audio_language);
+        }
+        $streamer->set_profiles($this->transcoding_profiles);
         $streamer->set_dvr($this->dvr_length);
         return $streamer->start();
     }

@@ -9,49 +9,64 @@ use GuzzleHttp;
 
 class Streamer
 {
-    private $executable = '/usr/bin/ffmpeg';
+    const executable = '/usr/bin/ffmpeg';
+
+    const bitrates = [
+                        'FullHD' =>  ['name' => 'Full HD',
+                                      'video_bitrate' => 3000,
+                                      'width' =>  1920,
+                                      'height' => 1280,
+                                      'framerate'=> 25,
+                                      'audio_bitrate' => 160,
+                                      'h264' => '-profile:v high -level 4.1'],
+
+                        'HDReady' => ['name' => 'HD Ready',
+                                      'video_bitrate' => 1500,
+                                      'width' =>  1280,
+                                      'height' => 720,
+                                      'framerate'=> 25,
+                                      'audio_bitrate' => 128,
+                                      'h264' => '-profile:v high -level 4.0'],
+
+                        'SD'      => ['name' => 'SD',
+                                      'video_bitrate' => 800,
+                                      'width' =>  858,
+                                      'height' => 480,
+                                      'framerate'=> 25,
+                                      'audio_bitrate' => 112,
+                                      'h264' => '-profile:v main -level 3.1'],
+
+                        'Mobile'  => ['name' => 'Mobile',
+                                      'video_bitrate' => 512,
+                                      'width' =>  640,
+                                      'height' => 360,
+                                      'framerate'=> 20,
+                                      'audio_bitrate' => 96,
+                                      'h264' => '-profile:v baseline -level 3.1'],
+
+                        'Audio'   => ['name' => 'Audio Only',
+                                      'audio_bitrate' => 96]];
+
     private $auto_killer_temp_file = '.autoKiller';
+
     private $buffer_time = 3;
     private $chunktime = 2;
     private $dvrlength = 300;
     private $encoder_type = 'software';
-    private $bitrates = [
-                         //'FullHD' => ['video_bitrate' => 3000,
-                         //              'width' =>  1920,
-                         //              'height' => 1280,
-                         //              'framerate'=> 25,
-                         //              'audio_bitrate' => 160,
-                         //              'h264' => '-profile:v high -level 4.1'],
 
-                         'HDReady' => ['video_bitrate' => 1500,
-                                       'width' =>  1280,
-                                       'height' => 720,
-                                       'framerate'=> 25,
-                                       'audio_bitrate' => 128,
-                                       'h264' => '-profile:v high -level 4.0'],
-
-                         'SD'      => ['video_bitrate' => 800,
-                                       'width' =>  858,
-                                       'height' => 480,
-                                       'framerate'=> 25,
-                                       'audio_bitrate' => 112,
-                                       'h264' => '-profile:v main -level 3.1'],
-
-                         'Mobile'  => ['video_bitrate' => 512,
-                                       'width' =>  640,
-                                       'height' => 360,
-                                       'framerate'=> 20,
-                                       'audio_bitrate' => 96,
-                                       'h264' => '-profile:v baseline -level 3.1'],
-
-                         'Audio'   => ['audio_bitrate' => 96]];
 
     private $source_url = null;
     private $source_name = null;
     private $language = null;
 
-    function __construct($source_url, $source_name) {
+    function __construct($source_url, $source_name)
+    {
         $this->set_source($source_url, $source_name);
+    }
+
+    static function profiles()
+    {
+        return Streamer::bitrates;
     }
 
     public function set_source($source_url,$source_name)
@@ -63,6 +78,11 @@ class Streamer
     public function language($language)
     {
         $this->language = $language;
+    }
+
+    public function set_profiles($profiles)
+    {
+        $this->enabled_profiles = explode(',',$profiles);
     }
 
     public function set_dvr($length)
@@ -149,21 +169,28 @@ class Streamer
 
             if ('software' == $this->encoder_type)
             {
-                $cmd = $this->executable . ' -i ' . $this->source_url;
+                $cmd = Streamer::executable . ' -i ' . $this->source_url;
             }
             elseif ('vaapi' == $this->encoder_type)
             {
                 // HW VAAPI
-                $cmd = $this->executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
+                $cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
             }
+            //
+            //if ($this->language != null)
+            //{
+            //    $cmd .= ' -map 0:m:language:' . $this->language . '?';
+            //}
 
-            if ($this->language != null)
+            foreach (Streamer::bitrates as $bitrate_name => $bitrate)
             {
-                $cmd .= ' -map 0:m:language:' . $this->language . '?';
-            }
 
-            foreach ($this->bitrates as $bitrate_name => $bitrate)
-            {
+               // dd()
+
+                if (!in_array($bitrate_name,$this->enabled_profiles))
+                {
+                    continue;
+                }
                 if (isset($bitrate['video_bitrate']))
                 {
                     // Video
@@ -203,13 +230,15 @@ class Streamer
 
                 if ($this->language != null)
                 {
-                    $cmd .= ' -map 0:m:language:' . $this->language . '?';
+                    $cmd .= ' -map 0:a:language:' . $this->language . '?';
+                }
+                else
+                {
+                    $cmd .= ' -map 0:a:0?';
                 }
 
-                $cmd .= ' -map 0:a:1?';
-
                 // Audio
-                $cmd .= ' -c:a aac -ac 3 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
+                $cmd .= ' -c:a aac -ac 51 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
 
                 // HLS Output
                 $cmd .= ' -f hls -strftime 1 -use_localtime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');
@@ -229,10 +258,10 @@ class Streamer
                 // Check if all bitrates playlist are generated...
                 $all_done = array_count_values(array_map(function($bitrate) {
                     return (Storage::exists('public/stream/' . Str::slug($this->source_name . '_' . $bitrate, '_') . '.m3u8') ? 1 : 0);
-                },array_keys($this->bitrates)));
+                },$this->enabled_profiles));
 
                 // If true, alle bitrates are available. Break 30 sec check loop and continue to make the master playlist
-                if (isset($all_done[1]) && $all_done[1] == count($this->bitrates)) break;
+                if (isset($all_done[1]) && $all_done[1] == count($this->enabled_profiles)) break;
                 sleep(1);
             }
             // Write main playlist

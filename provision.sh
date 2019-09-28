@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get -y update && apt-get -y install git nginx php-fpm php-cli php-mbstring php-xml php-sqlite3 ffmpeg
+apt-get -y update && apt-get -y install git nginx php-fpm php-cli php-mbstring php-xml php-sqlite3 ffmpeg ntp
 
 usermod -G vagrant -a www-data
 usermod -G www-data -a vagrant
@@ -36,7 +36,6 @@ sed -i -e 's/APP_DEBUG=.*/APP_DEBUG=false/g' /home/vagrant/dreamboxrestream/.env
 
 sed -i -e 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/g' /home/vagrant/dreamboxrestream/.env
 sed -i -e 's/DB_DATABASE=.*/DB_DATABASE=\/home\/vagrant\/dreamboxrestream\/database\/restream\.sqlite/g' /home/vagrant/dreamboxrestream/.env
-#sed -i -e 's/DB_PORT=3306/DB_FOREIGN_KEYS=true/g' /home/vagrant/dreamboxrestream/.env
 
 su -c 'php artisan key:generate' vagrant
 su -c 'php artisan migrate' vagrant
