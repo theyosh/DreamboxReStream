@@ -108,7 +108,7 @@ function stream(id, type) {
     }
     source.addClass('active');
     let source_position = source.position();
-    bouquet.scrollTop(source_position.top-source.height());
+    bouquet.find('.card-body').scrollTop(source_position.top - source.height());
 
     dreambox_player.source = data;
 
