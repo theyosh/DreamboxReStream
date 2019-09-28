@@ -26,10 +26,48 @@
 @endsection
 
 @section('javascript')
+    <style>
+        #ambilightModal .modal-content,
+        #ambilightModal .modal-body,
+        #ambilightModal .embed-responsive.embed-responsive-16by9
+        {
+            overflow: visible !important;
+        }
+
+        #ambilightModal .modal-body {
+            padding: 0.1rem !important;
+        }
+
+			.ambilight-left,
+			.ambilight-right {
+				position: absolute;
+				width: 400px;
+				height: 200%;
+                z-index: -1;
+
+				-webkit-transition: opacity 0.2s linear;
+				-moz-transition: opacity 0.2s linear;
+				-ms-transition: opacity 0.2s linear;
+				-o-transition: opacity 0.2s linear;
+				transition: opacity 0.2s linear;
+			}
+
+			.ambilight-left {
+				left: -350px;
+				top: -53%;
+			}
+
+			.ambilight-right {
+				right: -350px;
+				top: -51%;
+			}
+
+    </style>
 <script type="text/javascript">
 const dreambox_id = {{$dreambox->id}};
 let channel_refresh_list = {};
 let channel_refresh_timer = null;
+let ambilight_on = false;
 
 function start_dreambox() {
   $.getJSON('{{ route('status_dreambox', ['dreambox' => $dreambox->id])}}', function( data ) {
@@ -63,7 +101,21 @@ function start_dreambox() {
 let dreambox_player = null;
 let overlay_timer = null;
 function init_video_player() {
-  dreambox_player = videojs('dreambox-video');
+  dreambox_player = videojs('dreambox-video',{
+    html5: {
+      hls: {
+        withCredentials: true,
+        handleManifestRedirects: true,
+        overrideNative: true,
+        smoothQualityChange: true,
+      }
+    },
+    autoplay: 'any',
+    plugins: {
+        'airplayButton' : {},
+        'httpSourceSelector': {'default' : 'auto'},
+    }
+  });
   dreambox_player.source = null;
 
   dreambox_player.titleoverlay({
@@ -77,16 +129,25 @@ function init_video_player() {
 
   dreambox_player.contextmenuUI({
     content: [{
-
-      // A plain old link.
-      href: 'https://github.com/theyosh/DreamboxReStream',
-      label: '<img src=\'{{ URL::asset('images/dreamboxrestream_icon.png') }}\'><br />Dreambox ReStream<br /><small>@version</small>'
-    }]
+        // A plain old link.
+        href: 'https://github.com/theyosh/DreamboxReStream',
+        label: '<img src=\'{{ URL::asset('images/dreamboxrestream_icon.png') }}\' class="img-fluid rounded"><br />Dreambox ReStream<br /><small>@version</small>'
+      },{
+        // A link with a listener. Its `href` will automatically be `#`.
+        label: 'Ambilight',
+        listener: function() {
+          ambi();
+        }
+      }]
   });
 
   dreambox_player.on('playing',function(event){
     $('#dreamboxModal').modal('hide')
-  })
+  });
+
+  dreambox_player.on('ready',function(event){
+    dreamboxAmbilight.attachPlayer(this);
+  });
 
   dreambox_player.on('mouseover', function(event) {
     clearTimeout(overlay_timer);
@@ -96,10 +157,6 @@ function init_video_player() {
     overlay_timer = setTimeout(function(){
       dreambox_player.titleoverlay.hideOverlay();
     },5 * 1000);
-  });
-
-  dreambox_player.on('mouseout', function(event) {
-    dreambox_player.titleoverlay.hideOverlay();
   });
 
   dreambox_player.qualityLevels();
@@ -179,6 +236,293 @@ function load_recordings() {
   });
 }
 
+class DreamboxAmbilight {
+/**
+ * @author Sergey Chikuyonok (serge.che@gmail.com)
+ * @link http://chikuyonok.ru - http://chikuyonok.ru/2010/03/ambilight-video/
+ */
+
+  constructor() {
+    this.options = {
+		brightness: 2.7,    // ambilight brightness coeff
+		saturation: 1.4,    // ambilight saturation coeff
+		lamps: 5,           // number of glowing lamps.
+		blockSize: 20,      // width of image sampling block. Larger value means more accurate but result but slower performance
+		delay: 100,
+	};
+
+    this.left_light_canvas = document.createElement('canvas');
+    this.left_light_canvas.className = 'ambilight-left';
+
+    this.left_light_mask = new Image();
+    this.left_light_mask.src = '{{ URL::asset('images/mask4-left.png') }}';
+
+    this.right_light_canvas = document.createElement('canvas');
+    this.right_light_canvas.className = 'ambilight-right';
+
+    this.right_light_mask = new Image();
+    this.right_light_mask.src = '{{ URL::asset('images/mask4-right.png') }}';
+
+    this.buffer = document.createElement('canvas');
+    this.bufferCtx = this.buffer.getContext('2d');
+
+    this.fps_timer = null;
+    this.running = false;
+    this.last_update = 0;
+  }
+
+  attachPlayer(player) {
+    this.video = player.children_[0];
+    this.video.parentNode.appendChild(this.left_light_canvas);
+    this.video.parentNode.appendChild(this.right_light_canvas);
+    player.on('play', (e) => {
+        this.start();
+    });
+    player.on('pause', (e) => {
+        this.stop();
+    });
+  }
+
+  start() {
+    this.running = $('div#ambilightModal.modal.fade.show').length == 1;
+    this.fps = 0;
+    clearInterval(this.fps_timer);
+    let self = this;
+    this.fps_timer = setInterval(function(){
+      console.log('Current ambilight fps: ' + self.fps);
+      self.fps = 0;
+    },1000);
+
+    this.last_update = 0;
+    this.ambilightLoop();
+  }
+
+  stop() {
+    this.running = false;
+  }
+
+    drawLight(side) {
+
+      let light_canvas = ('left' == side ? this.left_light_canvas : this.right_light_canvas);
+      let light_mask   = ('left' == side ? this.left_light_mask : this.right_light_mask);
+
+
+		/** @type {CanvasRenderingContext2D} */
+		let ctx = light_canvas.getContext('2d');
+
+		let midcolors = this.getMidColors(side);
+
+		let grd = ctx.createLinearGradient(0, 0, 0, light_canvas.height);
+        let il = midcolors.length;
+		for (let i = 0; i < il; i++) {
+			this.adjustColor(midcolors[i]);
+
+			grd.addColorStop(i / il, 'rgb(' + midcolors[i].join(',') + ')');
+		}
+
+		ctx.fillStyle = grd;
+		ctx.fillRect(0, 0, light_canvas.width, light_canvas.height);
+
+		let gco = ctx.globalCompositeOperation;
+		ctx.globalCompositeOperation = 'destination-in';
+		ctx.drawImage(light_mask, 0, 0, light_mask.width, light_mask.height, 0, 0, light_canvas.width, light_canvas.height);
+		ctx.globalCompositeOperation = gco;
+	}
+
+
+  createSnapshot() {
+    // Scale 1:1
+	//buffer.width = this.video.videoWidth || this.video.width;
+	//buffer.height = this.video.videoHeight || this.video.height;
+
+    // Scale down....
+    this.buffer.width = this.video.clientWidth || this.video.width;
+    this.buffer.height = this.video.clientHeight || this.video.height;
+
+    // Get source size/resolution
+	let vw = this.video.videoWidth || this.video.width;
+	let vh = this.video.videoHeight || this.video.height;
+
+    // Copy frame from movie to canvas buffer
+    this.bufferCtx.drawImage(this.video, 0, 0, vw, vh, 0, 0, this.buffer.width, this.buffer.height);
+
+  }
+
+
+
+    /**
+	 * Calculates middle color for pixel block
+	 * @param {CanvasPixelArray} data Canvas pixel data
+	 * @param {Number} from Start index of pixel data
+	 * @param {Number} to End index of pixel data
+	 * @return {Array} RGB-color
+	 */
+	 calcMidColor(data, from, to) {
+		let result = [0, 0, 0];
+		let totalPixels = (to - from) / 4;
+
+		for (let i = from; i <= to; i += 4) {
+			result[0] += data[i];
+			result[1] += data[i + 1];
+			result[2] += data[i + 2];
+		}
+
+		result[0] = (result[0] / totalPixels) | 0;
+		result[1] = (result[1] / totalPixels) | 0;
+		result[2] = (result[2] / totalPixels) | 0;
+
+		return result;
+	}
+
+
+	/**
+	 * Returns array of midcolors for one of the side of buffer canvas
+	 * @param {String} side Canvas side where to take pixels from. 'left' or 'right'
+	 * @return {Array} Array of RGB colors
+	 */
+	 getMidColors(side) {
+		let w = this.buffer.width;
+		let h = this.buffer.height;
+		let lamps = this.options.lamps;
+		let blockWidth = this.options.blockSize;
+		let blockHeight = Math.ceil(h / lamps);
+		let pxl = blockWidth * blockHeight * 4;
+
+//		var result = getArrayFromPool('midcolor');
+        let result = [];
+
+        try {
+            let imgData = this.bufferCtx.getImageData(side == 'right' ? w - blockWidth : 0, 0, blockWidth, h);
+            let totalPixels = imgData.data.length;
+//console.log(imgData);
+
+            for (let i = 0; i < lamps; i++) {
+                let from = i * w * blockWidth;
+                result[i] = this.calcMidColor(imgData.data, i * pxl, Math.min((i + 1) * pxl, totalPixels - 1));
+            }
+        } catch (e) {
+        }
+		return result;
+	}
+
+	/**
+	 * Convers RGB color to HSV model
+	 * @param {Array} RGB color
+	 * @return {Array} HSV color
+	 */
+	 rgb2hsv(color) {
+		let r = color[0] / 255;
+		let g = color[1] / 255;
+		let b = color[2] / 255;
+
+		let x, val, d1, d2, hue, sat;
+
+		x = Math.min(Math.min(r, g), b);
+		val = Math.max(Math.max(r, g), b);
+		if (x == val) {
+			return false;
+		}
+
+		d1 = (r == x) ? g - b : ((g == x) ? b - r : r - g);
+		d2 = (r == x) ? 3 : ((g == x) ? 5 : 1);
+
+		color[0] = (((d2 - d1 / (val - x)) * 60) | 0) % 360;
+		color[1] = (((val - x) / val) * 100) | 0;
+		color[2] = (val * 100) | 0;
+		return true;
+	}
+
+	/**
+	 * Convers HSV color to RGB model
+	 * @param {Array} RGB color
+	 * @return {Array} HSV color
+	 */
+	 hsv2rgb(color) {
+		let h = color[0],
+			s = color[1],
+			v = color[2];
+
+		let r, g, a, b, c;
+        s = s / 100;
+        v = v / 100;
+        h = h / 360;
+
+		if (s > 0) {
+			if (h >= 1) h = 0;
+
+			h = 6 * h;
+			let f = h - (h | 0);
+			// don't need accurate results here, use |0 instead of Math.round()
+			a = (255 * v * (1 - s)) | 0;
+			b = (255 * v * (1 - (s * f))) | 0;
+			c = (255 * v * (1 - (s * (1 - f)))) | 0;
+			v = (255 * v) | 0;
+
+			switch (h | 0) {
+				case 0: r = v; g = c; b = a; break;
+				case 1: r = b; g = v; b = a; break;
+				case 2: r = a; g = v; b = c; break;
+				case 3: r = a; g = b; b = v; break;
+				case 4: r = c; g = a; b = v; break;
+				case 5: r = v; g = a; b = b; break;
+			}
+
+			color[0] = r || 0;
+			color[1] = g || 0;
+			color[2] = b || 0;
+		} else {
+			color[0] = color[1] = color[2] = (v * 255) | 0;
+		}
+	}
+
+	/**
+	 * Adjusts color lightness and saturation
+	 * @param {Array} RGB color
+	 * @return {Array}
+	 */
+	 adjustColor(color) {
+		let ok = this.rgb2hsv(color);
+		if (ok) {
+			color[1] = Math.min(100, color[1] * this.options.saturation)
+			// color[2] = Math.min(100, color[2] * getOption('brightness'));
+			color[2] = 90;
+			this.hsv2rgb(color);
+		}
+		return color;
+	}
+
+	  ambilightLoop() {
+        if (dreamboxAmbilight.running) {
+			let now = +new Date;
+			if (now - dreamboxAmbilight.last_update >= dreamboxAmbilight.options.delay) {
+                dreamboxAmbilight.createSnapshot();
+                dreamboxAmbilight.drawLight('left');
+                dreamboxAmbilight.drawLight('right');
+                dreamboxAmbilight.last_update = now;
+                dreamboxAmbilight.fps += 1;
+            }
+            requestAnimationFrame(dreamboxAmbilight.ambilightLoop);
+        }
+	}
+}
+
+function ambi() {
+    let modal = $('#ambilightModal');
+    modal.find('.modal-body').html($('#dreambox-video').parent());
+
+    modal.off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
+        $('#mainplayer').html(modal.find('#dreambox-video').parent());
+        dreamboxAmbilight.stop();
+    });
+
+    modal.off('shown.bs.modal').on('shown.bs.modal', function (e) {
+      $('div.modal-backdrop.fade.show').css('opacity',0.85);
+      dreamboxAmbilight.start();
+    });
+    modal.modal();
+}
+
+const dreamboxAmbilight = new DreamboxAmbilight();
 $(function(){
   // Set the local to the application locale
   moment.locale('{{ str_replace('_', '-', app()->getLocale()) }}');

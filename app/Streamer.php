@@ -10,29 +10,31 @@ use GuzzleHttp;
 class Streamer
 {
     private $executable = '/usr/bin/ffmpeg';
-
     private $auto_killer_temp_file = '.autoKiller';
-
+    private $buffer_time = 3;
+    private $chunktime = 2;
+    private $dvrlength = 300;
+    private $encoder_type = 'software';
     private $bitrates = [
                          //'FullHD' => ['video_bitrate' => 3000,
                          //              'width' =>  1920,
                          //              'height' => 1280,
                          //              'framerate'=> 25,
                          //              'audio_bitrate' => 160,
-                         //              'h264' => '-profile:v high -level 3.2'],
+                         //              'h264' => '-profile:v high -level 4.1'],
 
                          'HDReady' => ['video_bitrate' => 1500,
                                        'width' =>  1280,
                                        'height' => 720,
                                        'framerate'=> 25,
-                                       'audio_bitrate' => 112,
-                                       'h264' => '-profile:v main -level 3.2'],
+                                       'audio_bitrate' => 128,
+                                       'h264' => '-profile:v high -level 4.0'],
 
                          'SD'      => ['video_bitrate' => 800,
                                        'width' =>  858,
                                        'height' => 480,
                                        'framerate'=> 25,
-                                       'audio_bitrate' => 96,
+                                       'audio_bitrate' => 112,
                                        'h264' => '-profile:v main -level 3.1'],
 
                          'Mobile'  => ['video_bitrate' => 512,
@@ -40,34 +42,22 @@ class Streamer
                                        'height' => 360,
                                        'framerate'=> 20,
                                        'audio_bitrate' => 96,
-                                       'h264' => '-profile:v baseline -level 3.1']];
+                                       'h264' => '-profile:v baseline -level 3.1'],
 
-    private $hostname = null;
-    private $port = null;
-    private $authentication = null;
+                         'Audio'   => ['audio_bitrate' => 96]];
 
-    private $source = null;
+    private $source_url = null;
+    private $source_name = null;
     private $language = null;
 
-    private $chunktime = 2;
-    private $dvrlength = 300;
-
-    private $encoder_type = 'software';
-
-    function __construct($hostname, $port = 80, $authentication = null) {
-        $this->hostname = $hostname;
-        $this->port = $port;
-        $this->authentication = $authentication;
+    function __construct($source_url, $source_name) {
+        $this->set_source($source_url, $source_name);
     }
 
-    public function channel(Channel $channel)
+    public function set_source($source_url,$source_name)
     {
-        $this->source = $channel;
-    }
-
-    public function recording(Recording $recording)
-    {
-        $this->source = $recording;
+        $this->source_url  = $source_url;
+        $this->source_name = $source_name;
     }
 
     public function language($language)
@@ -88,7 +78,7 @@ class Streamer
         }
     }
 
-    private function auto_killer()
+    private function auto_killer($streamer_pid)
     {
         $kill_timer_pid = -1;
         // Check for existing process pid
@@ -97,165 +87,148 @@ class Streamer
         }
         if (is_numeric($kill_timer_pid) && $kill_timer_pid > 1) {
 			// Kill old process
-			$cmd = 'kill -9 ' . $kill_timer_pid;
-			Dreambox::execute($cmd,'',true);
+			Dreambox::execute('kill -9 ' . $kill_timer_pid,'',true);
 		}
         // Start new kill timer...
-		$cmd = '(sleep 120;killall -9 ffmpeg; rm ' . storage_path('app/public/stream') . '/* )';
+		$cmd = '(sleep 120;kill -9 ' . $streamer_pid . '; rm ' . storage_path('app/public/stream') . '/* )';
 		$kill_timer_pid = Dreambox::execute($cmd);
-
+        // Store new pid to temp file
         Storage::put($this->auto_killer_temp_file, $kill_timer_pid);
-    }
-
-    private function load_playlist()
-    {
-        $client = new GuzzleHttp\Client([
-                            'base_uri' => 'http://' . $this->hostname ,
-                            'timeout'  => 5.0,
-                        ]);
-
-        $response = null;
-        if ($this->source instanceof Channel)
-        {
-            $response = $client->request('GET', '/web/stream.m3u?ref=' . $this->source->service, ['auth' => $this->authentication]);
-        }
-        elseif ($this->source instanceof Recording)
-        {
-            // http://hd51.theyosh.lan/web/ts.m3u?file=/recordings/20180216%202057%20-%20HISTORY%20HD%20-%20American%20Pickers.ts
-            $response = $client->request('GET', '/web/ts.m3u?file=' . str_replace(' ','%20',$this->source->service), ['auth' => $this->authentication]);
-        }
-
-        if ($response != null && 200 == $response->getStatusCode())
-        {
-            $re = '/(?P<stream_url>http:\/\/' . $this->hostname . '.*)/m';
-            preg_match_all($re, $response->getBody()->getContents(), $matches, PREG_SET_ORDER);
-            if ($matches)
-            {
-                return trim($matches[0]['stream_url']);
-            }
-        }
-        return false;
     }
 
     public function status($autokiller = true)
     {
-        // Restart the autokiller....
-        if ($autokiller)
-        {
-            $this->auto_killer();
-        }
-
+        $status = ['source' => null, 'service' => null, 'encoder' => null];
         $process_data = trim(shell_exec("ps ax | grep ffmpeg | grep -v grep"));
-        $re = '/(?P<encoder>vaapi)? -i http:\/\/' . $this->hostname . '(:\d+)?\/(file\?file=)?(?P<service>[^ ]+)/m';
+        $re = '/^(?P<pid>\d+).*ffmpeg (?P<encoder>vaapi)?-i (?P<source>http:\/\/[^ ]+(:\d+)?\/(file\?file=)?(?P<service>[^ ]+))/m';
         preg_match_all($re, $process_data, $matches, PREG_SET_ORDER);
-        if ($matches)
+        if ($matches && stripos($this->source_url,$matches[0]['source']) == 0)
         {
-            $status = Channel::where('service',$matches[0]['service'])->first();
-            if (!$status) {
-                $status = Recording::where('service',str_replace('%20',' ',$matches[0]['service']))->first()->loadMissing('channel');
+            $status['source'] = $matches[0]['source'];
+            $status['service'] = $matches[0]['service'];
+            $status['pid'] = $matches[0]['pid'];
+            // Restart the autokiller....
+            if ($autokiller)
+            {
+                $this->auto_killer($status['pid']);
             }
-            $status['encoder'] = $matches[0]['encoder'];
+            if (!empty($status['encoder']))
+            {
+                $status['encoder'] = $matches[0]['encoder'];
+            }
             return $status;
         }
-
-        return null;
+        return false;
     }
 
     public function stop()
     {
-        $cmd = '(killall -9 ffmpeg; rm ' . storage_path('app/public/stream') . '/*)';
+        $pid = $this->status(false);
+        $cmd = '(kill -9 ' . $pid['pid'] . '; rm ' . storage_path('app/public/stream') . '/*)';
         Dreambox::execute($cmd,'',true);
     }
 
-
     public function start()
     {
-        global $basename;
         $current_status = $this->status(false);
-
-        if (!isset($current_status) || $current_status->service != $this->source->service)
+        if (!isset($current_status) || $current_status['source'] != $this->source_url)
         {
             $this->stop();
-
-            $basename = $this->source->name;
-            $main_playlist[] = '#EXTM3U';
-
-            $source = $this->load_playlist();
-            if (!$source)
+            if ($this->source_url == null)
             {
                 return false;
             }
 
+            if (config('app.debug'))
+            {
+                start_measure('start_stream','Starting transcoding');
+            }
+
+            // Playlist header
+            $main_playlist[] = '#EXTM3U';
+
             if ('software' == $this->encoder_type)
             {
-                $cmd = $this->executable . ' -i ' . $source;
+                $cmd = $this->executable . ' -i ' . $this->source_url;
             }
             elseif ('vaapi' == $this->encoder_type)
             {
                 // HW VAAPI
-                $cmd = $this->executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $source;
+                $cmd = $this->executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
+            }
+
+            if ($this->language != null)
+            {
+                $cmd .= ' -map 0:m:language:' . $this->language . '?';
             }
 
             foreach ($this->bitrates as $bitrate_name => $bitrate)
             {
-                // Scale resolution
-                if ('software' == $this->encoder_type)
+                if (isset($bitrate['video_bitrate']))
                 {
-                    $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\' -sws_flags lanczos';
-                }
-                elseif ('vaapi' == $this->encoder_type)
-                {
-                    // HW VAAPI
-                    $cmd .= ' -vf \'deinterlace_vaapi=rate=field:auto=1,fps=' . $bitrate['framerate'] . ',scale_vaapi=w=' . $bitrate['width'] . ':h=-2:format=nv12\'';
-                    //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
-                }
+                    // Video
+                    $cmd .= ' -map 0:v';
 
-                $cmd .= ' -map 0:v';
+                    // Scale resolution
+                    if ('software' == $this->encoder_type)
+                    {
+                        $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\' -sws_flags lanczos';
+                    }
+                    elseif ('vaapi' == $this->encoder_type)
+                    {
+                        // HW VAAPI
+                        $cmd .= ' -vf \'deinterlace_vaapi=rate=field:auto=1,fps=' . $bitrate['framerate'] . ',scale_vaapi=w=' . $bitrate['width'] . ':h=-2:format=nv12\'';
+                        //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
+                    }
+
+                    // Encoding
+                    if ('software' == $this->encoder_type)
+                    {
+                        // -x264-params idrint=10,bframes=16,b-adapt=1,ref=3,qpmax=51,qpmin=10,me=hex,merange=16,subq=5,subme=7,qcomp=0.6,aud,keyint=10,nocabac
+                        $cmd .= ' -c:v libx264 -x264-params "nal-hrd=cbr" -movflags +faststart -tune film -preset fast ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate'] . ' -g ' . ($bitrate['framerate']*2);
+                    }
+                    elseif ('vaapi' == $this->encoder_type)
+                    {
+                        // HW VAAPI
+                        $cmd .= ' -c:v h264_vaapi -qp 18 -quality 1 -bf 2 -tune film -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                    }
+                    $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2, avc1.64001f",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'];
+
+                }
+                else
+                {
+                    // Audio only track
+                    $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2",BANDWIDTH=' . round( $bitrate['audio_bitrate'] * 1024);
+                }
 
                 if ($this->language != null)
                 {
                     $cmd .= ' -map 0:m:language:' . $this->language . '?';
                 }
 
-                $cmd .= ' -map 0:a';
+                $cmd .= ' -map 0:a:1?';
 
                 // Audio
-                $cmd .= ' -c:a aac -strict experimental -ac 3 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
-
-                // Video
-                if ('software' == $this->encoder_type)
-                {
-                    // -x264-params idrint=10,bframes=16,b-adapt=1,ref=3,qpmax=51,qpmin=10,me=hex,merange=16,subq=5,subme=7,qcomp=0.6,aud,keyint=10,nocabac
-                    $cmd .= ' -c:v libx264 -pix_fmt yuv420p -tune film ' . $bitrate['h264'] . ' -bufsize 1M -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize 2M -r ' . $bitrate['framerate'] . ' -g ' . ($bitrate['framerate']*2);
-                }
-                elseif ('vaapi' == $this->encoder_type)
-                {
-                    // HW VAAPI
-                    $cmd .= ' -c:v h264_vaapi -qp 18 -quality 1 -bf 2 -bufsize 2M -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
-                }
+                $cmd .= ' -c:a aac -ac 3 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
 
                 // HLS Output
-                $cmd .= ' -f hls -strftime 1 -use_localtime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($basename . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($basename . '_' . $bitrate_name, '_') . '.m3u8');
+                $cmd .= ' -f hls -strftime 1 -use_localtime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');
 
                 // Main playlist info
-                $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="avc1.64001f,mp4a.40.2",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'];
-                $main_playlist[] = Str::slug($basename . '_' . $bitrate_name, '_') . '.m3u8';
+                $main_playlist[] = Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8';
             }
-
-
 
             // Delete old/previous files
             Storage::delete(Storage::allFiles('public/stream/'));
             // Execute on background....
-            $process = Dreambox::execute($cmd,storage_path('ffmpeg_log'));
+            $process = Dreambox::execute($cmd,storage_path('app/ffmpeg_log'));
 
             // Create overall playlist
             for ($i = 0; $i < 30; $i++)
             {
                 // Check if all bitrates playlist are generated...
                 $all_done = array_count_values(array_map(function($bitrate) {
-                    global $basename;
-                    return (Storage::exists('public/stream/' . Str::slug($basename . '_' . $bitrate, '_') . '.m3u8') ? 1 : 0);
+                    return (Storage::exists('public/stream/' . Str::slug($this->source_name . '_' . $bitrate, '_') . '.m3u8') ? 1 : 0);
                 },array_keys($this->bitrates)));
 
                 // If true, alle bitrates are available. Break 30 sec check loop and continue to make the master playlist
@@ -263,9 +236,13 @@ class Streamer
                 sleep(1);
             }
             // Write main playlist
-            Storage::put('public/stream/'.Str::slug($basename, '_') . '.m3u8', implode("\n",$main_playlist));
+            Storage::put('public/stream/'.Str::slug($this->source_name, '_') . '.m3u8', implode("\n",$main_playlist));
             $current_status = $this->status(false);
+            if (config('app.debug'))
+            {
+                stop_measure('start_stream');
+            }
         }
-        return asset('storage/stream/'. Str::slug($current_status->name, '_') . '.m3u8');
+        return asset('storage/stream/'. Str::slug($this->source_name, '_') . '.m3u8');
     }
 }

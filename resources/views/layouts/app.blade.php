@@ -16,22 +16,20 @@
       <div class="row">
         <div class="col text-center">
           <h3>@yield('title') <small class="text-muted">@version</small></h3>
-          @error('offline')
-          <div class="alert alert-danger" id="offline_message" role="alert">
+          <div class="alert alert-danger" id="offline_message" role="alert" style="display:none">
             <h4 class="alert-heading">Offline!</h4>
             <div>Your dreambox is offline. Please check your network connections.</div>
           </div>
-          @enderror
         </div>
       </div>
     @section('content')
       <div class="row">
         <div class="col-12 col-md-8">
           <div class="row">
-            <div class="col">
+            <div class="col" id="mainplayer">
               <div class="embed-responsive embed-responsive-16by9 rounded">
                 <div class="test-screen" style="background-image:url('{{ URL::asset('images/test_screen.gif') }}');"><p>Pick a channel -></p></div>
-                <video id='dreambox-video' class='embed-responsive-item video-js vjs-default-skin' controls preload='auto' width='100%' height='100%' poster='{{ URL::asset('images/old_tv.png') }}' data-setup='{"autoplay":"any","plugins" : { "airplayButton": {}, "httpSourceSelector" : {"default" : "auto"} }}'>
+                <video id='dreambox-video' class='embed-responsive-item video-js vjs-default-skin' controls preload='auto' width='100%' height='100%' poster='{{ URL::asset('images/old_tv.png') }}'>
                   <p class='vjs-no-js'>
                     To view this video please enable JavaScript, and consider upgrading to a web browser that
                     <a href='https://videojs.com/html5-video-support/' target='_blank'>supports HTML5 video</a>
@@ -53,7 +51,7 @@
                 <h5 class="mb-1"><span>Channel name</span> <small class="program-now">(duration)</small></h5>
               </div>
               <p>
-              <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Dreambox ReStream Logo" class="img-fluid rounded float-right picon" >
+              <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Dreambox ReStream Logo" class="img-fluid float-right picon" >
               Description</p>
               <small class="program-next">Next: upcoming</small>
             </div>
@@ -246,10 +244,10 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-12 col-md-4 text-center">
+              <div class="col-4 text-center">
                 <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Dreambox ReStream Logo" class="img-thumbnail">
               </div>
-              <div class="col-12 col-md-8 stream-info">
+              <div class="col-8 stream-info">
               @section('modal_content')
                 <div class="d-flex w-100 justify-content-between">
                   <h5 class="mb-1">{{$dreambox->name}}</h5>
@@ -261,6 +259,14 @@
             </div>
           </div>
           <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="ambilightModal" tabindex="-1" role="dialog" aria-hidden="true" style="overflow-y:hidden !important">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+          </div>
         </div>
       </div>
     </div>

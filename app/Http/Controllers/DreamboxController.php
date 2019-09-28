@@ -16,8 +16,6 @@ class DreamboxController extends Controller
         $dreambox = Dreambox::first();
         if ($dreambox)
         {
-            //$dreambox->bouquets()->delete();
-            //$dreambox->channels()->delete();
             return view('index',['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
         }
         else
@@ -84,19 +82,7 @@ class DreamboxController extends Controller
 
     public function status(Dreambox $dreambox)
     {
-        $status = ['online' => $dreambox->is_online(),
-                   'running' => false];
-        $streamer = new Streamer($dreambox->hostname,$dreambox->port, [$dreambox->username, $dreambox->password]);
-        $channel = $streamer->status();
-        if ($channel)
-        {
-            // Streamer is running....
-            $channel['type'] = (isset($channel->filesize) ? 'recording' : 'channel');
-            $channel['online'] = $status['online'];
-            $channel['running'] = true;
-            return $channel;
-        }
-        return $status;
+        return $dreambox->status();
     }
 
 

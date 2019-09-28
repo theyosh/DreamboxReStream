@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -14,7 +15,94 @@ class Dreambox extends Model
     //
     protected $fillable = ['name', 'hostname', 'port', 'username', 'password', 'enigma','dual_tuner','audio_language','subtitle_language','epg_limit','dvr_length','buffer_time','exclude_bouquets'];
 
+    private $guzzle_http_timeout = 5;
     private $status = null;
+
+    private function zap_first($source)
+    {
+        // With dual tuner, zapping is not needed, so the 'action' is always true/valid
+        if ($this->dual_tuner)
+        {
+            return true;
+        }
+
+        //Single tuner needs a zap first... :(
+        $client = new GuzzleHttp\Client([
+                        'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
+                        'timeout'  => $this->guzzle_http_timeout,
+                    ]);
+
+        if (config('app.debug'))
+        {
+            start_measure('zap_first','Zapping Dreambox to right channel');
+        }
+        try
+        {
+            $response = $client->request('GET', '/api/zap',[
+                         'auth'  => [$this->username, $this->password],
+                         'query' => ['sRef' => $source->service]
+            ]);
+        }
+        catch (Exception $e)
+        {
+            $this->status = null;
+            return false;
+        }
+        if (config('app.debug'))
+        {
+            stop_measure('zap_first');
+        }
+        return 200 == $response->getStatusCode();
+    }
+
+    private function load_playlist($source)
+    {
+        $client = new GuzzleHttp\Client([
+                            'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
+                            'timeout'  => $this->guzzle_http_timeout,
+                        ]);
+        if (config('app.debug'))
+        {
+            start_measure('load_playlist','Get streaming url from playlist');
+        }
+        try
+        {
+            if ($source instanceof Channel)
+            {
+                $response = $client->request('GET', '/web/stream.m3u',[
+                             'auth'  => [$this->username, $this->password],
+                             'query' => ['ref' => $source->service]
+                ]);
+            }
+            elseif ($source instanceof Recording)
+            {
+                // http://hd51.theyosh.lan/web/ts.m3u?file=/recordings/20180216%202057%20-%20HISTORY%20HD%20-%20American%20Pickers.ts
+                $response = $client->request('GET', '/web/ts.m3u',[
+                             'auth'  => [$this->username, $this->password],
+                             'query' => ['file' =>  str_replace(' ','%20',$source->service)]
+                ]);
+            }
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+        if (config('app.debug'))
+        {
+            stop_measure('load_playlist');
+        }
+
+        if (200 == $response->getStatusCode())
+        {
+            $re = '/(?P<stream_url>http:\/\/' . $this->hostname . '.*)/m';
+            preg_match_all($re, $response->getBody()->getContents(), $matches, PREG_SET_ORDER);
+            if ($matches)
+            {
+                return trim($matches[0]['stream_url']);
+            }
+        }
+        return false;
+    }
 
     public function load_data()
     {
@@ -32,10 +120,13 @@ class Dreambox extends Model
     {
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => 5.0,
+                            'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        //start_measure('is_online','Dreambox online check');
+        if (config('app.debug'))
+        {
+            start_measure('is_online','Dreambox online check');
+        }
         try
         {
             $response = $client->request('GET', '/api/about',['auth' => [$this->username, $this->password]]);
@@ -45,7 +136,10 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
-        //stop_measure('is_online');
+        if (config('app.debug'))
+        {
+            stop_measure('is_online');
+        }
 
         if (200 == $response->getStatusCode())
         {
@@ -62,14 +156,43 @@ class Dreambox extends Model
         return true;
     }
 
+    public function status()
+    {
+        $status = ['online' => $this->is_online(),'running' => false];
+        if (!$status['online'])
+        {
+            return $status;
+        }
+        $streamer = new Streamer($this->hostname,'');
+        $streamer_status = $streamer->status();
+
+        if ($streamer_status !== false)
+        {
+            // Streamer is running....
+            $status = Channel::where('service',$streamer_status['service'])->first();
+            if (!$status) {
+                $status = Recording::where('service',str_replace('%20',' ',$streamer_status['service']))->first();//->loadMissing('channel');
+            }
+            $status['encoder'] = $streamer_status['encoder'];
+            $status['online'] = true;
+            $status['type'] = (isset($status->filesize) ? 'recording' : 'channel');
+            $status['running'] = true;
+
+        }
+        return $status;
+    }
+
     public function load_bouquets($all = true)
     {
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => 5.0,
+                            'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        //start_measure('load_bouquets','Dreambox loading bouquets');
+        if (config('app.debug'))
+        {
+            start_measure('load_bouquets','Dreambox loading bouquets');
+        }
         try
         {
             $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
@@ -78,7 +201,10 @@ class Dreambox extends Model
         {
             return false;
         }
-        //stop_measure('load_bouquets');
+        if (config('app.debug'))
+        {
+            stop_measure('load_bouquets');
+        }
 
         if (200 == $response->getStatusCode())
         {
@@ -143,19 +269,28 @@ class Dreambox extends Model
     {
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => 5.0,
+                            'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        //start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
+        if (config('app.debug'))
+        {
+            start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
+        }
         try
         {
-            $response = $client->request('GET', '/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
+            $response = $client->request('GET', '/api/getservices',[
+                         'auth'  => [$this->username, $this->password],
+                         'query' => ['sRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
+            ]);
         }
         catch (Exception $e)
         {
             return false;
         }
-        //stop_measure('load_channels');
+        if (config('app.debug'))
+        {
+            stop_measure('load_channels');
+        }
 
         if (200 == $response->getStatusCode())
         {
@@ -189,7 +324,7 @@ class Dreambox extends Model
                     $seen_channels[] = $channel->service;
                 }
                 // Clean up outdated channels
-                //$this->channels()->whereNotIn(['bouquet' => $bouquet->id, 'service' => $seen_channels])->delete();
+                $this->channels()->where('bouquet',$bouquet->id)->whereNotIn('service', $seen_channels)->delete();
             }
             catch (Exception $e)
             {
@@ -202,19 +337,28 @@ class Dreambox extends Model
     {
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => 5.0,
+                            'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        //start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
+        if (config('app.debug'))
+        {
+            start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
+        }
         try
         {
-            $response = $client->request('GET', '/api/epg' . ('now' == $type ? 'now' : 'next') . '?bRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet',['auth' => [$this->username, $this->password]]);
+            $response = $client->request('GET', '/api/epg' . ('now' == $type ? 'now' : 'next') ,[
+                         'auth'  => [$this->username, $this->password],
+                         'query' => ['bRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
+            ]);
         }
         catch (Exception $e)
         {
             return false;
         }
-        //stop_measure('load_programs');
+        if (config('app.debug'))
+        {
+            stop_measure('load_programs');
+        }
 
         if (200 == $response->getStatusCode())
         {
@@ -256,6 +400,8 @@ class Dreambox extends Model
             if ('now' == $type)
             {
                 $this->load_programs($bouquet,'next');
+                // Delete expired programs
+                DB::table('programs')->where('stop', '<', Carbon::now())->delete();
             }
         }
     }
@@ -264,7 +410,7 @@ class Dreambox extends Model
     {
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => 5.0,
+                            'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
         // Reload the data when less then 50% of epg limit time is left....
@@ -274,16 +420,25 @@ class Dreambox extends Model
             return;
         }
 
-        //start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
+        if (config('app.debug'))
+        {
+            start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
+        }
         try
         {
-            $response = $client->request('GET', '/api/epgservice?sRef=' . $channel->service,['auth' => [$this->username, $this->password]]);
+            $response = $client->request('GET', '/api/epgservice',[
+                         'auth'  => [$this->username, $this->password],
+                         'query' => ['sRef' => $channel->service]
+            ]);
         }
         catch (Exception $e)
         {
             return false;
         }
-        //stop_measure('load_epg');
+        if (config('app.debug'))
+        {
+            stop_measure('load_epg');
+        }
 
         if (200 == $response->getStatusCode())
         {
@@ -354,10 +509,13 @@ class Dreambox extends Model
     {
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => 5.0,
+                            'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        //start_measure('load_recordings','Dreambox loading recordings');
+        if (config('app.debug'))
+        {
+            start_measure('load_recordings','Dreambox loading recordings');
+        }
         try
         {
             $response = $client->request('GET', '/api/movielist',['auth' => [$this->username, $this->password]]);
@@ -366,7 +524,10 @@ class Dreambox extends Model
         {
             return false;
         }
-        //stop_measure('load_recordings');
+        if (config('app.debug'))
+        {
+            stop_measure('load_recordings');
+        }
 
         if (200 == $response->getStatusCode())
         {
@@ -446,20 +607,21 @@ class Dreambox extends Model
 
     public function stream($source)
     {
-        $streamer = new Streamer($this->hostname, $this->port, [$this->username, $this->password]);
-        $streamer->set_dvr($this->dvr_length);
+        $source_url = $this->load_playlist($source);
+        if ($source_url === false)
+        {
+            return false;
+        }
 
-        if ($source instanceof Channel)
+        if (!$this->zap_first($source))
         {
-          $streamer->channel($source);
+            return false;
         }
-        elseif ($source instanceof Recording)
-        {
-            $streamer->recording($source);
-        }
+
+        $streamer = new Streamer($source_url,$source->name);
+        $streamer->set_dvr($this->dvr_length);
         return $streamer->start();
     }
-
 
     public function bouquets()
     {

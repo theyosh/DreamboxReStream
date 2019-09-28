@@ -8,11 +8,11 @@ label.required:after {
 }
 
 a, a:active, a:focus, button, button:focus, button:active, .btn, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn.active.focus {
-  outline: transparent;
-  outline: 0;
+  outline: transparent !important;
+  outline: 0 !important;
 }
 input::-moz-focus-inner {
-  border: 0;
+  border: 0 !important;
 }
 
 a.no-underline:hover {
@@ -41,7 +41,6 @@ div.program-info {
 
 div.program-info p img.picon {
   max-width: 20%;
-  margin-top: -1.3rem;
 }
 
 .modal-body small.hd,

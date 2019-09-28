@@ -30,8 +30,8 @@ function show_epg(channel_id) {
 
   modal.find('.modal-dialog').addClass('modal-xl');
   modal.find('.modal-title').html('Electronic program guide ' + channel.find('h5').html());
-  modal.find('.modal-body img').parent().hide()
-  modal.find('.stream-info').removeClass('col-md-8').html('<h3 class="text-center">Loading EPG data ...</h3>');
+  modal.find('.modal-body img').parent().hide();
+  modal.find('.stream-info').removeClass('col-8').html('<h3 class="text-center">Loading EPG data ...</h3>');
   modal.modal();
 
   $.get('/dreambox/' + dreambox_id + '/channel/' + channel_id + '/epg',function(data){
@@ -39,6 +39,7 @@ function show_epg(channel_id) {
     modal.find('.modal-header .clearfix').hide();
     modal.find('.modal-header img').attr({'src':channel.css('background-image').replace('url("','').replace('")','')}).show();
     modal.find('.stream-info').html(data);
+    modal.find('.stream-info .list-group-item-action:first').addClass('active');
     modal.find('.program-start').each(function(index,value){
         $(value).text(moment(+moment.utc($(value).text())).format('dddd D MMMM @ LT'));
     });
@@ -68,10 +69,10 @@ function generate_player_title_overlay() {
     if (dreambox_player.source && 'channel' == dreambox_player.source.type) {
         title = $('<div/>').html(dreambox_player.source.name).text() + ' - now: ' + $('<div/>').html(dreambox_player.source.currentprogram.name).text() +
         ' (' +  moment.duration(moment(+moment.utc(dreambox_player.source.nextprogram.start)) - moment.now()).humanize()+ ' left). next: ' +
-        $('<div/>').html(dreambox_player.source.nextprogram.name).text()
+        $('<div/>').html(dreambox_player.source.nextprogram.name).text();
     } else if (dreambox_player.source && 'recording' == dreambox_player.source.type) {
-        title = 'Recording: ' + $('<div/>').html(dreambox_player.source.name).text() + ' (duration ' + moment.duration(dreambox_player.source.duration,'seconds').humanize()
-        + ', recored at: ' +  moment(+moment.utc(dreambox_player.source.start)).format('LLLL') +')';
+        title = 'Recording: ' + $('<div/>').html(dreambox_player.source.name).text() + ' (duration ' + moment.duration(dreambox_player.source.duration,'seconds').humanize() +
+        ', recored at: ' +  moment(+moment.utc(dreambox_player.source.start)).format('LLLL') +')';
     }
     return title;
 }
@@ -85,7 +86,7 @@ function stream(id, type) {
   modal.find('.modal-header img').hide();
   modal.find('.modal-header .clearfix').show();
   modal.find('.modal-title').html('Loading...');
-  modal.find('.stream-info').addClass('col-md-8').html('');
+  modal.find('.stream-info').addClass('col-8').html('');
 
   if (source.length >= 1) {
     modal.find('.modal-body img').attr({'src':$(source[0]).css('background-image').replace('url("','').replace('")','')}).parent().show();
@@ -97,6 +98,8 @@ function stream(id, type) {
 
   $('a.list-group-item-action').removeClass('active');
   $.post('/api/dreambox/' + dreambox_id + '/' + type + '/' + id + '/stream',function(data){
+    $('.test-screen').remove();
+
     $(document).scrollTop(0);
     // Open bouquet is needed:
     let bouquet = source.parents('div.card');
@@ -265,13 +268,16 @@ function add_to_epg_refresh_list(timestamp,channel_id)
 
 function load_changelog(url)
 {
-  $('#dreamboxModal img').hide();
-  $('#dreamboxModal .modal-title').html('CHANGELOG');
-  $('#dreamboxModal .modal-body').html('<h3 class="text-center">Loading changelog ...</h3>');
-  $('#dreamboxModal').modal();
+  let modal = $('#dreamboxModal');
+  modal.find('.modal-dialog').addClass('modal-xl');
+  modal.find('.modal-title').html('CHANGELOG');
+  modal.find('.modal-body img').parent().hide();
+  modal.find('.stream-info').removeClass('col-md-8').html('<h3 class="text-center">Loading changelog ...</h3>');
+  modal.modal();
   $.get(url,function(data){
-    $('#dreamboxModal .modal-body').html('<pre>' + data + '</pre>');
+    modal.find('.stream-info').html('<pre>' + data + '</pre>');
   });
+
 }
 
 function start_progress_bar()
@@ -279,7 +285,7 @@ function start_progress_bar()
     if (dreambox_player.source != null && dreambox_player.source.currentprogram != null) {
         let now = moment.utc();
         let past = now - moment(+moment.utc(dreambox_player.source.currentprogram.start));
-        let left = moment(+moment.utc(dreambox_player.source.currentprogram.stop)) - now;
+        //let left = moment(+moment.utc(dreambox_player.source.currentprogram.stop)) - now;
         let duration = dreambox_player.source.currentprogram.duration * 1000;
         $('.progress-bar').css('width', ((past / duration) * 100) + '%');
     } else {

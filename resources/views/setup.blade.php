@@ -94,19 +94,19 @@
         </div>
         <div class="form-group">
           {{Form::label('epg_limit', 'EPG time limit')}}
-          {{Form::number('epg_limit',old('epg_limit',36),['class' => 'form-control', 'placeholder' => 'EPG time limit in hours'])}}
+          {{Form::number('epg_limit',old('epg_limit'),['class' => 'form-control', 'placeholder' => 'EPG time limit in hours'])}}
           <small class="form-text text-danger"></small>
           <small id="epglimitHelp" class="form-text text-muted">Enter the amount of time the EPG should load in hours (default 36).</small>
         </div>
         <div class="form-group">
           {{Form::label('dvr_length', 'DVR length')}}
-          {{Form::number('dvr_length',old('dvr_length',120),['class' => 'form-control', 'placeholder' => 'DVR length time in seconds'])}}
+          {{Form::number('dvr_length',old('dvr_length'),['class' => 'form-control', 'placeholder' => 'DVR length time in seconds'])}}
           <small class="form-text text-danger"></small>
           <small id="dvrlengthHelp" class="form-text text-muted">Enter the amount of DVR window length in seconds (default 120).</small>
         </div>
         <div class="form-group">
           {{Form::label('buffer_time', 'Extra buffer time')}}
-          {{Form::number('buffer_time',old('buffer_time',0),['class' => 'form-control', 'placeholder' => 'Extra buffer time in seconds'])}}
+          {{Form::number('buffer_time',old('buffer_time'),['class' => 'form-control', 'placeholder' => 'Extra buffer time in seconds'])}}
           <small class="form-text text-danger"></small>
           <small id="epglimitHelp" class="form-text text-muted">Enter an extra buffer time in seconds when there are timing issues. (default 0).</small>
         </div>
