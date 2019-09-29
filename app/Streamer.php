@@ -176,6 +176,16 @@ class Streamer
                 // HW VAAPI
                 $cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
             }
+            elseif ('nvidia' == $this->encoder_type)
+            {
+                // NVIDIA
+                $cmd = Streamer::executable . ' -hwaccel cuvid -c:v h264_cuvid -deint 2 -i  ' . $this->source_url;
+            }
+            elseif ('omx' == $this->encoder_type)
+            {
+                // OpenMAX (Raspberry PI)
+                $cmd = Streamer::executable . ' -c:v h264_mmal -i  ' . $this->source_url;
+            }
             //
             //if ($this->language != null)
             //{
@@ -207,6 +217,17 @@ class Streamer
                         $cmd .= ' -vf \'deinterlace_vaapi=rate=field:auto=1,fps=' . $bitrate['framerate'] . ',scale_vaapi=w=' . $bitrate['width'] . ':h=-2:format=nv12\'';
                         //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
                     }
+                    elseif ('nvidia' == $this->encoder_type)
+                    {
+                        // NVIDIA
+                        $cmd .= ' -vf scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
+                        //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
+                    }
+                    elseif ('omx' == $this->encoder_type)
+                    {
+                        // OpenMAX (Raspberry PI)
+                        $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\' -sws_flags lanczos';
+                    }
 
                     // Encoding
                     if ('software' == $this->encoder_type)
@@ -219,6 +240,19 @@ class Streamer
                         // HW VAAPI
                         $cmd .= ' -c:v h264_vaapi -qp 18 -quality 1 -bf 2 -tune film -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
                     }
+
+                    elseif ('nvidia' == $this->encoder_type)
+                    {
+                        // NVIDIA
+                        $cmd .= ' -c:v h264_nvenc -qp 18 -quality 1 -bf 2 -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                    }
+
+                    elseif ('omx' == $this->encoder_type)
+                    {
+                        // OpenMAX (Raspberry PI)
+                        $cmd .= ' -c:v h264_omx -qp 18 -quality 1 -bf 2 -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                    }
+
                     $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2, avc1.64001f",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'];
 
                 }

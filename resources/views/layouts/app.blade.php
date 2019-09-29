@@ -46,14 +46,15 @@
             </div>
           </div>
           <div class="row">
-            <div class="col program-info">
-              <div class="d-flex w-100 align-bottom">
-                <h5 class="mb-1"><span>Channel name</span> <small class="program-now">(duration)</small></h5>
+            <div class="col">
+              <div class="media program-info">
+                <div class="media-body">
+                  <h5 class="mt-0 mb-1"><span>Channel name</span> <small class="program-now">(duration)</small></h5>
+                  <p>Description</p>
+                  <small class="program-next">Next: upcoming</small>
+                </div>
+                <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Program icon" class="picon" >
               </div>
-              <p>
-              <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Dreambox ReStream Logo" class="img-fluid float-right picon" >
-              Description</p>
-              <small class="program-next">Next: upcoming</small>
             </div>
           </div>
         </div>
@@ -247,7 +248,7 @@
               <div class="col-4 text-center">
                 <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Dreambox ReStream Logo" class="img-thumbnail">
               </div>
-              <div class="col-8 stream-info">
+              <div class="col-8 stream-info w-100">
               @section('modal_content')
                 <div class="d-flex w-100 justify-content-between">
                   <h5 class="mb-1">{{$dreambox->name}}</h5>

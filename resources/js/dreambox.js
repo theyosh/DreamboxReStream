@@ -108,7 +108,7 @@ function stream(id, type) {
     }
     source.addClass('active');
     let source_position = source.position();
-    bouquet.find('.card-body').scrollTop(source_position.top - source.height());
+    bouquet.find('.card-body').scrollTop(bouquet.find('.card-body').scrollTop() + (source_position.top - source.height()));
 
     dreambox_player.source = data;
 
@@ -141,11 +141,11 @@ function update_current_program()
 
     program.find('p').html(dreambox_player.source.currentprogram.description);
     program.find('small.program-now').text( '(' + moment.duration(dreambox_player.source.currentprogram.duration,'seconds').humanize() + ')');
-    program.find('small.program-next').html('next: ' + moment(+moment.utc(dreambox_player.source.nextprogram.start)).format('LT') + ' - ' + dreambox_player.source.nextprogram.name);
+    program.find('small.program-next').html('next: ' + moment(+moment.utc(dreambox_player.source.nextprogram.start)).format('LT') + ' - ' + dreambox_player.source.nextprogram.name + ' (' + moment.duration(dreambox_player.source.nextprogram.duration,'seconds').humanize() + ')');
 
     if (dreambox_player.source.picon) {
-      program_image = $('<img>').addClass('img-fluid rounded float-right picon').attr({'src':dreambox_player.source.picon,'alt':dreambox_player.source.name});
-      program.find('p').prepend(program_image);
+      //program_image = $('<img>').addClass('img-fluid rounded float-right picon').attr({'src':dreambox_player.source.picon,'alt':dreambox_player.source.name});
+      program.find('img').attr({'src':dreambox_player.source.picon,'alt':dreambox_player.source.name});
     }
 }
 
@@ -156,11 +156,11 @@ function update_current_recording()
     program.find('h5 span').html(dreambox_player.source.name);
     program.find('p').html(dreambox_player.source.description);
     program.find('small.program-now').text( '(' + moment.duration(dreambox_player.source.duration,'seconds').humanize() + ')');
-    program.find('small.program-next').html('recorded: ' + moment(+moment.utc(dreambox_player.source.start)).format('LLLL') + ', ' +
-    moment.duration(moment(+moment.utc(dreambox_player.source.start))-moment.utc()).humanize(true));
+    program.find('small.program-next').html('recorded: ' + moment(+moment.utc(dreambox_player.source.start)).format('LLLL') + ', ' + moment.duration(moment(+moment.utc(dreambox_player.source.start))-moment.utc()).humanize(true));
     if (dreambox_player.source.channel.picon) {
-      program_image = $('<img>').addClass('img-fluid rounded float-right picon').attr({'src':dreambox_player.source.channel.picon,'alt':dreambox_player.source.channel.name});
-      program.find('p').prepend(program_image);
+      //program_image = $('<img>').addClass('img-fluid rounded float-right picon').attr({'src':dreambox_player.source.channel.picon,'alt':dreambox_player.source.channel.name});
+      //program.find('p').prepend(program_image);
+      program.find('img').attr({'src':dreambox_player.source.picon,'alt':dreambox_player.source.name});
     }
 }
 

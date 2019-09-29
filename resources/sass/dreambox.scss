@@ -3,10 +3,6 @@ label.required:after {
   color:red;
 }
 
-.vjs-default-skin .vjs-big-play-button {
-  display:none;
-}
-
 a, a:active, a:focus, button, button:focus, button:active, .btn, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn.active.focus {
   outline: transparent !important;
   outline: 0 !important;
@@ -27,11 +23,8 @@ a.no-underline:hover {
   cursor: pointer;
 }
 
-.list-group-item,
-div.program-info {
-  background-repeat: no-repeat;
-  background-position: bottom right;
-  background-size: 20% auto;
+.vjs-default-skin .vjs-big-play-button {
+  display:none;
 }
 
 #dreambox-video.video-js,
@@ -39,7 +32,13 @@ div.program-info {
   background-color: transparent;
 }
 
-div.program-info p img.picon {
+.list-group-item {
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 20% auto;
+}
+
+div.media.program-info img {
   max-width: 20%;
 }
 

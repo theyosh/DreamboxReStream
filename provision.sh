@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get -y update && apt-get -y install git nginx php-fpm php-cli php-mbstring php-xml php-sqlite3 ffmpeg ntp
+apt-get -y update && apt-get -y upgrade && apt-get -y install git nginx php-fpm php-cli php-mbstring php-xml php-sqlite3 ffmpeg ntp
 
 usermod -G vagrant -a www-data
 usermod -G www-data -a vagrant

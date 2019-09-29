@@ -272,6 +272,7 @@ class DreamboxAmbilight {
   }
 
   attachPlayer(player) {
+    this.player = player;
     this.video = player.children_[0];
     this.video.parentNode.appendChild(this.left_light_canvas);
     this.video.parentNode.appendChild(this.right_light_canvas);
@@ -281,31 +282,52 @@ class DreamboxAmbilight {
     player.on('pause', (e) => {
         this.stop();
     });
+
+    let vjplayer = player;
+    player.on('fullscreenchange', (e) => {
+
+        console.log('Stop ambilight due to fullscreen',vjplayer.isFullscreen());
+
+        if (vjplayer.isFullscreen()) {
+            console.log('Stop ambilight due to fullscreen');
+            this.stop();
+        } else {
+            console.log('Start ambilight due to fullscreen');
+            this.start();
+        }
+    });
   }
 
   start() {
+    if (this.running) {
+      // Only start once...
+      return;
+    }
     this.running = $('div#ambilightModal.modal.fade.show').length == 1;
     this.fps = 0;
     clearInterval(this.fps_timer);
     let self = this;
     this.fps_timer = setInterval(function(){
-      console.log('Current ambilight fps: ' + self.fps);
-      self.fps = 0;
-    },1000);
+      console.log('Current ambilight fps: ' + self.fps / 60.0);
+      self.fps = 0.0;
+    },60000);
 
     this.last_update = 0;
+    $(this.left_light_canvas).show();
+    $(this.right_light_canvas).show();
     this.ambilightLoop();
   }
 
   stop() {
     this.running = false;
+    $(this.left_light_canvas).hide();
+    $(this.right_light_canvas).hide();
   }
 
     drawLight(side) {
 
       let light_canvas = ('left' == side ? this.left_light_canvas : this.right_light_canvas);
       let light_mask   = ('left' == side ? this.left_light_mask : this.right_light_mask);
-
 
 		/** @type {CanvasRenderingContext2D} */
 		let ctx = light_canvas.getContext('2d');
@@ -387,15 +409,11 @@ class DreamboxAmbilight {
 		let blockWidth = this.options.blockSize;
 		let blockHeight = Math.ceil(h / lamps);
 		let pxl = blockWidth * blockHeight * 4;
-
-//		var result = getArrayFromPool('midcolor');
         let result = [];
 
         try {
             let imgData = this.bufferCtx.getImageData(side == 'right' ? w - blockWidth : 0, 0, blockWidth, h);
             let totalPixels = imgData.data.length;
-//console.log(imgData);
-
             for (let i = 0; i < lamps; i++) {
                 let from = i * w * blockWidth;
                 result[i] = this.calcMidColor(imgData.data, i * pxl, Math.min((i + 1) * pxl, totalPixels - 1));
