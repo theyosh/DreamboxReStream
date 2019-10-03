@@ -10,12 +10,13 @@ use GuzzleHttp;
 class Streamer
 {
     const executable = '/usr/bin/ffmpeg';
+    const ffprobe = '/usr/bin/ffprobe';
 
     const bitrates = [
                         'FullHD' =>  ['name' => 'Full HD',
                                       'video_bitrate' => 3000,
                                       'width' =>  1920,
-                                      'height' => 1280,
+                                      'height' => 1080,
                                       'framerate'=> 25,
                                       'audio_bitrate' => 160,
                                       'h264' => '-profile:v high -level 4.1'],
@@ -30,7 +31,7 @@ class Streamer
 
                         'SD'      => ['name' => 'SD',
                                       'video_bitrate' => 800,
-                                      'width' =>  858,
+                                      'width' =>  854,
                                       'height' => 480,
                                       'framerate'=> 25,
                                       'audio_bitrate' => 112,
@@ -116,11 +117,88 @@ class Streamer
         Storage::put($this->auto_killer_temp_file, $kill_timer_pid);
     }
 
+    private function probe_stream()
+    {
+        if (config('app.debug'))
+        {
+            start_measure('probe_stream','Starting probe');
+        }
+
+        $probe = shell_exec(Streamer::ffprobe . ' -hide_banner -v quiet -print_format json -show_format -show_streams ' . $this->source_url);
+        $probe = json_decode($probe);
+
+        $audio_tracks = array_map('trim',explode(',',$this->language));
+        $track_counter = 0;
+
+        $data = ['video' => 0, 'audio' => 0, 'subtitle' => 0];
+
+        for ($i = 0; $i < 3; $i++)
+        {
+            $track_counter = 0;
+            foreach($probe->streams as $stream)
+            {
+                if (!isset($stream->codec_type))
+                {
+                    continue;
+                }
+
+            //print_r($stream->codec_name);
+            //exit;
+                if ('audio' == $stream->codec_type)
+                {
+                    switch ($i)
+                    {
+                        case 0:
+                            if (isset($stream->tags->language) && in_array($stream->tags->language,$audio_tracks) && in_array($stream->codec_name,$audio_tracks))
+                            {
+                                $data['audio'] = $track_counter;
+                                $i = 99;
+                            }
+
+                            break;
+
+                        case 1:
+                            if (isset($stream->tags->language) && in_array($stream->tags->language,$audio_tracks))
+                            {
+                                $data['audio'] = $track_counter;
+                                $i = 99;
+                            }
+
+                            break;
+
+                        case 2:
+                            if (in_array($stream->codec_name,$audio_tracks))
+                            {
+                                $data['audio'] = $track_counter;
+                                $i = 99;
+                            }
+
+                            break;
+                    }
+                    $track_counter++;
+                }
+            }
+
+        }
+
+
+
+
+
+        if (config('app.debug'))
+        {
+            stop_measure('probe_stream');
+        }
+
+        return $data;
+
+    }
+
     public function status($autokiller = true)
     {
         $status = ['source' => null, 'service' => null, 'encoder' => null];
         $process_data = trim(shell_exec("ps ax | grep ffmpeg | grep -v grep"));
-        $re = '/^(?P<pid>\d+).*ffmpeg (?P<encoder>vaapi)?-i (?P<source>http:\/\/[^ ]+(:\d+)?\/(file\?file=)?(?P<service>[^ ]+))/m';
+        $re = '/^(?P<pid>\d+).*ffmpeg(-nvidia)? (?P<encoder>vaapi|cuvid)?.*-i (?P<source>http:\/\/[^ ]+(:\d+)?\/(file\?file=)?(?P<service>[^ ]+))/m';
         preg_match_all($re, $process_data, $matches, PREG_SET_ORDER);
         if ($matches && stripos($this->source_url,$matches[0]['source']) == 0)
         {
@@ -159,6 +237,15 @@ class Streamer
                 return false;
             }
 
+            //$audio_map = 0;
+            $stream_map = ['video' => 0, 'audio' => 0, 'subtitle' => 0];
+            if ($this->language != null)
+            {
+                $stream_map = $this->probe_stream();
+                //print_r($stream_map);
+                //exit;
+            }
+
             if (config('app.debug'))
             {
                 start_measure('start_stream','Starting transcoding');
@@ -170,16 +257,20 @@ class Streamer
             if ('software' == $this->encoder_type)
             {
                 $cmd = Streamer::executable . ' -i ' . $this->source_url;
+                //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
             }
             elseif ('vaapi' == $this->encoder_type)
             {
                 // HW VAAPI
                 $cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
+
+                //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -i ' . $this->source_url;
             }
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = Streamer::executable . ' -hwaccel cuvid -c:v h264_cuvid -deint 2 -i  ' . $this->source_url;
+                //$cmd = Streamer::executable . ' -hwaccel cuvid -c:v h264_cuvid -deint 2 -i  ' . $this->source_url;
+                $cmd = '/opt/webdata/restream.theyosh.nl/ffmpeg-nvidia -vsync 0 -hwaccel cuvid -c:v h264_cuvid -deint 2 -re -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
@@ -204,7 +295,7 @@ class Streamer
                 if (isset($bitrate['video_bitrate']))
                 {
                     // Video
-                    $cmd .= ' -map 0:v';
+                    $cmd .= ' -map 0:v:' . $stream_map['video'];
 
                     // Scale resolution
                     if ('software' == $this->encoder_type)
@@ -220,13 +311,13 @@ class Streamer
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -vf scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
+                        $cmd .= ' -vf fps=' . $bitrate['framerate'] . ',scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
                         //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
                     }
                     elseif ('omx' == $this->encoder_type)
                     {
                         // OpenMAX (Raspberry PI)
-                        $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\' -sws_flags lanczos';
+                        $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\'';
                     }
 
                     // Encoding
@@ -244,13 +335,13 @@ class Streamer
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -c:v h264_nvenc -qp 18 -quality 1 -bf 2 -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset fast ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc-lookahead 20';// . ' -r ' . $bitrate['framerate'];
                     }
 
                     elseif ('omx' == $this->encoder_type)
                     {
                         // OpenMAX (Raspberry PI)
-                        $cmd .= ' -c:v h264_omx -qp 18 -quality 1 -bf 2 -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                        $cmd .= ' -c:v h264_omx -bf 2 -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
                     }
 
                     $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2, avc1.64001f",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'];
@@ -261,18 +352,8 @@ class Streamer
                     // Audio only track
                     $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2",BANDWIDTH=' . round( $bitrate['audio_bitrate'] * 1024);
                 }
-
-                if ($this->language != null)
-                {
-                    $cmd .= ' -map 0:a:language:' . $this->language . '?';
-                }
-                else
-                {
-                    $cmd .= ' -map 0:a:0?';
-                }
-
                 // Audio
-                $cmd .= ' -c:a aac -ac 51 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
+                $cmd .= '  -map 0:a:' . $stream_map['audio'] . ' -c:a aac -ac 2 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
 
                 // HLS Output
                 $cmd .= ' -f hls -strftime 1 -use_localtime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');
@@ -299,7 +380,15 @@ class Streamer
                 sleep(1);
             }
             // Write main playlist
-            Storage::put('public/stream/'.Str::slug($this->source_name, '_') . '.m3u8', implode("\n",$main_playlist));
+            if (count($this->enabled_profiles) == 1)
+            {
+                symlink(Str::slug($this->source_name . '_' . $this->enabled_profiles[0], '_') . '.m3u8',
+                        storage_path('app/public/stream/'.Str::slug($this->source_name, '_') . '.m3u8'));
+            }
+            else
+            {
+                Storage::put('public/stream/'.Str::slug($this->source_name, '_') . '.m3u8', implode("\n",$main_playlist));
+            }
             $current_status = $this->status(false);
             if (config('app.debug'))
             {
