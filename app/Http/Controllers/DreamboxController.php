@@ -43,7 +43,7 @@ class DreamboxController extends Controller
 
     public function load(Dreambox $dreambox)
     {
-        $dreambox->load_data();
+        $dreambox->load_bouquets();
         return $dreambox->loadMissing('bouquets.channels');
     }
 

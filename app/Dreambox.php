@@ -79,7 +79,6 @@ class Dreambox extends Model
             }
             elseif ($source instanceof Recording)
             {
-                // http://hd51.theyosh.lan/web/ts.m3u?file=/recordings/20180216%202057%20-%20HISTORY%20HD%20-%20American%20Pickers.ts
                 $response = $client->request('GET', '/web/ts.m3u',[
                              'auth'  => [$this->username, $this->password],
                              'query' => ['file' =>  str_replace(' ','%20',$source->service)]
@@ -105,18 +104,6 @@ class Dreambox extends Model
             }
         }
         return false;
-    }
-
-    public function load_data()
-    {
-        if ($this->updated_at->diffInHours(Carbon::now()) >= $this->epg_limit)
-        {
-            $this->bouquets()->delete();
-            $this->channels()->delete();
-            $this->touch();
-        }
-        // Load all other bouquets
-        $this->load_bouquets();
     }
 
     public function is_online()
@@ -342,6 +329,7 @@ class Dreambox extends Model
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
+
 
         if (config('app.debug'))
         {
@@ -620,7 +608,7 @@ class Dreambox extends Model
         {
             return false;
         }
-        
+
         $streamer = new Streamer($source_url,$source->name);
         if ($this->audio_language)
         {
