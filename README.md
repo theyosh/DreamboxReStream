@@ -19,22 +19,25 @@ Dreambox ReStream requires a webserver with PHP enabled. And FFMPEG for transcod
 ## Vagrant installation
 If you have Vagrant installed already, then you can skip the installation below by using the vagrant file that is provided with this software. Just run
 ```sh
+git clone https://github.com/theyosh/DreamboxReStream.git
+cd DreamboxReStream
 vagrant up
 ```
 and everything will be installed and configured.
 
-## Install the dependencies
+## Manual installation
+### Install the dependencies
 ```sh
 sudo apt install git nginx php-fpm php-cli php-mbstring php-xml ffmpeg
 ```
-## Install PHP Composer
+### Install PHP Composer
 Install php composer according to the website: https://getcomposer.org/download/
 
-## Install Dreambox ReStream
+### Install Dreambox ReStream
 ```sh
 git clone https://github.com/theyosh/DreamboxReStream.git
 cd DreamboxReStream
-php composer.phar install
+php composer.phar install --no-dev
 touch database/restream.sqlite
 cp .env.example .env
 sed -i -e 's@APP_NAME=.*@APP_NAME=DreamboxReStream@g' .env
@@ -45,7 +48,7 @@ php artisan key:generate
 php artisan migrate
 php artisan storage:link
 ```
-## Configure NGINX
+### Configure NGINX
 ```sh
 cp nginx.conf.example nginx.conf
 sed -i -e 's@root .*@root '`pwd`'/public;@g' nginx.conf
@@ -56,7 +59,7 @@ sudo service nginx reload
 ```
 
 # Setup
-When the installation is finished, go with a browser to your configured domain. This will load a setup screen when you can enter the needed information to connect to your TV encoder.
+When the installation is finished, go with a browser to your configured domain. This will load a setup screen where you can enter the needed information to connect to your TV encoder. It is pretty straight forward.
 
 The amount of 'Streaming profiles' thant can be used is depending on the CPU power. So start with 1 or 2 profiles, and when that works well, you can later add more profiles until your CPU gets loaded to much.
 
