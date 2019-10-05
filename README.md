@@ -19,6 +19,8 @@ Dreambox ReStream requires a webserver with PHP enabled. And FFMPEG for transcod
 ## Vagrant installation
 If you have Vagrant installed already, then you can skip the installation below by using the vagrant file that is provided with this software. Just run
 ```sh
+git clone https://github.com/theyosh/DreamboxReStream.git
+cd DreamboxReStream
 vagrant up
 ```
 and everything will be installed and configured.
@@ -34,7 +36,7 @@ Install php composer according to the website: https://getcomposer.org/download/
 ```sh
 git clone https://github.com/theyosh/DreamboxReStream.git
 cd DreamboxReStream
-php composer.phar install
+php composer.phar install --no-dev
 touch database/restream.sqlite
 cp .env.example .env
 sed -i -e 's@APP_NAME=.*@APP_NAME=DreamboxReStream@g' .env
