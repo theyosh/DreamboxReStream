@@ -16,6 +16,13 @@ Dreambox ReStream is a [Laravel PHP framework](https://laravel.com/) application
 # Installation
 Dreambox ReStream requires a webserver with PHP enabled. And FFMPEG for transcoding. This software is tested with NGINX on an Ubuntu server. To get it working smoothly a decent upstream connection (minimal 512 Kbps) is needed. And ofcourse an Enigma2 enabled TV Decoder is needed. Best known are the Dreamboxes.
 
+## Vagrant installation
+If you have Vagrant installed already, then you can skip the installation below by using the vagrant file that is provided with this software. Just run
+```sh
+vagrant up
+```
+and everything will be installed and configured.
+
 ## Install the dependencies
 ```sh
 sudo apt install git nginx php-fpm php-cli php-mbstring php-xml ffmpeg
