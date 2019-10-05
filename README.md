@@ -8,6 +8,7 @@ Dreambox ReStream is a [Laravel PHP framework](https://laravel.com/) application
 - Stream any recording to your mobile
 - Electronic program guide
 - [Ambilight effect](https://en.wikipedia.org/wiki/Bias_lighting)
+- Hardware enabled transcoding (VAAPI, NVIDIA)
 
 # Translations
 - English
@@ -15,7 +16,7 @@ Dreambox ReStream is a [Laravel PHP framework](https://laravel.com/) application
 # Installation
 Dreambox ReStream requires a webserver with PHP enabled. And FFMPEG for transcoding. This software is tested with NGINX on an Ubuntu server. To get it working smoothly a decent upstream connection (minimal 512 Kbps) is needed. And ofcourse an Enigma2 enabled TV Decoder is needed. Best known are the Dreamboxes.
 
-## Install the dependencies.
+## Install the dependencies
 ```sh
 sudo apt install git nginx php-fpm php-cli php-mbstring php-xml ffmpeg
 ```
@@ -46,3 +47,9 @@ sudo ln -s `pwd`/nginx.conf /etc/nginx/sites-enabled/dreambox_restream.conf
 sudo nginx -t
 sudo service nginx reload
 ```
+
+# Setup
+When the installation is finished, go with a browser to your configured domain. This will load a setup screen when you can enter the needed information to connect to your TV encoder.
+
+The amount of 'Streaming profiles' thant can be used is depending on the CPU power. So start with 1 or 2 profiles, and when that works well, you can later add more profiles until your CPU gets loaded to much.
+
