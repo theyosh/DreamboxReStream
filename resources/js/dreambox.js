@@ -38,7 +38,7 @@ function show_epg(channel_id) {
 
     modal.find('.modal-header .clearfix').hide();
     modal.find('.modal-header img').attr({'src':channel.css('background-image').replace('url("','').replace('")','')}).show();
-    modal.find('.stream-info').html(data);
+    modal.find('.stream-info').html(Autolinker.link(data));
     modal.find('.stream-info .list-group-item-action:first').addClass('active');
     modal.find('.program-start').each(function(index,value){
         $(value).text(moment(+moment.utc($(value).text())).format('dddd D MMMM @ LT'));
@@ -139,7 +139,7 @@ function update_current_program()
     let program = $('div.program-info');
     program.find('h5 span').html(dreambox_player.source.currentprogram.name);
 
-    program.find('p').html(dreambox_player.source.currentprogram.description);
+    program.find('p').html(Autolinker.link(dreambox_player.source.currentprogram.description));
     program.find('small.program-now').text( '(' + moment.duration(dreambox_player.source.currentprogram.duration,'seconds').humanize() + ')');
     program.find('small.program-next').html('next: ' + moment(+moment.utc(dreambox_player.source.nextprogram.start)).format('LT') + ' - ' + dreambox_player.source.nextprogram.name + ' (' + moment.duration(dreambox_player.source.nextprogram.duration,'seconds').humanize() + ')');
 
@@ -275,7 +275,7 @@ function load_changelog(url)
   modal.find('.stream-info').removeClass('col-md-8').html('<h3 class="text-center">Loading changelog ...</h3>');
   modal.modal();
   $.get(url,function(data){
-    modal.find('.stream-info').html('<pre>' + data + '</pre>');
+    modal.find('.stream-info').html('<pre>' + Autolinker.link(data) + '</pre>');
   });
 
 }

@@ -1,6 +1,15 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2019
 
+version 3.0.0 (05-10-2019)
+ * Fully rewritten application in Laravel PHP Framework (https://laravel.com/)
+ * Changed player to latest VideoJS player version 7.6.5 (https://videojs.com/)
+ * Dropped support for Enigma 1 devices :(
+ * Switched from VLC to FFMPEG ()https://ffmpeg.org/
+ * Support for hardware encoding (VAAPI, NVIDIA, OMX(RPI))
+ * Fully responsive and mobile friendly
+ * Added Vagrant support for running it in a virtual image on Virtual box (https://www.vagrantup.com/downloads.html)
+
 version 2.4.9 (14-04-2019)
  * Fixed SD source aspect ratio.
  * Updated jQuery to version 3.4.0 (https://jquery.com/)

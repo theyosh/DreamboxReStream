@@ -274,6 +274,7 @@
 
     @stack('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/nprogress.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/autolinker.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
     @yield('javascript')
 
