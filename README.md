@@ -56,7 +56,7 @@ sudo service nginx reload
 ```
 
 # Setup
-When the installation is finished, go with a browser to your configured domain. This will load a setup screen when you can enter the needed information to connect to your TV encoder.
+When the installation is finished, go with a browser to your configured domain. This will load a setup screen where you can enter the needed information to connect to your TV encoder. It is pretty straight forward.
 
 The amount of 'Streaming profiles' thant can be used is depending on the CPU power. So start with 1 or 2 profiles, and when that works well, you can later add more profiles until your CPU gets loaded to much.
 
