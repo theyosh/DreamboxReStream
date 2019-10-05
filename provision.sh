@@ -30,7 +30,7 @@ RESULT=$?
 rm composer-setup.php
 #exit $RESULT
 
-su -c 'php composer.phar install' vagrant
+su -c 'php composer.phar install --no-dev' vagrant
 su -c 'touch database/restream.sqlite' vagrant
 su -c 'cp .env.example .env' vagrant
 

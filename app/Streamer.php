@@ -181,10 +181,6 @@ class Streamer
 
         }
 
-
-
-
-
         if (config('app.debug'))
         {
             stop_measure('probe_stream');
@@ -256,13 +252,13 @@ class Streamer
 
             if ('software' == $this->encoder_type)
             {
-                $cmd = Streamer::executable . ' -i ' . $this->source_url;
+                $cmd = Streamer::executable . ' -hide_banner -i ' . $this->source_url;
                 //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
             }
             elseif ('vaapi' == $this->encoder_type)
             {
                 // HW VAAPI
-                $cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
+                $cmd = Streamer::executable . ' -hide_banner -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
 
                 //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -i ' . $this->source_url;
             }
@@ -270,7 +266,7 @@ class Streamer
             {
                 // NVIDIA
                 //$cmd = Streamer::executable . ' -hwaccel cuvid -c:v h264_cuvid -deint 2 -i  ' . $this->source_url;
-                $cmd = '/opt/webdata/restream.theyosh.nl/ffmpeg-nvidia -vsync 0 -hwaccel cuvid -c:v h264_cuvid -deint 2 -re -i ' . $this->source_url;
+                $cmd = '/opt/webdata/restream.theyosh.nl/ffmpeg-nvidia -hide_banner -vsync 0 -hwaccel cuvid -c:v h264_cuvid -deint 2 -re -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
@@ -363,6 +359,7 @@ class Streamer
             }
 
             // Delete old/previous files
+            Storage::makeDirectory('public/stream/');
             Storage::delete(Storage::allFiles('public/stream/'));
             // Execute on background....
             $process = Dreambox::execute($cmd,storage_path('app/ffmpeg_log'));
