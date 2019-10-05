@@ -25,14 +25,15 @@ vagrant up
 ```
 and everything will be installed and configured.
 
-## Install the dependencies
+## Manual installation
+### Install the dependencies
 ```sh
 sudo apt install git nginx php-fpm php-cli php-mbstring php-xml ffmpeg
 ```
-## Install PHP Composer
+### Install PHP Composer
 Install php composer according to the website: https://getcomposer.org/download/
 
-## Install Dreambox ReStream
+### Install Dreambox ReStream
 ```sh
 git clone https://github.com/theyosh/DreamboxReStream.git
 cd DreamboxReStream
@@ -47,7 +48,7 @@ php artisan key:generate
 php artisan migrate
 php artisan storage:link
 ```
-## Configure NGINX
+### Configure NGINX
 ```sh
 cp nginx.conf.example nginx.conf
 sed -i -e 's@root .*@root '`pwd`'/public;@g' nginx.conf
