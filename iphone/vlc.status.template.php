@@ -1,1 +1,0 @@
-<a href="#" data-role="button" data-icon="check" data-iconpos="notext" class="ui-btn-left ui-icon-alt EncoderIcon" onclick="DreamboxObj.toggleEncoderStatus()">Check</a>

@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+Use App\Dreambox;
+Use App\Channel;
+Use App\Streamer;
+Use App\Recording;
+
+class DreamboxController extends Controller
+{
+    //
+    public function index()
+    {
+        $dreambox = Dreambox::first();
+        if ($dreambox)
+        {
+            return view('index',['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
+        }
+        else
+        {
+            return redirect()->route('new_dreambox');
+        }
+    }
+
+    public function new_dreambox()
+    {
+        $dreambox = new Dreambox();
+        return $this->setup($dreambox);
+    }
+
+    public function setup(Dreambox $dreambox)
+    {
+        return view('setup', ['dreambox' => $dreambox, 'profiles' => Streamer::profiles()]);
+    }
+
+    public function show(Dreambox $dreambox)
+    {
+        $dreambox->load_bouquets(false);
+        return view('dreambox', ['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
+    }
+
+    public function load(Dreambox $dreambox)
+    {
+        $dreambox->load_bouquets();
+        return $dreambox->loadMissing('bouquets.channels');
+    }
+
+    public function epg(Dreambox $dreambox,Channel $channel)
+    {
+        $dreambox->load_epg($channel);
+        return $channel->loadMissing('programs');
+    }
+
+    public function recordings(Dreambox $dreambox) {
+        $dreambox->load_recordings();
+        return $dreambox->recordings->loadMissing('channel');
+    }
+
+    public function show_epg(Dreambox $dreambox,Channel $channel)
+    {
+        $dreambox->load_epg($channel);
+        return view('epg', ['channel' => $channel]);
+
+    }
+
+    public function stream(Dreambox $dreambox,Channel $channel)
+    {
+        $channel['stream'] = $dreambox->stream($channel);
+        $channel['type'] = 'channel';
+        return $channel;
+    }
+
+    public function stream_recording(Dreambox $dreambox,Recording $recording)
+    {
+        $recording->loadMissing('channel');
+        $recording['stream'] = $dreambox->stream($recording);
+        $recording['type'] = 'recording';
+        return $recording;
+    }
+
+    public function status(Dreambox $dreambox)
+    {
+        return $dreambox->status();
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|unique:dreamboxes|max:255',
+            'hostname' => 'required|max:255',
+            'port' => 'required|integer|min:0',
+            'multiple_tuners' => 'required|boolean',
+            'buffer_time' => 'required|integer|min:0',
+            'epg_limit' => 'integer|min:0|max:72',
+            'dvr_length' => 'integer|min:0|max:900',
+        ]);
+
+        $dreambox = Dreambox::create($request->all());
+        return ['message' => 'Dreambox is created. Will reload now...','url' => route('show_dreambox',['dreambox' => $dreambox->id])];
+    }
+
+    public function update(Request $request, Dreambox $dreambox)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'hostname' => 'required|max:255',
+            'port' => 'required|integer|min:0',
+            'multiple_tuners' => 'required|boolean',
+            'buffer_time' => 'required|integer|min:0',
+            'epg_limit' => 'integer|min:0|max:72',
+            'dvr_length' => 'integer|min:0|max:900',
+        ]);
+        $dreambox->update($request->all());
+        return ['message' => 'Dreambox is updated. Will reload now...','url' => route('show_dreambox',['dreambox' => $dreambox->id])];
+    }
+
+    public function delete(Dreambox $dreambox)
+    {
+        $dreambox->delete();
+
+        return response()->json(null, 204);
+    }
+}

@@ -1,0 +1,87 @@
+label.required:after {
+  content:" *";
+  color:red;
+}
+
+a, a:active, a:focus, button, button:focus, button:active, .btn, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn.active.focus {
+  outline: transparent !important;
+  outline: 0 !important;
+}
+input::-moz-focus-inner {
+  border: 0 !important;
+}
+
+a.no-underline:hover {
+  text-decoration: none;
+}
+
+.card-body {
+  overflow-y:scroll;
+}
+
+.accordion .card-header {
+  cursor: pointer;
+}
+
+.vjs-default-skin .vjs-big-play-button {
+  display:none;
+}
+
+#dreambox-video.video-js,
+#dreambox-video .vjs-poster{
+  background-color: transparent;
+}
+
+.list-group-item {
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 20% auto;
+}
+
+div.media.program-info img {
+  max-width: 20%;
+}
+
+.modal-body small.hd,
+.modal-body small.epg {
+  display:none;
+}
+
+.program-meta {
+  height: 0px;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 0.5rem;
+  z-index: 999;
+}
+
+.program-meta button,
+.program-meta small {
+  margin-top: 0.8rem;
+  margin-right: 0.2rem;
+}
+
+#dreamboxModal .modal-header img {
+  height: 1.8rem;
+  margin-right: 0.2rem;
+}
+.test-screen {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  position: absolute;
+  top: 10%;
+  left: 15%;
+  width: 55%;
+  height: 70%;
+}
+
+.test-screen p {
+  font-size: 3em;
+  text-align: center;
+  margin-top: 30%;
+  text-shadow:
+  -1px -1px 0 #000,
+  1px -1px 0 #000,
+  -1px 1px 0 #000,
+  1px 1px 0 #000;
+}
