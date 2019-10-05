@@ -24,7 +24,6 @@
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
-    "anchorme": "^1.1.2",
     "autolinker": "^3.11.0",
     "moment": "^2.24.0",
     "nprogress": "^0.2.0",
