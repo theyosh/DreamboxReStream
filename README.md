@@ -13,28 +13,36 @@ Dreambox ReStream is a [Laravel PHP framework](https://laravel.com/) application
 - English
 
 # Installation
-Dreambox ReStream requires a webserver with PHP enabled. And FFMPEG for transcoding. This software is tested with NGINX on an Ubuntu server. To get it working smoothly a decent upstream connection (minimal 512 Kbps) is needed. And ofcourse an Enigma2 enabled TV Decoder is needed. Best know are the Dreamboxes.
+Dreambox ReStream requires a webserver with PHP enabled. And FFMPEG for transcoding. This software is tested with NGINX on an Ubuntu server. To get it working smoothly a decent upstream connection (minimal 512 Kbps) is needed. And ofcourse an Enigma2 enabled TV Decoder is needed. Best known are the Dreamboxes.
 
 ## Install the dependencies.
 ```sh
-$ sudo apt install git nginx php-fpm php-cli php-mbstring php-xml ffmpeg
+sudo apt install git nginx php-fpm php-cli php-mbstring php-xml ffmpeg
 ```
 ## Install PHP Composer
 Install php composer according to the website: https://getcomposer.org/download/
 
 ## Install Dreambox ReStream
 ```sh
-$ git clone https://github.com/theyosh/DreamboxReStream.git
-$ cd DreamboxReStream
-$ php composer.phar install
-$ touch database/restream.sqlite
-$ cp .env.example .env
-$ sed -i -e 's/APP_NAME=.*/APP_NAME=DreamboxReStream/g' .env
-$ sed -i -e 's/APP_DEBUG=.*/APP_DEBUG=false/g' .env
-$ sed -i -e 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/g' .env
-$ sed -i -e 's/DB_DATABASE=.*/DB_DATABASE=\/home\/vagrant\/dreamboxrestream\/database\/restream\.sqlite/g' .env
-$ php artisan key:generate
-$ php artisan migrate
-$ php artisan storage:link
+git clone https://github.com/theyosh/DreamboxReStream.git
+cd DreamboxReStream
+php composer.phar install
+touch database/restream.sqlite
+cp .env.example .env
+sed -i -e 's@APP_NAME=.*@APP_NAME=DreamboxReStream@g' .env
+sed -i -e 's@APP_DEBUG=.*@APP_DEBUG=false@g' .env
+sed -i -e 's@DB_CONNECTION=.*@DB_CONNECTION=sqlite@g' .env
+sed -i -e 's@DB_DATABASE=.*@DB_DATABASE='`pwd`'/database/restream\.sqlite@g' .env
+php artisan key:generate
+php artisan migrate
+php artisan storage:link
 ```
 ## Configure NGINX
+```sh
+cp nginx.conf.example nginx.conf
+sed -i -e 's@root .*@root '`pwd`'/public;@g' nginx.conf
+sed -i -e 's@server_name .*@server_name [YOUR_DOMAIN_NAME];@g' .env
+sudo ln -s `pwd`/nginx.conf /etc/nginx/sites-enabled/dreambox_restream.conf
+sudo nginx -t
+sudo service nginx reload
+```
