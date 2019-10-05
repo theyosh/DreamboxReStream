@@ -6,7 +6,7 @@ server {
          access_log /var/log/nginx/dreambox_restream-access.log;
          error_log /var/log/nginx/dreambox_restream-error.log;
 
-         # Webroot /home/vagrant/dreamboxrestream/public;
+         # Webroot Directory for Laravel project
          root /home/vagrant/dreamboxrestream/public;
          index index.php index.html index.htm;
 
