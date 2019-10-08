@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 use GuzzleHttp;
+use GuzzleHttp\Exception\ConnectException;
 
 class Dreambox extends Model
 {
@@ -20,6 +21,7 @@ class Dreambox extends Model
 
     private $guzzle_http_timeout = 5;
     private $status = null;
+    private $online = false;
 
     private function zap_first($source)
     {
@@ -120,8 +122,9 @@ class Dreambox extends Model
         try
         {
             $response = $client->request('GET', '/api/about',['auth' => [$this->username, $this->password]]);
+            $this->online = true;
         }
-        catch (Exception $e)
+        catch (ConnectException $e)
         {
             $this->status = null;
             return false;
@@ -174,6 +177,10 @@ class Dreambox extends Model
 
     public function load_bouquets($all = true)
     {
+        if (!$this->online)
+        {
+            return false;
+        }
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
@@ -257,6 +264,11 @@ class Dreambox extends Model
 
     public function load_channels(Bouquet $bouquet)
     {
+        if (!$this->online)
+        {
+            return false;
+        }
+
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
@@ -325,6 +337,11 @@ class Dreambox extends Model
 
     public function load_programs(Bouquet $bouquet, $type = 'now')
     {
+        if (!$this->online)
+        {
+            return false;
+        }
+
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
@@ -399,6 +416,11 @@ class Dreambox extends Model
 
     public function load_epg(Channel $channel)
     {
+        if (!$this->online)
+        {
+            return false;
+        }
+
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
@@ -498,6 +520,11 @@ class Dreambox extends Model
 
     public function load_recordings()
     {
+        if (!$this->online)
+        {
+            return false;
+        }
+
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,

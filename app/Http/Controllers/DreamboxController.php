@@ -37,36 +37,42 @@ class DreamboxController extends Controller
 
     public function show(Dreambox $dreambox)
     {
+        $dreambox->is_online();
         $dreambox->load_bouquets(false);
         return view('dreambox', ['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
     }
 
     public function load(Dreambox $dreambox)
     {
+        $dreambox->is_online();
         $dreambox->load_bouquets();
         return $dreambox->loadMissing('bouquets.channels');
     }
 
     public function epg(Dreambox $dreambox,Channel $channel)
     {
+        $dreambox->is_online();
         $dreambox->load_epg($channel);
         return $channel->loadMissing('programs');
     }
 
-    public function recordings(Dreambox $dreambox) {
+    public function recordings(Dreambox $dreambox)
+    {
+        $dreambox->is_online();
         $dreambox->load_recordings();
         return $dreambox->recordings->loadMissing('channel');
     }
 
     public function show_epg(Dreambox $dreambox,Channel $channel)
     {
+        $dreambox->is_online();
         $dreambox->load_epg($channel);
         return view('epg', ['channel' => $channel]);
-
     }
 
     public function stream(Dreambox $dreambox,Channel $channel)
     {
+        $dreambox->is_online();
         $channel['stream'] = $dreambox->stream($channel);
         $channel['type'] = 'channel';
         return $channel;
@@ -74,6 +80,7 @@ class DreamboxController extends Controller
 
     public function stream_recording(Dreambox $dreambox,Recording $recording)
     {
+        $dreambox->is_online();
         $recording->loadMissing('channel');
         $recording['stream'] = $dreambox->stream($recording);
         $recording['type'] = 'recording';
@@ -82,6 +89,7 @@ class DreamboxController extends Controller
 
     public function status(Dreambox $dreambox)
     {
+        $dreambox->is_online();
         return $dreambox->status();
     }
 
