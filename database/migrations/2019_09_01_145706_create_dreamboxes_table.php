@@ -35,7 +35,7 @@ class CreateDreamboxesTable extends Migration
             $table->string('transcoding_profiles',50)->nullable();
             $table->string('interface_language',5)->default('en');
 
-            $table->text('exclude_bouquets')->default('');
+            $table->text('exclude_bouquets')->nullable();
 
             $table->timestamps();
         });
