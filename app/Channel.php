@@ -50,7 +50,7 @@ class Channel extends Model
 
     public function programs()
     {
-        return $this->hasMany('App\Program')->where('stop','>',Carbon::now());
+        return $this->hasMany('App\Program')->where('stop','>',Carbon::now())->orderBy('start');
     }
 
     public function recordings()
