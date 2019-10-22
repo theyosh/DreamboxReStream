@@ -427,12 +427,13 @@ class Dreambox extends Model
                         ]);
 
         // Reload the data when less then 50% of epg limit time is left....
+/*
         $last_program = $channel->programs()->orderBy('start', 'desc')->first();
         if ($last_program != null && Carbon::now()->floatDiffInHours(Carbon::parse($last_program['stop'])) > ($this->epg_limit / 2.0))
         {
             return;
         }
-
+*/
         if (config('app.debug'))
         {
             start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
