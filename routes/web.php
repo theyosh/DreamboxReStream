@@ -10,7 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', 'DreamboxController@index')->name('index_dreambox');
+Route::get('', 'DreamboxController@index')->name('index_dreambox');
 Route::get('dreambox/{dreambox}','DreamboxController@show')->where('dreambox', '[0-9]+')->name('show_dreambox');
 
 
