@@ -326,7 +326,9 @@ class Dreambox extends Model
                     $seen_channels[] = $channel->service;
                 }
                 // Clean up outdated channels
-                $this->channels()->where('bouquet',$bouquet->id)->whereNotIn('service', $seen_channels)->delete();
+                // Can only delete channels that have outdated bouquets... needs to figure this out....
+
+                //$this->channels()->whereNotIn('bouquet', $this->bouquets()->pluck('id'))->delete();
             }
             catch (Exception $e)
             {

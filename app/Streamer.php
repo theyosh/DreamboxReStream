@@ -19,7 +19,7 @@ class Streamer
                                       'height' => 1080,
                                       'framerate'=> 25,
                                       'audio_bitrate' => 160,
-                                      'h264' => '-profile:v high -level 4.1'],
+                                      'h264' => '-profile:v high -level 4.1 -pixel_format nv12'],
 
                         'HDReady' => ['name' => 'HD Ready',
                                       'video_bitrate' => 1500,
@@ -27,7 +27,7 @@ class Streamer
                                       'height' => 720,
                                       'framerate'=> 25,
                                       'audio_bitrate' => 128,
-                                      'h264' => '-profile:v high -level 4.0'],
+                                      'h264' => '-profile:v high -level 4.0 -pixel_format nv12'],
 
                         'SD'      => ['name' => 'SD',
                                       'video_bitrate' => 800,
@@ -35,7 +35,7 @@ class Streamer
                                       'height' => 480,
                                       'framerate'=> 25,
                                       'audio_bitrate' => 112,
-                                      'h264' => '-profile:v main -level 3.1'],
+                                      'h264' => '-profile:v main -level 3.1 -pixel_format nv12'],
 
                         'Mobile'  => ['name' => 'Mobile',
                                       'video_bitrate' => 512,
@@ -43,7 +43,7 @@ class Streamer
                                       'height' => 360,
                                       'framerate'=> 20,
                                       'audio_bitrate' => 96,
-                                      'h264' => '-profile:v baseline -level 3.1'],
+                                      'h264' => '-profile:v baseline -level 3.1 -pixel_format nv12'],
 
                         'Audio'   => ['name' => 'Audio Only',
                                       'audio_bitrate' => 96]];
@@ -265,7 +265,6 @@ class Streamer
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                //$cmd = Streamer::executable . ' -hwaccel cuvid -c:v h264_cuvid -deint 2 -i  ' . $this->source_url;
                 $cmd = '/opt/webdata/restream.theyosh.nl/ffmpeg-nvidia -hide_banner -vsync 0 -hwaccel cuvid -c:v h264_cuvid -deint 2 -re -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
@@ -279,10 +278,16 @@ class Streamer
             //    $cmd .= ' -map 0:m:language:' . $this->language . '?';
             //}
 
+            $bitrate_counter = 0;
             foreach (Streamer::bitrates as $bitrate_name => $bitrate)
             {
 
                // dd()
+                if ($bitrate_counter >= 2 && 'nvidia' == $this->encoder_type)
+                {
+                    $this->encoder_type = 'software';
+                }
+
 
                 if (!in_array($bitrate_name,$this->enabled_profiles))
                 {
@@ -331,7 +336,7 @@ class Streamer
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset fast ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc-lookahead 20';// . ' -r ' . $bitrate['framerate'];
+                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset fast ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc vbr_hq -rc-lookahead 32';// . ' -r ' . $bitrate['framerate'];
                     }
 
                     elseif ('omx' == $this->encoder_type)
@@ -356,6 +361,8 @@ class Streamer
 
                 // Main playlist info
                 $main_playlist[] = Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8';
+
+                $bitrate_counter++;
             }
 
             // Delete old/previous files
