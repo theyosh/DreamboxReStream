@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 0
   git_absorb: git-local
-  prerelease: 13-g8ca9a90
+  prerelease: 18-g754c52c
   buildmetadata: ''
-  commit: 8ca9a9
+  commit: 754c52
   timestamp:
     year: 2019
     month: 10
-    day: 22
-    hour: 20
-    minute: 46
-    second: 24
+    day: 31
+    hour: 21
+    minute: 25
+    second: 2
     timezone: UTC
 commit:
   mode: git-local
