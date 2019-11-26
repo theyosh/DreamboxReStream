@@ -12,6 +12,8 @@ class Channel extends Model
 
     protected $appends = array('currentprogram','nextprogram','is_hd');
 
+    protected $touches = ['dreambox'];
+
     private $now_next;
 
     // Caching function to get the data only once from the database...

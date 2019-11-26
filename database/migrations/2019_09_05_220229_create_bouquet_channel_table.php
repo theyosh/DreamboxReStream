@@ -27,6 +27,8 @@ class CreateBouquetChannelTable extends Migration
             $table->foreign('channel_id')
                   ->references('id')->on('channels')
                   ->onDelete('cascade');
+
+            $table->unique(['bouquet_id', 'channel_id']);
         });
     }
 

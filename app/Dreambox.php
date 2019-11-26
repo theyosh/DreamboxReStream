@@ -181,79 +181,90 @@ class Dreambox extends Model
         {
             return false;
         }
-        $client = new GuzzleHttp\Client([
-                            'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
-                            'timeout'  => $this->guzzle_http_timeout,
-                        ]);
 
-        if (config('app.debug'))
-        {
-            start_measure('load_bouquets','Dreambox loading bouquets');
-        }
-        try
-        {
-            $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
-        }
-        catch (Exception $e)
-        {
-            return false;
-        }
-        if (config('app.debug'))
-        {
-            stop_measure('load_bouquets');
-        }
+        $update = false;
 
-        if (200 == $response->getStatusCode())
-        {
+        // For now we only load the dreambox once a day. Programm data is loaded normal.
+        if (Carbon::now()->floatDiffInHours(Carbon::parse($this->updated_at)) > 24) {
+            $update = true;
+            $client = new GuzzleHttp\Client([
+                                'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
+                                'timeout'  => $this->guzzle_http_timeout,
+                            ]);
+
+            if (config('app.debug'))
+            {
+                start_measure('load_bouquets','Dreambox loading bouquets');
+            }
             try
             {
-                $data = json_decode($response->getBody()->getContents());
-                $existing_bouquets = [];
-                foreach($this->bouquets()->get() as $bouquet)
-                {
-                    $existing_bouquets[$bouquet->service] = $bouquet;
-                }
-                $position = 0;
-                $seen_bouqets = [];
-                $exclude_bouquets = array_map('trim',explode(',',strtolower($this->exclude_bouquets)));
-
-                foreach($data->services as $bouquet_data)
-                {
-                    preg_match('/\\"(?P<bouquet>.*)\\"/', $bouquet_data->servicereference, $matches);
-                    if ($matches)
-                    {
-                        if (in_array(strtolower(trim($bouquet_data->servicename)),$exclude_bouquets))
-                        {
-                            continue;
-                        }
-
-                        if (array_key_exists($matches['bouquet'],$existing_bouquets))
-                        {
-                            $bouquet = $existing_bouquets[$matches['bouquet']];
-                        }
-                        else
-                        {
-                            $bouquet = new Bouquet(['name'     => $bouquet_data->servicename,
-                                                    'service'  => $matches['bouquet'],
-                                                    'position' => $position++]);
-
-                            $this->bouquets()->save($bouquet);
-                        }
-                        $seen_bouqets[] = $bouquet->service;
-                    }
-                }
+                $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
             }
             catch (Exception $e)
             {
-                print_r($e);
+                return false;
             }
-            // Clean up outdated bouquets
-            $this->bouquets()->whereNotIn('service',$seen_bouqets)->delete();
+            if (config('app.debug'))
+            {
+                stop_measure('load_bouquets');
+            }
+
+            if (200 == $response->getStatusCode())
+            {
+                try
+                {
+                    $data = json_decode($response->getBody()->getContents());
+                    $existing_bouquets = [];
+                    foreach($this->bouquets()->get() as $bouquet)
+                    {
+                        $existing_bouquets[$bouquet->service] = $bouquet;
+                    }
+                    $position = 0;
+                    $seen_bouqets = [];
+                    $exclude_bouquets = array_map('trim',explode(',',strtolower($this->exclude_bouquets)));
+
+                    foreach($data->services as $bouquet_data)
+                    {
+                        preg_match('/\\"(?P<bouquet>.*)\\"/', $bouquet_data->servicereference, $matches);
+                        if ($matches)
+                        {
+                            if (in_array(strtolower(trim($bouquet_data->servicename)),$exclude_bouquets))
+                            {
+                                continue;
+                            }
+
+                            if (array_key_exists($matches['bouquet'],$existing_bouquets))
+                            {
+                                $bouquet = $existing_bouquets[$matches['bouquet']];
+                            }
+                            else
+                            {
+                                $bouquet = new Bouquet(['name'     => $bouquet_data->servicename,
+                                                        'service'  => $matches['bouquet'],
+                                                        'position' => $position++]);
+
+                                $this->bouquets()->save($bouquet);
+                            }
+                            $seen_bouqets[] = $bouquet->id;
+                        }
+                    }
+                }
+                catch (Exception $e)
+                {
+                    print_r($e);
+                }
+                // Clean up outdated bouquets
+                $this->bouquets()->whereNotIn('id',$seen_bouqets)->delete();
+            }
+            $this->touch();
         }
 
         foreach($this->bouquets as $bouquet)
         {
-            $this->load_channels($bouquet);
+            if ($update)
+            {
+                $this->load_channels($bouquet);
+            }
             $this->load_programs($bouquet);
             if (!$all)
             {
@@ -320,15 +331,13 @@ class Dreambox extends Model
                                                 'service'  => $channel_data->servicereference]);
 
                         $this->channels()->save($channel);
-                        $bouquet->channels()->attach($channel,['position' => $position++]);
-
                     }
-                    $seen_channels[] = $channel->service;
+                    $bouquet->channels()->syncWithoutDetaching([$channel->id => ['position' => $position++]]);
+                    $seen_channels[] = $channel->id;
                 }
-                // Clean up outdated channels
-                // Can only delete channels that have outdated bouquets... needs to figure this out....
+                // Clean up outdated/non existing channels
+                //$bouquet->channels()->detach($seen_channels);
 
-                //$this->channels()->whereNotIn('bouquet', $this->bouquets()->pluck('id'))->delete();
             }
             catch (Exception $e)
             {

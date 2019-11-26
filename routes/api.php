@@ -28,10 +28,15 @@ use Illuminate\Http\Request;
     Route::post('dreambox/{dreambox}/channel/{channel}/stream','DreamboxController@stream')->where('dreambox', '[0-9]+')->where('channel', '[0-9]+')->name('stream_channel');
     Route::post('dreambox/{dreambox}/recording/{recording}/stream','DreamboxController@stream_recording')->where('dreambox', '[0-9]+')->where('recording', '[0-9]+')->name('stream_recording');
 
-
     //Route::get('dreambox/{dreambox}/setup','DreamboxController@store');
 
-    Route::post('dreambox','DreamboxController@store');
+    //Route::post('dreambox','DreamboxController@store');
+
+
+    Route::put('dreambox/{dreambox}','DreamboxController@update')->name('update.dreambox');
+    Route::post('dreambox','DreamboxController@store')->name('new.dreambox');
+
+
 
    // Route::put('dreambox/{dreambox}','DreamboxController@update')->name('update.dreambox');
 //});

@@ -301,6 +301,7 @@ class Streamer
                     // Scale resolution
                     if ('software' == $this->encoder_type)
                     {
+                        // Add yadif for deinterlacing
                         $cmd .= ' -vf \'fps=' . $bitrate['framerate'] . ',scale=' . $bitrate['width'] . ':-2,format=yuv420p\' -sws_flags lanczos';
                     }
                     elseif ('vaapi' == $this->encoder_type)
