@@ -622,7 +622,8 @@ class Dreambox extends Model
         $this->recordings()->whereNotIn('service',$seen_recordings)->delete();
     }
 
-    static public function execute($pCommand,$pLogLocation = '',$pWait = false) {
+    static public function execute($pCommand,$pLogLocation = '',$pWait = false)
+    {
 		if (($pCommand = trim($pCommand)) == "") return false;
 		if ($pLogLocation == '') {
 			$pCommand .= ' >/dev/null 1>/dev/null 2>/dev/null';
@@ -662,6 +663,16 @@ class Dreambox extends Model
         $streamer->set_profiles($this->transcoding_profiles);
         $streamer->set_dvr($this->dvr_length);
         return $streamer->start();
+    }
+
+    public function stop()
+    {
+        $status = $this->status();
+        if ($status['online'])
+        {
+            $streamer = new Streamer($this->hostname,'');
+            $streamer_status = $streamer->stop();
+        }
     }
 
     public function bouquets()

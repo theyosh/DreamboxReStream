@@ -85,3 +85,13 @@ div.media.program-info img {
   -1px 1px 0 #000,
   1px 1px 0 #000;
 }
+
+.vjs-button.vjs-icon-cancel {
+    display: none;
+}
+.vjs-button.vjs-icon-cancel.online{
+    display:block;
+}
+.vjs-button.vjs-icon-cancel.online::before {
+    color: #00bc8c;
+}

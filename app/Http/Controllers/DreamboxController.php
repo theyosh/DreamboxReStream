@@ -70,6 +70,11 @@ class DreamboxController extends Controller
         return view('epg', ['channel' => $channel]);
     }
 
+    public function stop(Dreambox $dreambox)
+    {
+        $dreambox->stop();
+    }
+
     public function stream(Dreambox $dreambox,Channel $channel)
     {
         $dreambox->is_online();

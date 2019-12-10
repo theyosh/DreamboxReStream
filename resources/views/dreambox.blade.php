@@ -73,6 +73,7 @@ function start_dreambox() {
   $.getJSON('{{ route('status_dreambox', ['dreambox' => $dreambox->id])}}', function( data ) {
     if (data.id !== undefined) {
       stream(data.id,data.type);
+      $('.vjs-button.vjs-icon-cancel').addClass('online');
     }
 
     setTimeout(function(){
@@ -87,11 +88,13 @@ function start_dreambox() {
       if (!data.online) {
         $('#offline_message').show();
       } else if (data.running) {
+        $('.vjs-button.vjs-icon-cancel').addClass('online');
         if (dreambox_player.source.currentprogram != null && (dreambox_player.source.currentprogram.name != data.currentprogram.name || dreambox_player.source.currentprogram.start != data.currentprogram.start)) {
           dreambox_player.source = data;
           update_current_source();
         }
       } else {
+        $('.vjs-button.vjs-icon-cancel').removeClass('online');
         dreambox_player.source = null;
       }
     });
@@ -161,6 +164,27 @@ function init_video_player() {
 
   dreambox_player.qualityLevels();
   dreambox_player.httpSourceSelector();
+
+  var button = videojs.getComponent('Button');
+  var closeButton = videojs.extend(button, {
+    constructor: function() {
+      button.apply(this, arguments);
+      this.controlText("Stop streamer");
+      this.addClass("vjs-icon-cancel");
+    },
+    handleClick: function() {
+      // Call to stop the streamer....
+      dreambox_player.pause();
+      this.removeClass("online");
+      $.post('{{ route('stop_streaming', ['dreambox' => $dreambox->id])}}',function(data){
+        console.log(data);
+      });
+
+    }
+  });
+  videojs.registerComponent('closeButton', closeButton);
+  dreambox_player.getChild('controlBar').addChild('closeButton', {});
+
 }
 
 function load_other_bouquets() {
