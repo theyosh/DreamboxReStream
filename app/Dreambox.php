@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 use GuzzleHttp;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ClientException;
 
 class Dreambox extends Model
 {
@@ -125,6 +126,11 @@ class Dreambox extends Model
             $this->online = true;
         }
         catch (ConnectException $e)
+        {
+            $this->status = null;
+            return false;
+        }
+        catch (ClientException $e)
         {
             $this->status = null;
             return false;

@@ -18,7 +18,7 @@
           <h3>@yield('title') <small class="text-muted">@version</small></h3>
           <div class="alert alert-danger" id="offline_message" role="alert" style="display:none">
             <h4 class="alert-heading">Offline!</h4>
-            <div>Your dreambox is offline. Please check your network connections.</div>
+            <div>Your dreambox is offline. Please check your network connections or <a href="/dreambox/{{$dreambox->id}}/setup" title="Click to enter the setup page">setup</a>.</div>
           </div>
         </div>
       </div>
