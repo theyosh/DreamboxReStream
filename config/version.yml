@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 0
   git_absorb: git-local
-  prerelease: 27-gbdc3d16
+  prerelease: 36-ge01722c
   buildmetadata: ''
-  commit: bdc3d1
+  commit: e01722
   timestamp:
-    year: 2019
-    month: 12
-    day: 10
-    hour: 21
-    minute: 39
-    second: 20
+    year: 2020
+    month: 4
+    day: 1
+    hour: 19
+    minute: 5
+    second: 31
     timezone: UTC
 commit:
   mode: git-local
