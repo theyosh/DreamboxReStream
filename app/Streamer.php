@@ -50,7 +50,7 @@ class Streamer
 
     private $auto_killer_temp_file = '.autoKiller';
 
-    private $buffer_time = 3;
+    private $buffer_time = 10;
     private $chunktime = 2;
     private $dvrlength = 300;
     private $encoder_type = 'software';
@@ -326,18 +326,18 @@ class Streamer
                     if ('software' == $this->encoder_type)
                     {
                         // -x264-params idrint=10,bframes=16,b-adapt=1,ref=3,qpmax=51,qpmin=10,me=hex,merange=16,subq=5,subme=7,qcomp=0.6,aud,keyint=10,nocabac
-                        $cmd .= ' -c:v libx264 -x264-params "nal-hrd=cbr" -movflags +faststart -tune film -preset fast ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate'] . ' -g ' . ($bitrate['framerate']*2);
+                        $cmd .= ' -c:v libx264 -x264-params nal-hrd=cbr,min-keyint=' . (2 * $bitrate['framerate']) . ',keyint=' . (2 * $bitrate['framerate']) . ',no-scenecut -movflags +faststart -tune film -preset medium ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate'] . ' -g ' . ($bitrate['framerate']*2);
                     }
                     elseif ('vaapi' == $this->encoder_type)
                     {
                         // HW VAAPI
-                        $cmd .= ' -c:v h264_vaapi -qp 18 -quality 1 -bf 2 -tune film -preset fast -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
+                        $cmd .= ' -c:v h264_vaapi -qp 18 -quality 1 -bf 2 -tune film -preset medium -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
                     }
 
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset fast ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc vbr_hq -rc-lookahead 32';// . ' -r ' . $bitrate['framerate'];
+                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset medium ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc vbr_hq -rc-lookahead 32';// . ' -r ' . $bitrate['framerate'];
                     }
 
                     elseif ('omx' == $this->encoder_type)
