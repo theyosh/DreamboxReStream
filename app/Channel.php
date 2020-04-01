@@ -3,7 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
+
+use GuzzleHttp;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ClientException;
 
 class Channel extends Model
 {
@@ -11,8 +18,6 @@ class Channel extends Model
     protected $fillable = ['name', 'service', 'position', 'picon'];
 
     protected $appends = array('currentprogram','nextprogram','is_hd');
-
-    protected $touches = ['dreambox'];
 
     private $now_next;
 
@@ -48,6 +53,43 @@ class Channel extends Model
     public function getIsHdAttribute()
     {
         return strpos($this->service, '1:0:19:') === 0;
+    }
+
+    public function loadIcon($dreambox)
+    {
+        $client = new GuzzleHttp\Client([
+                            'base_uri' => 'http://' . $dreambox->hostname . ':' . $dreambox->port,
+                            'timeout'  => $dreambox->guzzle_http_timeout,
+                        ]);
+
+        $picon_file = Str::slug($this->name,'_') . '.png';
+
+        if (!Storage::exists('public/icon/' . $picon_file))
+        {
+            //start_measure('load_epg_icon','Dreambox downloading picon channel ' . $channel->name);
+            try
+            {
+                $pico_response = $client->request('GET', '/picon/' . str_replace(':','_',trim($this->service,':')) . '.png' ,[
+                         'auth'  => [$dreambox->username, $dreambox->password]
+                    ]);
+            }
+            catch (ClientException $e)
+            {
+                return false;
+            }
+            //stop_measure('load_epg_icon');
+            if (200 == $pico_response->getStatusCode())
+            {
+                Storage::put('public/icon/' . $picon_file, $pico_response->getBody());
+                $this->picon = Storage::url('icon/' . $picon_file);
+                $this->save();
+            }
+        }
+        else
+        {
+            $this->picon = Storage::url('icon/' . $picon_file);
+            $this->save();
+        }
     }
 
     public function programs()

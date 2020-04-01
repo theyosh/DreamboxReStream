@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -44,13 +46,16 @@ class Dreambox extends Model
         }
         try
         {
+            $start = microtime(true);
             $response = $client->request('GET', '/api/zap',[
                          'auth'  => [$this->username, $this->password],
                          'query' => ['sRef' => $source->service]
             ]);
+            Log::debug('zap_first(): Got data from url \'/api/zap\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (Exception $e)
         {
+            Log::exception('zap_first(): Exception zapping: ' . $e);
             $this->status = null;
             return false;
         }
@@ -111,6 +116,13 @@ class Dreambox extends Model
 
     public function is_online()
     {
+        $cache_key = 'http://' . $this->hostname . ':' . $this->port;
+        if (Cache::get($cache_key)) {
+            Log::debug('Return online due to caching...');
+            $this->online = true;
+            return True;
+        }
+
         $client = new GuzzleHttp\Client([
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
@@ -122,8 +134,10 @@ class Dreambox extends Model
         }
         try
         {
+            $start = microtime(true);
             $response = $client->request('GET', '/api/about',['auth' => [$this->username, $this->password]]);
             $this->online = true;
+            Log::debug('is_online(): Got data from url \'/api/about\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (ConnectException $e)
         {
@@ -152,6 +166,7 @@ class Dreambox extends Model
                 print_r($e);
             }
         }
+        Cache::put($cache_key, true, 60);
         return true;
     }
 
@@ -204,7 +219,9 @@ class Dreambox extends Model
             }
             try
             {
+                $start = microtime(true);
                 $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
+                Log::debug('load_bouquets(): Got data from url \'/api/getservices\' in ' . (microtime(true) - $start) . ' seconds');
             }
             catch (Exception $e)
             {
@@ -221,20 +238,23 @@ class Dreambox extends Model
                 {
                     $data = json_decode($response->getBody()->getContents());
                     $existing_bouquets = [];
+                    $start = microtime(true);
                     foreach($this->bouquets()->get() as $bouquet)
                     {
                         $existing_bouquets[$bouquet->service] = $bouquet;
                     }
+                    Log::debug('load_bouquets(): Loaded ' . sizeof($existing_bouquets) . ' known bouquets in ' . (microtime(true) - $start) . ' seconds');
                     $position = 0;
                     $seen_bouqets = [];
-                    $exclude_bouquets = array_map('trim',explode(',',strtolower($this->exclude_bouquets)));
+                    // Create a single regex line for matching excluding bouquets
+                    $exclude_bouquets = '/' . implode('|',array_map('trim',explode(',',strtolower($this->exclude_bouquets)))) . '/';
 
                     foreach($data->services as $bouquet_data)
                     {
                         preg_match('/\\"(?P<bouquet>.*)\\"/', $bouquet_data->servicereference, $matches);
                         if ($matches)
                         {
-                            if (in_array(strtolower(trim($bouquet_data->servicename)),$exclude_bouquets))
+                            if (preg_match($exclude_bouquets,strtolower(trim($bouquet_data->servicename))) == 1)
                             {
                                 continue;
                             }
@@ -297,10 +317,13 @@ class Dreambox extends Model
         }
         try
         {
+            Log::debug('load_channels(): Start....');
+            $start = microtime(true);
             $response = $client->request('GET', '/api/getservices',[
                          'auth'  => [$this->username, $this->password],
                          'query' => ['sRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
             ]);
+            Log::debug('load_channels(): Got bouquet ' . $bouquet->name . ' data from url \'/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (Exception $e)
         {
@@ -317,12 +340,15 @@ class Dreambox extends Model
             {
                 $data = json_decode($response->getBody()->getContents());
                 $existing_channels = [];
+                $start = microtime(true);
                 foreach($this->channels()->get() as $channel)
                 {
                     $existing_channels[$channel->service] = $channel;
                 }
+                Log::debug('load_channels(): Loaded ' . sizeof($existing_channels) . ' known channels in ' . (microtime(true) - $start) . ' seconds');
                 $position = 0;
                 $seen_channels = [];
+                $start = microtime(true);
                 foreach($data->services as $channel_data)
                 {
                     if ($channel_data->program <= 0 || '' == $channel_data->servicename) continue;
@@ -333,17 +359,24 @@ class Dreambox extends Model
                     }
                     else
                     {
-                        $channel = new Channel(['name'     => $channel_data->servicename,
-                                                'service'  => $channel_data->servicereference]);
+                        $start_1 = microtime(true);
+                        $channel = new Channel(['name'    => $channel_data->servicename,
+                                                'service' => $channel_data->servicereference]);
 
                         $this->channels()->save($channel);
+                        Log::debug('load_channels(): Saved ' . $channel_data->servicename . ' channel in ' . (microtime(true) - $start_1) . ' seconds');
                     }
+                    $start_2 = microtime(true);
                     $bouquet->channels()->syncWithoutDetaching([$channel->id => ['position' => $position++]]);
+                    Log::debug('load_channels(): Saved ' . $channel_data->servicename . ' channel order in ' . (microtime(true) - $start_2) . ' seconds');
+                    $channel->loadIcon($this);
                     $seen_channels[] = $channel->id;
                 }
                 // Clean up outdated/non existing channels
-                //$bouquet->channels()->detach($seen_channels);
-
+               $this->channels()->whereNotIn('id' ,function($query){
+                    $query->select('channel_id')->from('bouquet_channel');
+                })->delete();
+                Log::debug('load_channels(): Loaded new ' . sizeof($seen_channels) . ' channels, total channels ' . $this->channels()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
             }
             catch (Exception $e)
             {
@@ -371,10 +404,12 @@ class Dreambox extends Model
         }
         try
         {
+            $start = microtime(true);
             $response = $client->request('GET', '/api/epg' . ('now' == $type ? 'now' : 'next') ,[
                          'auth'  => [$this->username, $this->password],
                          'query' => ['bRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
             ]);
+            Log::debug('load_programs(): Got bouquet ' . $bouquet->name . ' data from url \'/api/epg' . ('now' == $type ? 'now' : 'next') . '?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (Exception $e)
         {
@@ -444,23 +479,25 @@ class Dreambox extends Model
                         ]);
 
         // Reload the data when less then 50% of epg limit time is left....
-/*
+
         $last_program = $channel->programs()->orderBy('start', 'desc')->first();
         if ($last_program != null && Carbon::now()->floatDiffInHours(Carbon::parse($last_program['stop'])) > ($this->epg_limit / 2.0))
         {
             return;
         }
-*/
+
         if (config('app.debug'))
         {
             start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
         }
         try
         {
+            $start = microtime(true);
             $response = $client->request('GET', '/api/epgservice',[
                          'auth'  => [$this->username, $this->password],
                          'query' => ['sRef' => $channel->service]
             ]);
+            Log::debug('load_epg(): Got program data ' . $channel->name . ' data from url \'/api/epgservice?sRef=' . $channel->service . '\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (Exception $e)
         {
@@ -508,31 +545,12 @@ class Dreambox extends Model
 
                         $channel->programs()->save($program);
                     }
-
-                    $picon_file = Str::slug($channel->name,'_') . '.png';
-                    if (!Storage::exists('public/icon/' . $picon_file)) {
-                        //start_measure('load_epg_icon','Dreambox downloading picon channel ' . $channel->name);
-                        $pico_response = $client->request('GET', $program_data->picon);
-                        //stop_measure('load_epg_icon');
-                        if (200 == $pico_response->getStatusCode())
-                        {
-                          Storage::put('public/icon/' . $picon_file, $pico_response->getBody());
-                          $channel->picon = Storage::url('icon/' . $picon_file);
-                          $channel->save();
-                        }
-                    }
-                    else
-                    {
-                        $channel->picon = Storage::url('icon/' . $picon_file);
-                        $channel->save();
-                    }
                 }
             }
             catch (Exception $e)
             {
                 print_r($e);
             }
-
         }
     }
 
