@@ -184,7 +184,6 @@ function init_video_player() {
   });
   videojs.registerComponent('closeButton', closeButton);
   dreambox_player.getChild('controlBar').addChild('closeButton', {});
-
 }
 
 function load_other_bouquets() {
