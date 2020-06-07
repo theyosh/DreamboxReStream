@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "3c3353f9f05bb63ccb0646d8f552ed6e",
@@ -625,16 +625,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v6.18.16",
+            "version": "v6.18.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "73f18a6bc58fb91aa83925161db25aa3674b73e9"
+                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/73f18a6bc58fb91aa83925161db25aa3674b73e9",
-                "reference": "73f18a6bc58fb91aa83925161db25aa3674b73e9",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
+                "reference": "9e5226ecc28f960cba1bd38b6d1d82a52e072dc3",
                 "shasum": ""
             },
             "require": {
@@ -645,7 +645,7 @@
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "league/commonmark": "^1.3",
-                "league/flysystem": "^1.0.8",
+                "league/flysystem": "^1.0.34",
                 "monolog/monolog": "^1.12|^2.0",
                 "nesbot/carbon": "^2.0",
                 "opis/closure": "^3.1",
@@ -768,7 +768,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-05-26T14:31:44+00:00"
+            "time": "2020-06-02T22:32:07+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1215,16 +1215,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.4.0",
+            "version": "v4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120"
+                "reference": "53c2753d756f5adb586dca79c2ec0e2654dd9463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/53c2753d756f5adb586dca79c2ec0e2654dd9463",
+                "reference": "53c2753d756f5adb586dca79c2ec0e2654dd9463",
                 "shasum": ""
             },
             "require": {
@@ -1263,20 +1263,20 @@
                 "parser",
                 "php"
             ],
-            "time": "2020-04-10T16:34:50+00:00"
+            "time": "2020-06-03T07:24:19+00:00"
         },
         {
             "name": "opis/closure",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opis/closure.git",
-                "reference": "cac47092144043d5d676e2e7cf8d0d2f83fc89ca"
+                "reference": "1d0deef692f66dae5d70663caee2867d0971306b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opis/closure/zipball/cac47092144043d5d676e2e7cf8d0d2f83fc89ca",
-                "reference": "cac47092144043d5d676e2e7cf8d0d2f83fc89ca",
+                "url": "https://api.github.com/repos/opis/closure/zipball/1d0deef692f66dae5d70663caee2867d0971306b",
+                "reference": "1d0deef692f66dae5d70663caee2867d0971306b",
                 "shasum": ""
             },
             "require": {
@@ -1324,7 +1324,7 @@
                 "serialization",
                 "serialize"
             ],
-            "time": "2020-05-25T09:32:45+00:00"
+            "time": "2020-06-07T11:41:29+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -4235,30 +4235,33 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "f69bbde7d7a75d6b2862d9ca8fab1cd28014b4be"
+                "reference": "6c6a7c533469873deacf998237e7649fc6b36223"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/f69bbde7d7a75d6b2862d9ca8fab1cd28014b4be",
-                "reference": "f69bbde7d7a75d6b2862d9ca8fab1cd28014b4be",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/6c6a7c533469873deacf998237e7649fc6b36223",
+                "reference": "6c6a7c533469873deacf998237e7649fc6b36223",
                 "shasum": ""
             },
             "require": {
                 "hamcrest/hamcrest-php": "~2.0",
                 "lib-pcre": ">=7.0",
-                "php": ">=5.6.0"
+                "php": "^7.3.0"
+            },
+            "conflict": {
+                "phpunit/phpunit": "<8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~5.7.10|~6.5|~7.0|~8.0"
+                "phpunit/phpunit": "^8.0.0 || ^9.0.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.3.x-dev"
+                    "dev-master": "1.4.x-dev"
                 }
             },
             "autoload": {
@@ -4296,7 +4299,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2019-12-26T09:49:15+00:00"
+            "time": "2020-05-19T14:25:16+00:00"
         },
         {
             "name": "myclabs/deep-copy",
