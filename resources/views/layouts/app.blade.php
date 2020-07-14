@@ -28,7 +28,7 @@
           <div class="row">
             <div class="col" id="mainplayer">
               <div class="embed-responsive embed-responsive-16by9 rounded">
-                <div class="test-screen" style="background-image:url('{{ URL::asset('images/test_screen.gif') }}');"><p>Pick a channel -></p></div>
+                <div class="test-screen" style="background-image:url('{{ URL::asset('images/test_screen.gif') }}');"><p>{{ __('Pick a channel') }}-></p></div>
                 <video id='dreambox-video' class='embed-responsive-item video-js vjs-default-skin' controls preload='auto' width='100%' height='100%' poster='{{ URL::asset('images/old_tv.png') }}'>
                   <p class='vjs-no-js'>
                     To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -49,8 +49,8 @@
             <div class="col">
               <div class="media program-info">
                 <div class="media-body">
-                  <h5 class="mt-0 mb-1"><span>Channel name</span> <small class="program-now">(duration)</small></h5>
-                  <p>Description</p>
+                  <h5 class="mt-0 mb-1"><span>{{ __('Channel name') }}</span> <small class="program-now">({{ __('duration') }})</small></h5>
+                  <p>{{ __('Description') }}</p>
                   <small class="program-next">Next: upcoming</small>
                 </div>
                 <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Program icon" class="picon" >
@@ -65,7 +65,7 @@
               <div class="card-header" id="heading_recordings" data-toggle="collapse" data-target="#collapse_bouquets" aria-expanded="true" aria-controls="collapse_bouquets">
                 <div class="d-flex w-100 align-items-center justify-content-between">
                   <h4 class="mb-0">
-                     <a href="#" class="no-underline">Bouquets</a>
+                     <a href="#" class="no-underline">{{ __('Bouquets') }}</a>
                   </h4>
                   <span class="badge badge-primary float-right">0</span>
                 </div>
@@ -96,7 +96,7 @@
                   @foreach ($bouquet->channels as $channel)
                     <span class="program-meta">
                       <button class="btn badge badge-warning epg" data-channel="{{ $channel->id }}">
-                        <small>EPG ({{$channel->programs_count}})</small>
+                        <small>{{ __('EPG') }} ({{$channel->programs_count}})</small>
                       </button>
                       @if ($channel->is_hd)
                       <small class="badge badge-dark hd">HD</small>
@@ -106,8 +106,8 @@
                       <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{$channel->name}}</h5>
                       </div>
-                      <p class="mb-1 program-now">now: @if ($channel->currentprogram) <span>{{ $channel->currentprogram['start']}}</span> - {!! $channel->currentprogram['name'] !!}@endif</p>
-                      <small class="program-next">next: @if ($channel->nextprogram) <span>{{$channel->nextprogram['start']}}</span> - {!! $channel->nextprogram['name'] !!}@endif</small>
+                      <p class="mb-1 program-now">{{ __('now') }}: @if ($channel->currentprogram) <span>{{ $channel->currentprogram['start']}}</span> - {!! $channel->currentprogram['name'] !!}@endif</p>
+                      <small class="program-next">{{ __('next') }}: @if ($channel->nextprogram) <span>{{$channel->nextprogram['start']}}</span> - {!! $channel->nextprogram['name'] !!}@endif</small>
                     </a>
                   @endforeach
                   </div>
@@ -119,7 +119,7 @@
             <div class="card-header" id="heading_recordings" data-toggle="collapse" data-target="#collapse_recordings" aria-expanded="true" aria-controls="collapse_recordings">
               <div class="d-flex w-100 align-items-center justify-content-between">
                 <h4 class="mb-0">
-                   <a href="#" class="no-underline">Recordings</a>
+                   <a href="#" class="no-underline">{{ __('Recordings') }}</a>
                 </h4>
                 <span class="badge badge-primary float-right">{{$dreambox->recordings_count}}</span>
               </div>
@@ -137,8 +137,8 @@
                       <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{$recording->name}}</h5>
                       </div>
-                      <p class="mb-1 program-now">recorded: <span>{{ $recording->start}}</span></p>
-                      <small class="program-next">duration: <span>{{ $recording->duration}}</span></small>
+                      <p class="mb-1 program-now">{{ __('recorded') }}: <span>{{ $recording->start}}</span></p>
+                      <small class="program-next">{{ __('duration') }}: <span>{{ $recording->duration}}</span></small>
                     </a>
                   @endforeach
                 </div>
@@ -149,7 +149,7 @@
             <div class="card-header" id="heading_search" data-toggle="collapse" data-target="#collapse_search" aria-expanded="true" aria-controls="collapse_search">
               <div class="d-flex w-100 align-items-center justify-content-between">
                 <h4 class="mb-0 primary" >
-                  <a href="#" class="no-underline">Search</a>
+                  <a href="#" class="no-underline">{{ __('Search') }}</a>
                 </h4>
                 <span class="badge badge-primary float-right">0</span>
               </div>
@@ -159,9 +159,9 @@
                   <div class="list-group">
                     <div class="list-group-item">
                       <form class="form">
-                        <label class="sr-only" for="search">Search</label>
-                        <input type="text" class="form-control" id="search" placeholder="Start typing to search ...">
-                        <small id="searchHelp" class="form-text text-muted">Start typing to search ... (min 3 characters)</small>
+                        <label class="sr-only" for="search">{{ __('Search') }}</label>
+                        <input type="text" class="form-control" id="search" placeholder="{{ __('Start typing to search ...') }}">
+                        <small id="searchHelp" class="form-text text-muted">{{ __('Start typing to search ... (min 3 characters)') }}</small>
                       </form>
                     </div>
                   </div>
@@ -172,7 +172,7 @@
               <div class="card-header" id="heading_about" data-toggle="collapse" data-target="#collapse_about" aria-expanded="true" aria-controls="collapse_about">
                 <div class="d-flex w-100 align-items-center justify-content-between">
                   <h4 class="mb-0 primary" >
-                    <a href="#" class="no-underline">About</a>
+                    <a href="#" class="no-underline">{{ __('About') }}</a>
                   </h4>
                 </div>
               </div>
@@ -231,14 +231,14 @@
 
             <div class="clearfix">
               <div class="spinner-border float-left mr-2" role="status">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">{{ __('Loading...') }}</span>
               </div>
             </div>
             <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Dreambox ReStream Logo" class="img-thumbnail" style="display:none">
 
 
 
-            <h5 class="modal-title" id="dreamboxModalTitle">Loading...</h5>
+            <h5 class="modal-title" id="dreamboxModalTitle">{{ __('Loading...') }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>

@@ -14,7 +14,8 @@
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^6.0",
-        "pragmarx/version": "^1.0"
+        "pragmarx/version": "^1.0",
+        "vemcogroup/laravel-translation": "^2.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
