@@ -1,1 +1,21 @@
-{}
+{
+    "English": "Engels",
+    "EPG time limit in hours": "EPG tijd limit in uren",
+    "EPG time limit": "EPG tijd limit",
+    "EPG": "EPG",
+    "Dutch": "Nederlands",
+    "Dreambox username": "Dreambox gebruikersnaam",
+    "Dreambox port number": "Dreambox poort nummer",
+    "Dreambox password": "Dreambox wachtwoord",
+    "Dreambox name": "Dreambox naam",
+    "Dreambox multiple tuners": "Dreambox meerdere ontvangers",
+    "Dreambox host name": "Dreambox host naam",
+    "Does the dreambox have more then 1 tuner?.": "Heeft de dreambox meer dan 1 ontvanger?.",
+    "Description": "Omschrijving",
+    "DVR length time in seconds": "DVR lengte in seconden",
+    "DVR length": "DVR lengte",
+    "Channel name": "Kanaal naam",
+    "Audio language": "Audio taal",
+    "Any name": "Willekeurige naam",
+    "About": "Over"
+}
