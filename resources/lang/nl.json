@@ -66,5 +66,6 @@
     "Click to enter the setup page": "Klik om de instellingenpagina te openen",
     "Bouquets": "Boeketten",
     "Enter the port number of the web interface on your dreambox (default 80).": "Voer het poortnummer van de webinterface op uw dreambox in (standaard 80).",
-    "Enter either a number for the nth language or abbreviated name.": "Voer een nummer in voor de nde taal of een verkorte naam."
+    "Enter either a number for the nth language or abbreviated name.": "Voer een nummer in voor de nde taal of een verkorte naam.",
+    "Enter a comma separated list of bouquet names to be ignored during loading. Case insensitive.": "Voer een door komma's gescheiden lijst in van boeket namen die tijdens het laden moeten worden genegeerd. Niet hoofdletter gevoelig."
 }
