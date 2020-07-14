@@ -34,7 +34,7 @@
           {{Form::label('port', __('Dreambox port number'))}}
           {{Form::number('port',old('port'),['class' => 'form-control', 'placeholder' => __('Port number'), 'required' => 'true'])}}
           <small class="form-text text-danger"></small>
-          <small id="portnumberHelp" class="form-text text-muted">{{ __('Enter the portnumber of the webinterface on your dreambox (default 80).')}}</small>
+          <small id="portnumberHelp" class="form-text text-muted">{{ __('Enter the port number of the web interface on your dreambox (default 80).')}}</small>
         </div>
         <div class="form-group">
           {{Form::label('multiple_tuners', __('Dreambox multiple tuners'),['class' => 'required'])}}<br />
@@ -63,7 +63,7 @@
           {{Form::label('subtitle_language', __('Subtitle language'))}}
           {{Form::text('subtitle_language',old('subtitle_language'),['class' => 'form-control', 'placeholder' => __('Subtitle language')])}}
           <small class="form-text text-danger"></small>
-          <small id="subtitlelanguageHelp" class="form-text text-muted">{{ __('Enter either a number for the nth language or abriviated name.')}}</small>
+          <small id="subtitlelanguageHelp" class="form-text text-muted">{{ __('Enter either a number for the nth language or abbreviated name.')}}</small>
         </div>
         <div class="form-group">
           {{Form::label('dvr_length', __('DVR length'))}}
@@ -111,7 +111,7 @@
           {{Form::label('exclude_bouquets', __('Exclude bouquets'))}}
           {{Form::text('exclude_bouquets',old('exclude_bouquets'),['class' => 'form-control', 'placeholder' => __('Exclude bouquets')])}}
           <small class="form-text text-danger"></small>
-          <small id="exclude_bouquetsHelp" class="form-text text-muted">{{ __('Enter a comma separated list of bouquet names to be ingored during loading. Case insenitive.')}}</small>
+          <small id="exclude_bouquetsHelp" class="form-text text-muted">{{ __('Enter a comma separated list of bouquet names to be ignored during loading. Case nsensitive.')}}</small>
         </div>
         <div class="form-group">
           {{Form::label('epg_limit', __('EPG time limit'))}}
