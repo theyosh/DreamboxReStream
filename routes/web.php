@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::get('', 'DreamboxController@index')->name('index_dreambox');
 Route::get('new','DreamboxController@new_dreambox')->name('new_dreambox');
 

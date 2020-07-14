@@ -14,7 +14,7 @@
         <h4>Required data</h4>
         <div class="form-group">
           {{Form::label('interface_language', __('Interface language'))}}
-          {{Form::select('interface_language', ['en' => __('English'), 'du' => __('Dutch')], old('interface_language'),['class' => 'form-control','required' => 'true'])}}
+          {{Form::select('interface_language', ['en' => __('English'), 'nl' => __('Dutch')], old('interface_language'),['class' => 'form-control','required' => 'true'])}}
           <small class="form-text text-danger d-none"></small>
           <small id="interface_languageHelp" class="form-text text-muted">{{ __('Select the interface language')}}</small>
         </div>

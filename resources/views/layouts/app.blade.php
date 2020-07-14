@@ -17,8 +17,8 @@
         <div class="col text-center">
           <h3>@yield('title') <small class="text-muted">@version</small></h3>
           <div class="alert alert-danger" id="offline_message" role="alert" style="display:none">
-            <h4 class="alert-heading">Offline!</h4>
-            <div>Your dreambox is offline. Please check your network connections or <a href="/dreambox/{{$dreambox->id}}/setup" title="Click to enter the setup page">setup</a>.</div>
+            <h4 class="alert-heading">{{ __('Offline!') }}</h4>
+            <div>{{ __('Your dreambox is offline. Please check your network connections or') }} <a href="/dreambox/{{$dreambox->id}}/setup" title="{{ __('Click to enter the setup page') }}">{{ __('setup') }}</a>.</div>
           </div>
         </div>
       </div>
@@ -31,8 +31,8 @@
                 <div class="test-screen" style="background-image:url('{{ URL::asset('images/test_screen.gif') }}');"><p>{{ __('Pick a channel') }}-></p></div>
                 <video id='dreambox-video' class='embed-responsive-item video-js vjs-default-skin' controls preload='auto' width='100%' height='100%' poster='{{ URL::asset('images/old_tv.png') }}'>
                   <p class='vjs-no-js'>
-                    To view this video please enable JavaScript, and consider upgrading to a web browser that
-                    <a href='https://videojs.com/html5-video-support/' target='_blank'>supports HTML5 video</a>
+                  {{ __('To view this video please enable JavaScript, and consider upgrading to a web browser that') }}
+                    <a href='https://videojs.com/html5-video-support/' target='_blank'>{{ __(supports HTML5 video') }}</a>
                   </p>
                 </video>
               </div>
@@ -51,7 +51,7 @@
                 <div class="media-body">
                   <h5 class="mt-0 mb-1"><span>{{ __('Channel name') }}</span> <small class="program-now">({{ __('duration') }})</small></h5>
                   <p>{{ __('Description') }}</p>
-                  <small class="program-next">Next: upcoming</small>
+                  <small class="program-next">{{ __('Next') }}: {{ __('upcoming') }}</small>
                 </div>
                 <img src="{{ URL::asset('images/dreamboxrestream_icon.png') }}" alt="Program icon" class="picon" >
               </div>
@@ -99,7 +99,7 @@
                         <small>{{ __('EPG') }} ({{$channel->programs_count}})</small>
                       </button>
                       @if ($channel->is_hd)
-                      <small class="badge badge-dark hd">HD</small>
+                      <small class="badge badge-dark hd">{{ __('HD') }}</small>
                       @endif
                     </span>
                     <a href="#" data-type="channel" data-id="{{ $channel->id }}" class="list-group-item list-group-item-action channel{{ $channel->id }}" @if ($channel->picon) style="background-image: url('{{$channel->picon}}');" @endif >
@@ -194,8 +194,8 @@
                         <br />
                         <a href="{{ URL::asset('CHANGELOG') }}" title="Read changelog">CHANGELOG</a>
                         <br />
-                        <a href="/dreambox/{{$dreambox->id}}/setup" title="Click to enter the setup page">Setup</a>,
-                        <a href="/dreambox/{{$dreambox->id}}/purge" title="Purge the cache and reload the data">Purge</a>
+                        <a href="/dreambox/{{$dreambox->id}}/setup" title="{{ __('Click to enter the setup page') }}">{{ __('Setup') }}</a>,
+                        <a href="/dreambox/{{$dreambox->id}}/purge" title="{{ __('Purge the cache and reload the data') }}">{{ __('Purge') }}</a>
                       </p>
                       <p>
                         Copyright 2006-{{ date('Y') }} - <a href="http://theyosh.nl" class="external" target="_blank" title="The YOSH">TheYOSH</a>

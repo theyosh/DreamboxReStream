@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App;
 Use App\Dreambox;
 Use App\Channel;
 Use App\Streamer;
@@ -16,6 +17,7 @@ class DreamboxController extends Controller
         $dreambox = Dreambox::first();
         if ($dreambox)
         {
+            App::setLocale($dreambox->interface_language);
             return view('index',['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
         }
         else
@@ -32,6 +34,7 @@ class DreamboxController extends Controller
 
     public function setup(Dreambox $dreambox)
     {
+        App::setLocale($dreambox->interface_language);
         return view('setup', ['dreambox' => $dreambox, 'profiles' => Streamer::profiles()]);
     }
 
