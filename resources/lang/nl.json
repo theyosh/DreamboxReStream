@@ -17,5 +17,7 @@
     "Channel name": "Kanaal naam",
     "Audio language": "Audio taal",
     "Any name": "Willekeurige naam",
-    "About": "Over"
+    "About": "Over",
+    "Enter an extra buffer time in seconds when there are timing issues. (default 0).": "Voer een extra buffer tijd in seconden in wanneer er streaming problemen zijn. (standaard 0).",
+    "Enter a name for your Dreambox ReStream setup. Any name is valid.": "Vul een naam in voor je Dreambox ReStream setup. Elke naam is geldig."
 }
