@@ -20,7 +20,7 @@
     "EPG time limit": "EPG time limit",
     "EPG time limit in hours": "EPG time limit in hours",
     "English": "English",
-    "Enter a comma separated list of bouquet names to be ignored during loading. Case nsensitive.": "Enter a comma separated list of bouquet names to be ignored during loading. Case nsensitive.",
+    "Enter a comma separated list of bouquet names to be ignored during loading. Case insensitive.": "Enter a comma separated list of bouquet names to be ignored during loading. Case insensitive.",
     "Enter a name for your Dreambox ReStream setup. Any name is valid.": "Enter a name for your Dreambox ReStream setup. Any name is valid.",
     "Enter an extra buffer time in seconds when there are timing issues. (default 0).": "Enter an extra buffer time in seconds when there are timing issues. (default 0).",
     "Enter either a number for the nth language or abbreviated name.": "Enter either a number for the nth language or abbreviated name.",

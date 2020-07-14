@@ -111,7 +111,7 @@
           {{Form::label('exclude_bouquets', __('Exclude bouquets'))}}
           {{Form::text('exclude_bouquets',old('exclude_bouquets'),['class' => 'form-control', 'placeholder' => __('Exclude bouquets')])}}
           <small class="form-text text-danger"></small>
-          <small id="exclude_bouquetsHelp" class="form-text text-muted">{{ __('Enter a comma separated list of bouquet names to be ignored during loading. Case nsensitive.')}}</small>
+          <small id="exclude_bouquetsHelp" class="form-text text-muted">{{ __('Enter a comma separated list of bouquet names to be ignored during loading. Case insensitive.')}}</small>
         </div>
         <div class="form-group">
           {{Form::label('epg_limit', __('EPG time limit'))}}
