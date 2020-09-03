@@ -168,23 +168,27 @@ function update_current_recording()
 
 function update_channel(channel_data) {
   let channel = $('a[data-type="channel"][data-id="' + channel_data.id + '"]');
-  let now  = 'now: ';
-  let next = 'next: ';
+  let now  = null;
+  let next = null;
 
   if (channel_data.currentprogram) {
-    now += moment(+moment.utc(channel_data.currentprogram.start)).format('LT') + ' - ' + channel_data.currentprogram.name;
+    now = moment(+moment.utc(channel_data.currentprogram.start)).format('LT'); // + ' - ' + channel_data.currentprogram.name;
     add_to_epg_refresh_list(moment(+moment.utc(channel_data.currentprogram.stop)),channel_data.id);
   } else {
     add_to_epg_refresh_list(moment.utc(),channel_data.id);
   }
 
   if (channel_data.nextprogram) {
-    next += moment(+moment.utc(channel_data.nextprogram.start)).format('LT') + ' - ' + channel_data.nextprogram.name;
+    next = moment(+moment.utc(channel_data.nextprogram.start)).format('LT'); // + ' - ' + channel_data.nextprogram.name;
   }
 
   channel.find('h5').html(channel_data.name);
-  channel.find('.program-now').html(now);
-  channel.find('.program-next').html(next);
+
+  channel.find('.program-now span.time').text(now);
+  channel.find('.program-next span.time').text(next);
+
+  channel.find('.program-now span.name').text(channel_data.currentprogram.name);
+  channel.find('.program-next span.name').text(channel_data.nextprogram.name);
 
   channel.prev().find('.epg').text('EPG (' + (channel_data.programs_count ?  channel_data.programs_count : channel_data.programs.length) + ')');
   if (channel_data.picon) {
