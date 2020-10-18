@@ -55,7 +55,6 @@ class Streamer
     private $dvrlength = 300;
     private $encoder_type = 'software';
 
-
     private $source_url = null;
     private $source_name = null;
     private $language = null;
@@ -142,8 +141,6 @@ class Streamer
                     continue;
                 }
 
-            //print_r($stream->codec_name);
-            //exit;
                 if ('audio' == $stream->codec_type)
                 {
                     switch ($i)
@@ -225,21 +222,21 @@ class Streamer
     public function start()
     {
         $current_status = $this->status(false);
-        if (!isset($current_status) || $current_status['source'] != $this->source_url)
+        if (!isset($current_status) || $current_status == false || $current_status['source'] != $this->source_url)
         {
-            $this->stop();
+            if ($current_status) {
+                $this->stop();
+            }
+
             if ($this->source_url == null)
             {
                 return false;
             }
 
-            //$audio_map = 0;
             $stream_map = ['video' => 0, 'audio' => 0, 'subtitle' => 0];
             if ($this->language != null)
             {
                 $stream_map = $this->probe_stream();
-                //print_r($stream_map);
-                //exit;
             }
 
             if (config('app.debug'))
@@ -253,19 +250,17 @@ class Streamer
             if ('software' == $this->encoder_type)
             {
                 $cmd = Streamer::executable . ' -hide_banner -i ' . $this->source_url;
-                //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
             }
             elseif ('vaapi' == $this->encoder_type)
             {
                 // HW VAAPI
                 $cmd = Streamer::executable . ' -hide_banner -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
-
                 //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -i ' . $this->source_url;
             }
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = '/opt/webdata/restream.theyosh.nl/ffmpeg-nvidia -hide_banner -vsync 0 -hwaccel cuvid -c:v h264_cuvid -deint 2 -re -i ' . $this->source_url;
+                $cmd = base_path() . '/nvidia/ffmpeg -hide_banner -vsync 1 -hwaccel cuvid -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
@@ -281,8 +276,6 @@ class Streamer
             $bitrate_counter = 0;
             foreach (Streamer::bitrates as $bitrate_name => $bitrate)
             {
-
-               // dd()
                 if ($bitrate_counter >= 2 && 'nvidia' == $this->encoder_type)
                 {
                     $this->encoder_type = 'software';
@@ -314,7 +307,6 @@ class Streamer
                     {
                         // NVIDIA
                         $cmd .= ' -vf fps=' . $bitrate['framerate'] . ',scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
-                        //$cmd .= ' -vf "format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720:format=yuv420p,hwdownload"';
                     }
                     elseif ('omx' == $this->encoder_type)
                     {
