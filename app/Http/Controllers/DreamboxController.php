@@ -17,7 +17,7 @@ class DreamboxController extends Controller
         $dreambox = Dreambox::first();
         if ($dreambox)
         {
-            App::setLocale($dreambox->interface_language);
+            App::setLocale($dreambox->interface_language); // Stupid Laraval is not capable if handling language sessions... so every request tell again what you want... rubbish!
             return view('index',['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
         }
         else
@@ -34,7 +34,7 @@ class DreamboxController extends Controller
 
     public function setup(Dreambox $dreambox)
     {
-        App::setLocale($dreambox->interface_language);
+        App::setLocale($dreambox->interface_language); // Stupid Laraval is not capable if handling language sessions... so every request tell again what you want... rubbish!
         return view('setup', ['dreambox' => $dreambox, 'profiles' => Streamer::profiles()]);
     }
 
@@ -42,6 +42,7 @@ class DreamboxController extends Controller
     {
         $dreambox->is_online();
         $dreambox->load_bouquets(false);
+        App::setLocale($dreambox->interface_language); // Stupid Laraval is not capable if handling language sessions... so every request tell again what you want... rubbish!
         return view('dreambox', ['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
     }
 
@@ -70,6 +71,7 @@ class DreamboxController extends Controller
     {
         $dreambox->is_online();
         $dreambox->load_epg($channel);
+        App::setLocale($dreambox->interface_language); // Stupid Laraval is not capable if handling language sessions... so every request tell again what you want... rubbish!
         return view('epg', ['channel' => $channel]);
     }
 
