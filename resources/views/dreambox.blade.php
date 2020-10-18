@@ -569,14 +569,14 @@ $(function(){
   moment.locale('{{ str_replace('_', '-', app()->getLocale()) }}');
   // Reformat the program start times in template
   $('#bouquets a[data-type="channel"] [class*="program"]').each(function(index,value){
-    $(value).find('span').text(moment(+moment.utc($(value).find('span').text())).format('LT'));
+    $(value).find('span.time').text(moment(+moment.utc($(value).find('span.time').text())).format('LT'));
   });
   $('#bouquet_recordings a[data-type="recording"] .program-next').each(function(index,value){
     let duration = moment(+moment.utc($(this).prev().find('span').text())) - moment.utc();
-    $(value).find('span').text(moment.duration($(value).find('span').text()*1, 'seconds').humanize() + ', ' + moment.duration(duration).humanize(true));
+    $(value).find('span.time').text(moment.duration($(value).find('span.time').text()*1, 'seconds').humanize() + ', ' + moment.duration(duration).humanize(true));
   });
   $('#bouquet_recordings a[data-type="recording"] .program-now').each(function(index,value){
-    $(value).find('span').text(moment(+moment.utc($(value).find('span').text())).format('LLLL'));
+    $(value).find('span.time').text(moment(+moment.utc($(value).find('span.time').text())).format('LLLL'));
   });
   $('a[href$="CHANGELOG"]').on('click',function(event){
     event.preventDefault();

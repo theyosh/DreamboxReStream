@@ -32,7 +32,7 @@
                 <video id='dreambox-video' class='embed-responsive-item video-js vjs-default-skin' controls preload='auto' width='100%' height='100%' poster='{{ URL::asset('images/old_tv.png') }}'>
                   <p class='vjs-no-js'>
                   {{ __('To view this video please enable JavaScript, and consider upgrading to a web browser that') }}
-                    <a href='https://videojs.com/html5-video-support/' target='_blank'>{{ __(supports HTML5 video') }}</a>
+                    <a href='https://videojs.com/html5-video-support/' target='_blank'>{{ __('supports HTML5 video') }}</a>
                   </p>
                 </video>
               </div>
@@ -106,8 +106,8 @@
                       <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{$channel->name}}</h5>
                       </div>
-                      <p class="mb-1 program-now">{{ __('now') }}: @if ($channel->currentprogram) <span>{{ $channel->currentprogram['start']}}</span> - {!! $channel->currentprogram['name'] !!}@endif</p>
-                      <small class="program-next">{{ __('next') }}: @if ($channel->nextprogram) <span>{{$channel->nextprogram['start']}}</span> - {!! $channel->nextprogram['name'] !!}@endif</small>
+                      <p class="mb-1 program-now">{{ __('now') }}:  @if ($channel->currentprogram) <span class="time">{{ $channel->currentprogram['start']}}</span> - <span class="name">{!! $channel->currentprogram['name'] !!}</span>@endif</p>
+                      <small class="program-next">{{ __('next') }}: @if ($channel->nextprogram) <span class="time">{{$channel->nextprogram['start']}}</span> - <span class="name">{!! $channel->nextprogram['name'] !!}</span>@endif</small>
                     </a>
                   @endforeach
                   </div>
