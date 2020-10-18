@@ -7,7 +7,7 @@ current:
   minor: 1
   patch: 0
   git_absorb: git-local
-  prerelease: 64-gfdea301
+  prerelease: 66-g6e28948
   buildmetadata: ''
   commit: e01722
   timestamp:
