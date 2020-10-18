@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 0
   git_absorb: git-local
-  prerelease: 36-ge01722c
+  prerelease: 62-g74db4a3
   buildmetadata: ''
   commit: e01722
   timestamp:
     year: 2020
-    month: 4
-    day: 1
-    hour: 19
-    minute: 5
-    second: 31
+    month: 10
+    day: 18
+    hour: 14
+    minute: 22
+    second: 55
     timezone: UTC
 commit:
   mode: git-local

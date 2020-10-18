@@ -40,10 +40,10 @@ class Dreambox extends Model
                         'timeout'  => $this->guzzle_http_timeout,
                     ]);
 
-        if (config('app.debug'))
-        {
-            start_measure('zap_first','Zapping Dreambox to right channel');
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('zap_first','Zapping Dreambox to right channel');
+        // }
         try
         {
             $start = microtime(true);
@@ -59,10 +59,10 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
-        if (config('app.debug'))
-        {
-            stop_measure('zap_first');
-        }
+        // if (config('app.debug'))
+        // {
+        //     stop_measure('zap_first');
+        // }
         return 200 == $response->getStatusCode();
     }
 
@@ -72,10 +72,10 @@ class Dreambox extends Model
                             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
-        if (config('app.debug'))
-        {
-            start_measure('load_playlist','Get streaming url from playlist');
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('load_playlist','Get streaming url from playlist');
+        // }
         try
         {
             if ($source instanceof Channel)
@@ -128,10 +128,10 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        if (config('app.debug'))
-        {
-            start_measure('is_online','Dreambox online check');
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('is_online','Dreambox online check');
+        // }
         try
         {
             $start = microtime(true);
@@ -149,10 +149,10 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
-        if (config('app.debug'))
-        {
-            stop_measure('is_online');
-        }
+        // if (config('app.debug'))
+        // {
+        //     stop_measure('is_online');
+        // }
 
         if (200 == $response->getStatusCode())
         {
@@ -213,10 +213,10 @@ class Dreambox extends Model
                                 'timeout'  => $this->guzzle_http_timeout,
                             ]);
 
-            if (config('app.debug'))
-            {
-                start_measure('load_bouquets','Dreambox loading bouquets');
-            }
+            // if (config('app.debug'))
+            // {
+            //     start_measure('load_bouquets','Dreambox loading bouquets');
+            // }
             try
             {
                 $start = microtime(true);
@@ -227,10 +227,10 @@ class Dreambox extends Model
             {
                 return false;
             }
-            if (config('app.debug'))
-            {
-                stop_measure('load_bouquets');
-            }
+            // if (config('app.debug'))
+            // {
+            //     stop_measure('load_bouquets');
+            // }
 
             if (200 == $response->getStatusCode())
             {
@@ -311,10 +311,10 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        if (config('app.debug'))
-        {
-            start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
+        // }
         try
         {
             Log::debug('load_channels(): Start....');
@@ -329,10 +329,10 @@ class Dreambox extends Model
         {
             return false;
         }
-        if (config('app.debug'))
-        {
-            stop_measure('load_channels');
-        }
+        // if (config('app.debug'))
+        // {
+        //     stop_measure('load_channels');
+        // }
 
         if (200 == $response->getStatusCode())
         {
@@ -398,10 +398,10 @@ class Dreambox extends Model
                         ]);
 
 
-        if (config('app.debug'))
-        {
-            start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
+        // }
         try
         {
             $start = microtime(true);
@@ -415,10 +415,10 @@ class Dreambox extends Model
         {
             return false;
         }
-        if (config('app.debug'))
-        {
-            stop_measure('load_programs');
-        }
+        // if (config('app.debug'))
+        // {
+        //     stop_measure('load_programs');
+        // }
 
         if (200 == $response->getStatusCode())
         {
@@ -486,10 +486,10 @@ class Dreambox extends Model
             return;
         }
 
-        if (config('app.debug'))
-        {
-            start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
+        // }
         try
         {
             $start = microtime(true);
@@ -503,10 +503,10 @@ class Dreambox extends Model
         {
             return false;
         }
-        if (config('app.debug'))
-        {
-            stop_measure('load_epg');
-        }
+        // if (config('app.debug'))
+        // {
+        //     stop_measure('load_epg');
+        // }
 
         if (200 == $response->getStatusCode())
         {
@@ -566,10 +566,10 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        if (config('app.debug'))
-        {
-            start_measure('load_recordings','Dreambox loading recordings');
-        }
+        // if (config('app.debug'))
+        // {
+        //     start_measure('load_recordings','Dreambox loading recordings');
+        // }
         try
         {
             $response = $client->request('GET', '/api/movielist',['auth' => [$this->username, $this->password]]);
@@ -578,10 +578,10 @@ class Dreambox extends Model
         {
             return false;
         }
-        if (config('app.debug'))
-        {
-            stop_measure('load_recordings');
-        }
+        // if (config('app.debug'))
+        // {
+        //     stop_measure('load_recordings');
+        // }
 
         if (200 == $response->getStatusCode())
         {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App;
 Use App\Dreambox;
 Use App\Channel;
@@ -141,3 +142,4 @@ class DreamboxController extends Controller
         return response()->json(null, 204);
     }
 }
+
