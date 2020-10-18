@@ -120,7 +120,7 @@ class Streamer
     {
         if (config('app.debug'))
         {
-            start_measure('probe_stream','Starting probe');
+            start_measure('probe_stream','Probing stream: ' . $this->source_url);
         }
 
         $probe = shell_exec(Streamer::ffprobe . ' -hide_banner -v quiet -print_format json -show_format -show_streams ' . $this->source_url);
@@ -260,7 +260,7 @@ class Streamer
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = base_path() . '/nvidia/ffmpeg -hide_banner -vsync 1 -hwaccel cuvid -i ' . $this->source_url;
+                $cmd = base_path() . '/nvidia/ffmpeg -hide_banner -vsync 1 -hwaccel cuvid -c:v h264_cuvid -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
@@ -276,12 +276,6 @@ class Streamer
             $bitrate_counter = 0;
             foreach (Streamer::bitrates as $bitrate_name => $bitrate)
             {
-                if ($bitrate_counter >= 2 && 'nvidia' == $this->encoder_type)
-                {
-                    $this->encoder_type = 'software';
-                }
-
-
                 if (!in_array($bitrate_name,$this->enabled_profiles))
                 {
                     continue;
@@ -306,7 +300,7 @@ class Streamer
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -vf fps=' . $bitrate['framerate'] . ',scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
+                        $cmd .= ' -vf yadif_cuda,fps=' . $bitrate['framerate'] . ',scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
                     }
                     elseif ('omx' == $this->encoder_type)
                     {

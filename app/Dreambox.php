@@ -206,7 +206,7 @@ class Dreambox extends Model
         $update = false;
 
         // For now we only load the dreambox once a day. Programm data is loaded normal.
-        if (Carbon::now()->floatDiffInHours(Carbon::parse($this->updated_at)) > 24) {
+        if (Carbon::now()->floatDiffInHours(Carbon::parse($this->updated_at)) > 24 || $this->bouquets()->count() == 0) {
             $update = true;
             $client = new GuzzleHttp\Client([
                                 'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
