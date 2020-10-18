@@ -179,7 +179,6 @@ function init_video_player() {
       $.post('{{ route('stop_streaming', ['dreambox' => $dreambox->id])}}',function(data){
         console.log(data);
       });
-
     }
   });
   videojs.registerComponent('closeButton', closeButton);
@@ -231,6 +230,7 @@ function load_recordings() {
     if (bouquet.length > 0) {
       $.each(data, function(reccounter, recording_data) {
         let recording = bouquet.find('a[data-type="recording"][data-id="'+ recording_data.id + '"]');
+
         if (recording.length == 0) {
 
           let meta = $('<span>').addClass('program-meta');
@@ -249,8 +249,8 @@ function load_recordings() {
 
           bouquet.find('div.list-group').append(meta);
           bouquet.find('div.list-group').append(recording);
-          update_recording(recording_data);
         }
+        update_recording(recording_data);
       });
       bouquet.find('.badge.badge-primary').text(data.length);
     }

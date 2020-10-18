@@ -9,7 +9,7 @@
     @stack('styles')
     <link href="{{ URL::asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <title>@yield('title') - Dreambox Restream (@version)</title>
+    <title>@yield('title') - Dreambox Restream (@version('full'))</title>
   </head>
   <body>
     <div class="container-fluid">
@@ -104,10 +104,10 @@
                     </span>
                     <a href="#" data-type="channel" data-id="{{ $channel->id }}" class="list-group-item list-group-item-action channel{{ $channel->id }}" @if ($channel->picon) style="background-image: url('{{$channel->picon}}');" @endif >
                       <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{$channel->name}}</h5>
+                        <h5 class="mb-1">{{ html_entity_decode($channel->name) }}</h5>
                       </div>
-                      <p class="mb-1 program-now">{{ __('now') }}:  @if ($channel->currentprogram) <span class="time">{{ $channel->currentprogram['start']}}</span> - <span class="name">{!! $channel->currentprogram['name'] !!}</span>@endif</p>
-                      <small class="program-next">{{ __('next') }}: @if ($channel->nextprogram) <span class="time">{{$channel->nextprogram['start']}}</span> - <span class="name">{!! $channel->nextprogram['name'] !!}</span>@endif</small>
+                      <p class="mb-1 program-now">{{ __('now') }}:  @if ($channel->currentprogram) <span class="time">{{ $channel->currentprogram['start']}}</span> - <span class="name">{{ $channel->currentprogram['name'] }}</span>@endif</p>
+                      <small class="program-next">{{ __('next') }}: @if ($channel->nextprogram) <span class="time">{{$channel->nextprogram['start']}}</span> - <span class="name">{{ $channel->nextprogram['name'] }}</span>@endif</small>
                     </a>
                   @endforeach
                   </div>

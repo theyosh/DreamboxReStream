@@ -164,14 +164,12 @@ function update_current_recording()
     }
 }
 
-
-
 function update_channel(channel_data) {
   let channel = $('a[data-type="channel"][data-id="' + channel_data.id + '"]');
   let now  = null;
   let next = null;
 
-  if (channel_data.currentprogram) {
+  if (channel_data.currentprogram !== null) {
     now = moment(+moment.utc(channel_data.currentprogram.start)).format('LT'); // + ' - ' + channel_data.currentprogram.name;
     add_to_epg_refresh_list(moment(+moment.utc(channel_data.currentprogram.stop)),channel_data.id);
   } else {
@@ -187,8 +185,12 @@ function update_channel(channel_data) {
   channel.find('.program-now span.time').text(now);
   channel.find('.program-next span.time').text(next);
 
-  channel.find('.program-now span.name').text(channel_data.currentprogram.name);
-  channel.find('.program-next span.name').text(channel_data.nextprogram.name);
+  if (channel_data.currentprogram !== null) {
+    channel.find('.program-now span.name').html(channel_data.currentprogram.name);
+  }
+  if (channel_data.nextprogram !== null) {
+    channel.find('.program-next span.name').html(channel_data.nextprogram.name);
+  }
 
   channel.prev().find('.epg').text('EPG (' + (channel_data.programs_count ?  channel_data.programs_count : channel_data.programs.length) + ')');
   if (channel_data.picon) {
@@ -200,11 +202,9 @@ function update_recording(recording_data) {
   let recording = $('a[data-type="recording"][data-id="' + recording_data.id + '"]');
   let now = 'recorded: ' + moment(+moment.utc(recording_data.start)).format('LLLL');
 
-  if (recording.find('.program-now').text() != now) {
-    recording.find('h5').html(recording_data.name);
-    recording.find('.program-now').html(now);
-    recording.find('.program-next').html('duration: ' + moment.duration(recording_data.duration, 'seconds').humanize() + ', ' + moment.duration(moment(+moment.utc(recording_data.start))-moment.utc()).humanize(true));
-  }
+  recording.find('h5').html(recording_data.name);
+  recording.find('.program-now').html(now);
+  recording.find('.program-next').html('duration: ' + moment.duration(recording_data.duration, 'seconds').humanize() + ', ' + moment.duration(moment(+moment.utc(recording_data.start))-moment.utc()).humanize(true));
   if (recording_data.channel != null && recording_data.channel.picon && '' == recording.css('background-image')) {
    recording.css('background-image', 'url("' + recording_data.channel.picon + '")');
   }
@@ -221,7 +221,6 @@ function load_epg(channel_queue) {
         update_channel(data);
         refresh_channel_list();
       }
-
 
       let duration = new Date() - start;
 
