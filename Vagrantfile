@@ -1,6 +1,6 @@
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "generic/ubuntu1804"
+  config.vm.box = "generic/ubuntu2004"
   config.vm.define "DreamboxReStream"
   config.vm.hostname = "dreamboxrestream.box"
   config.vm.network "public_network"
