@@ -135,6 +135,14 @@ class DreamboxController extends Controller
         return ['message' => 'Dreambox is updated. Will reload now...','url' => route('show_dreambox',['dreambox' => $dreambox->id])];
     }
 
+    public function purge(Dreambox $dreambox)
+    {
+        $dreambox->bouquets()->each(function($bouquet) {
+            $bouquet->delete();
+        });
+        return redirect(route('show_dreambox',['dreambox' => $dreambox->id]));
+    }
+
     public function delete(Dreambox $dreambox)
     {
         $dreambox->delete();

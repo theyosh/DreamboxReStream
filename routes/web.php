@@ -18,4 +18,5 @@ Route::get('', [DreamboxController::class, 'index'])->name('index_dreambox');
 Route::get('new',[DreamboxController::class, 'new_dreambox'])->name('new_dreambox');
 Route::get('dreambox/{dreambox}',[DreamboxController::class, 'show'])->where('dreambox', '[0-9]+')->name('show_dreambox');
 Route::get('dreambox/{dreambox}/setup',[DreamboxController::class, 'setup'])->where('dreambox', '[0-9]+')->name('setup_dreambox');
+Route::get('dreambox/{dreambox}/purge',[DreamboxController::class, 'purge'])->where('dreambox', '[0-9]+')->name('purge_dreambox');
 Route::get('dreambox/{dreambox}/channel/{channel}/epg',[DreamboxController::class, 'show_epg'])->where('dreambox', '[0-9]+')->where('channel', '[0-9]+')->name('epg_dreambox');
