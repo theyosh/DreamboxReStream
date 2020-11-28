@@ -254,7 +254,7 @@ class Dreambox extends Model
                         preg_match('/\\"(?P<bouquet>.*)\\"/', $bouquet_data->servicereference, $matches);
                         if ($matches)
                         {
-                            if (preg_match($exclude_bouquets,strtolower(trim($bouquet_data->servicename))) == 1)
+                            if ('' != $this->exclude_bouquets && preg_match($exclude_bouquets,strtolower(trim($bouquet_data->servicename))) == 1)
                             {
                                 continue;
                             }
