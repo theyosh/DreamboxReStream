@@ -10,7 +10,7 @@ cd /home/vagrant/dreamboxrestream/
 rm /etc/nginx/sites-enabled/default || true
 su -c 'cp nginx.conf.example nginx.conf' vagrant
 sed -i -e 's@root .*@root '`pwd`'/public;@g' nginx.conf
-ln -s `pwd`/nginx.conf /etc/nginx/sites-enabled/dreambox_restream.conf
+cp `pwd`/nginx.conf /etc/nginx/sites-enabled/dreambox_restream.conf
 service nginx restart
 
 
