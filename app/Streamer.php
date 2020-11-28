@@ -53,7 +53,7 @@ class Streamer
     private $buffer_time = 10;
     private $chunktime = 2;
     private $dvrlength = 300;
-    private $encoder_type = 'nvidia';
+    private $encoder_type = 'software';
 
     private $source_url = null;
     private $source_name = null;
