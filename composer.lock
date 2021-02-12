@@ -894,16 +894,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.26.1",
+            "version": "v8.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94"
+                "reference": "a6680d98f9dadaa363aa7d5218517a08706cee64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
-                "reference": "275c78c97e007e4a9d771d4d1caa1c77ebfdcf94",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/a6680d98f9dadaa363aa7d5218517a08706cee64",
+                "reference": "a6680d98f9dadaa363aa7d5218517a08706cee64",
                 "shasum": ""
             },
             "require": {
@@ -1058,7 +1058,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-02-02T14:07:24+00:00"
+            "time": "2021-02-09T15:14:54+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1608,16 +1608,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.44.0",
+            "version": "2.45.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "e6ef33cb1f67a4bed831ed6d0f7e156739a5d8cd"
+                "reference": "528783b188bdb853eb21239b1722831e0f000a8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e6ef33cb1f67a4bed831ed6d0f7e156739a5d8cd",
-                "reference": "e6ef33cb1f67a4bed831ed6d0f7e156739a5d8cd",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/528783b188bdb853eb21239b1722831e0f000a8d",
+                "reference": "528783b188bdb853eb21239b1722831e0f000a8d",
                 "shasum": ""
             },
             "require": {
@@ -1697,7 +1697,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-26T20:46:41+00:00"
+            "time": "2021-02-11T18:30:17+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -4995,23 +4995,23 @@
         },
         {
             "name": "vemcogroup/laravel-translation",
-            "version": "3.0.2",
+            "version": "3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vemcogroup/laravel-translation.git",
-                "reference": "3a9d0ede40558cc087f9a4e43842f49645a5d6df"
+                "reference": "6aa93f379a68a27f3be99abf07b4c011106d11b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vemcogroup/laravel-translation/zipball/3a9d0ede40558cc087f9a4e43842f49645a5d6df",
-                "reference": "3a9d0ede40558cc087f9a4e43842f49645a5d6df",
+                "url": "https://api.github.com/repos/vemcogroup/laravel-translation/zipball/6aa93f379a68a27f3be99abf07b4c011106d11b5",
+                "reference": "6aa93f379a68a27f3be99abf07b4c011106d11b5",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "^6.3|^7.0",
                 "laravel/framework": "^6.0|^7.0|^8.0",
-                "php": "^7.3",
+                "php": "^7.3|^8.0",
                 "symfony/finder": "^4.3|^5.0"
             },
             "type": "library",
@@ -5049,9 +5049,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vemcogroup/laravel-translation/issues",
-                "source": "https://github.com/vemcogroup/laravel-translation/tree/3.0.2"
+                "source": "https://github.com/vemcogroup/laravel-translation/tree/3.0.3"
             },
-            "time": "2020-09-21T09:25:35+00:00"
+            "time": "2021-02-10T14:57:39+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -5479,16 +5479,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.10",
+            "version": "2.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "98154e8b991fb616304c213cd405299ffedc26f5"
+                "reference": "e91d67353054bf827c64687fcac5ea44e4dcec54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/98154e8b991fb616304c213cd405299ffedc26f5",
-                "reference": "98154e8b991fb616304c213cd405299ffedc26f5",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/e91d67353054bf827c64687fcac5ea44e4dcec54",
+                "reference": "e91d67353054bf827c64687fcac5ea44e4dcec54",
                 "shasum": ""
             },
             "require": {
@@ -5552,7 +5552,7 @@
                 "issues": "https://github.com/facade/ignition/issues",
                 "source": "https://github.com/facade/ignition"
             },
-            "time": "2021-02-02T10:15:48+00:00"
+            "time": "2021-02-05T12:52:11+00:00"
         },
         {
             "name": "facade/ignition-contracts",
