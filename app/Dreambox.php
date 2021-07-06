@@ -16,7 +16,6 @@ use GuzzleHttp\Exception\ClientException;
 
 class Dreambox extends Model
 {
-    //
     protected $fillable = ['name', 'hostname', 'port', 'username', 'password',
                            'multiple_tuners','audio_language','subtitle_language',
                            'epg_limit','dvr_length','buffer_time','exclude_bouquets',
@@ -259,18 +258,12 @@ class Dreambox extends Model
                                 continue;
                             }
 
-                            if (array_key_exists($matches['bouquet'],$existing_bouquets))
-                            {
-                                $bouquet = $existing_bouquets[$matches['bouquet']];
-                            }
-                            else
-                            {
-                                $bouquet = new Bouquet(['name'     => $bouquet_data->servicename,
-                                                        'service'  => $matches['bouquet'],
-                                                        'position' => $position++]);
+                            $bouquet = $this->bouquets()->updateOrCreate(
+                                ['service' => $matches['bouquet']],
+                                ['name' => $bouquet_data->servicename,
+                                 'position' => $position++]
+                            );
 
-                                $this->bouquets()->save($bouquet);
-                            }
                             $seen_bouqets[] = $bouquet->id;
                         }
                     }
@@ -281,6 +274,8 @@ class Dreambox extends Model
                 }
                 // Clean up outdated bouquets
                 $this->bouquets()->whereNotIn('id',$seen_bouqets)->delete();
+               // Log::debug('load_bouquets(): Loaded new ' . sizeof($seen_channels) . ' bouquets, total bouquets ' . $this->bouquets()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
+
             }
             $this->touch();
         }
@@ -339,33 +334,18 @@ class Dreambox extends Model
             try
             {
                 $data = json_decode($response->getBody()->getContents());
-                $existing_channels = [];
                 $start = microtime(true);
-                foreach($this->channels()->get() as $channel)
-                {
-                    $existing_channels[$channel->service] = $channel;
-                }
-                Log::debug('load_channels(): Loaded ' . sizeof($existing_channels) . ' known channels in ' . (microtime(true) - $start) . ' seconds');
                 $position = 0;
                 $seen_channels = [];
-                $start = microtime(true);
                 foreach($data->services as $channel_data)
                 {
                     if ($channel_data->program <= 0 || '' == $channel_data->servicename) continue;
 
-                    if (array_key_exists($channel_data->servicereference,$existing_channels))
-                    {
-                        $channel = $existing_channels[$channel_data->servicereference];
-                    }
-                    else
-                    {
-                        $start_1 = microtime(true);
-                        $channel = new Channel(['name'    => $channel_data->servicename,
-                                                'service' => $channel_data->servicereference]);
+                    $channel = $this->channels()->updateOrCreate(
+                        ['service' => $channel_data->servicereference],
+                        ['name' => $channel_data->servicename]
+                    );
 
-                        $this->channels()->save($channel);
-                        Log::debug('load_channels(): Saved ' . $channel_data->servicename . ' channel in ' . (microtime(true) - $start_1) . ' seconds');
-                    }
                     $start_2 = microtime(true);
                     $bouquet->channels()->syncWithoutDetaching([$channel->id => ['position' => $position++]]);
                     Log::debug('load_channels(): Saved ' . $channel_data->servicename . ' channel order in ' . (microtime(true) - $start_2) . ' seconds');
@@ -431,25 +411,18 @@ class Dreambox extends Model
                     $existing_channels[$channel->service] = $channel;
                 }
 
-                $existing_programs = [];
-                foreach($this->programs()->get() as $program)
-                {
-                    $existing_programs[$program->channel->name . '|' . $program->name . '|' . $program->start->timestamp] = $program;
-                }
-
                 foreach($data->events as $program_data)
                 {
-                    if ('' == $program_data->title || '' == $program_data->begin_timestamp || !array_key_exists($program_data->sref,$existing_channels)) continue;
+                    if ('' == $program_data->title || '' == $program_data->begin_timestamp) continue;
                     $channel = $existing_channels[$program_data->sref];
-                    if (!array_key_exists($channel->name . '|' . $program_data->title . '|' . $program_data->begin_timestamp,$existing_programs))
-                    {
-                        $program = new Program(['name'        => $program_data->title,
-                                                'start'       => $program_data->begin_timestamp,
-                                                'stop'        => $program_data->begin_timestamp + $program_data->duration_sec,
-                                                'description' => $program_data->longdesc]);
 
-                        $channel->programs()->save($program);
-                    }
+                    $channel->programs()->updateOrCreate(
+                        ['epg_id' => $program_data->id],
+                        ['name' => $program_data->title,
+                         'start' => $program_data->begin_timestamp,
+                         'stop' => $program_data->begin_timestamp + $program_data->duration_sec,
+                         'description' => $program_data->longdesc]
+                    );
                 }
             }
             catch (Exception $e)
@@ -526,25 +499,13 @@ class Dreambox extends Model
 
                     if (Carbon::now()->floatDiffInHours(Carbon::parse($program_data->begin_timestamp)) > $this->epg_limit) continue;
 
-                    if (array_key_exists($channel->name . '|' . $program_data->title . '|' . $program_data->begin_timestamp,$existing_programs))
-                    {
-                        $program = $existing_programs[$channel->name . '|' . $program_data->title . '|' . $program_data->begin_timestamp];
-                        if ('' == $program->description && '' != $program_data->longdesc)
-                        {
-                            $program->description = $program_data->longdesc;
-                            $program->save();
-                        }
-
-                    }
-                    else
-                    {
-                        $program = new Program(['name'        => $program_data->title,
-                                                'start'       => $program_data->begin_timestamp,
-                                                'stop'        => $program_data->begin_timestamp + $program_data->duration_sec,
-                                                'description' => $program_data->longdesc]);
-
-                        $channel->programs()->save($program);
-                    }
+                    $channel->programs()->updateOrCreate(
+                        ['epg_id' => $program_data->id],
+                        ['name' => $program_data->title,
+                         'start' => $program_data->begin_timestamp,
+                         'stop' => $program_data->begin_timestamp + $program_data->duration_sec,
+                         'description' => $program_data->longdesc]
+                    );
                 }
             }
             catch (Exception $e)
@@ -594,40 +555,41 @@ class Dreambox extends Model
                     $existing_recordings[$recording->service] = $recording;
                 }
                 $seen_recordings = [];
+
+                $existing_channels = [];
+                foreach($this->channels()->get() as $channel)
+                {
+                    $existing_channels[$channel->servicename] = $channel;
+                }
+
                 foreach($data->movies as $recording_data)
                 {
                     if ($recording_data->eventname == 'epg.dat') continue;
-                    if (array_key_exists($recording_data->filename,$existing_recordings))
+
+                    $duration = explode(':',$recording_data->length);
+                    if (count($duration) == 2)
                     {
-                        $recording = $existing_recordings[$recording_data->filename];
+                        $duration = ($duration[0] * 60) + $duration[1];
                     }
                     else
                     {
-                        $duration = explode(':',$recording_data->length);
-                        if (count($duration) == 2)
-                        {
-                            $duration = ($duration[0] * 60) + $duration[1];
-                        }
-                        else
-                        {
-                            $duration = $duration[0];
-                        }
-
-                        $recording = new Recording(['name'        => $recording_data->eventname,
-                                                    'service'     => $recording_data->filename,
-                                                    'start'       => $recording_data->recordingtime,
-                                                    'stop'        => $recording_data->recordingtime + $duration,
-                                                    'description' => $recording_data->description,
-                                                    'filesize'    => $recording_data->filesize]);
-
-                        $this->recordings()->save($recording);
-
-                        $channel = $this->channels()->where('name',$recording_data->servicename)->first();
-                        if ($channel)
-                        {
-                            $channel->recordings()->save($recording);
-                        }
+                        $duration = $duration[0];
                     }
+
+                    $recording = $this->recordings()->updateOrCreate(
+                        ['service' => $recording_data->filename],
+                        ['name' => $recording_data->eventname,
+                         'start' => $recording_data->recordingtime,
+                         'stop' => $recording_data->recordingtime + $duration,
+                         'description' => $recording_data->description,
+                         'filesize' => $recording_data->filesize]
+                    );
+
+                    if (in_array($recording_data->servicename, $existing_channels))
+                    {
+                        $existing_channels[$recording_data->servicename]->recordings()->save($recording);
+                    }
+
                     $seen_recordings[] = $recording->service;
                 }
             }

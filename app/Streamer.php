@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 use GuzzleHttp;
 
@@ -131,6 +132,8 @@ class Streamer
         {
             start_measure('probe_stream','Probing stream: ' . $this->source_url);
         }
+
+        Log::debug(Streamer::ffprobe . ' -hide_banner -v quiet -print_format json -show_format -show_streams ' . $this->source_url);
 
         $probe = shell_exec(Streamer::ffprobe . ' -hide_banner -v quiet -print_format json -show_format -show_streams ' . $this->source_url);
         $probe = json_decode($probe);

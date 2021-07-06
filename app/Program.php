@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 
 class Program extends Model
 {
-    protected $fillable = ['name', 'start', 'stop','description'];
+    protected $fillable = ['epg_id', 'name', 'start', 'stop', 'description'];
 
     protected $appends = array('duration');
 
