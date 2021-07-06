@@ -59,8 +59,11 @@ class Streamer
     private $source_name = null;
     private $language = null;
 
+    private $executable = Streamer::executable;
+
     function __construct($source_url, $source_name)
     {
+        $this->hardware_detection();
         $this->set_source($source_url, $source_name);
     }
 
@@ -92,10 +95,16 @@ class Streamer
 
     private function hardware_detection()
     {
-        if (file_exists('/dev/dri/renderD128'))
+        if (file_exists(base_path() . '/nvidia/ffmpeg'))
+        {
+            $this->encoder_type = 'nvidia';
+            $this->executable = base_path() . '/nvidia/ffmpeg';
+        }
+        elseif (file_exists('/dev/dri/renderD128'))
         {
             $this->encoder_type = 'vaapi';
         }
+
     }
 
     private function auto_killer($streamer_pid)
@@ -249,23 +258,23 @@ class Streamer
 
             if ('software' == $this->encoder_type)
             {
-                $cmd = Streamer::executable . ' -hide_banner -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -i ' . $this->source_url;
             }
             elseif ('vaapi' == $this->encoder_type)
             {
                 // HW VAAPI
-                $cmd = Streamer::executable . ' -hide_banner -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi -i ' . $this->source_url;
                 //$cmd = Streamer::executable . ' -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -i ' . $this->source_url;
             }
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = base_path() . '/nvidia/ffmpeg -hide_banner -vsync 1 -hwaccel cuvid -c:v h264_cuvid -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -vsync 1 -hwaccel cuvid -c:v h264_cuvid -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
                 // OpenMAX (Raspberry PI)
-                $cmd = Streamer::executable . ' -c:v h264_mmal -i  ' . $this->source_url;
+                $cmd = $this->executable . ' -c:v h264_mmal -i  ' . $this->source_url;
             }
             //
             //if ($this->language != null)
