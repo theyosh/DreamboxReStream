@@ -195,6 +195,8 @@ class Streamer
             stop_measure('probe_stream');
         }
 
+       // Log::debug('Probe found: ' . $data);
+
         return $data;
 
     }
@@ -272,7 +274,7 @@ class Streamer
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = $this->executable . ' -hide_banner -vsync 1 -hwaccel cuvid -c:v h264_cuvid -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -vsync 1 -hwaccel cuvid -c:v h264_cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
