@@ -106,11 +106,10 @@ let overlay_timer = null;
 function init_video_player() {
   dreambox_player = videojs('dreambox-video',{
     html5: {
-      hls: {
+      vhs: {
         withCredentials: true,
         handleManifestRedirects: true,
         overrideNative: true,
-        smoothQualityChange: true,
       }
     },
     autoplay: 'any',
