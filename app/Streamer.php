@@ -337,7 +337,7 @@ class Streamer
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset medium ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc vbr_hq -rc-lookahead 32';// . ' -r ' . $bitrate['framerate'];
+                        $cmd .= ' -c:v h264_nvenc -qp 18 -bf 2 -preset medium ' . $bitrate['h264'] . ' -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -g ' . ($bitrate['framerate']*2) . ' -rc cbr -rc-lookahead 32';// . ' -r ' . $bitrate['framerate'];
                     }
 
                     elseif ('omx' == $this->encoder_type)
@@ -358,7 +358,7 @@ class Streamer
                 $cmd .= '  -map 0:a:' . $stream_map['audio'] . ' -c:a aac -ac 2 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
 
                 // HLS Output
-                $cmd .= ' -f hls -strftime 1 -use_localtime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');
+                $cmd .= ' -f hls -strftime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');
 
                 // Main playlist info
                 $main_playlist[] = Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8';
@@ -370,6 +370,7 @@ class Streamer
             Storage::makeDirectory('public/stream/');
             Storage::delete(Storage::allFiles('public/stream/'));
             // Execute on background....
+            $process = Dreambox::execute('echo "$cmd"',storage_path('app/cmd.txt'));
             $process = Dreambox::execute($cmd,storage_path('app/ffmpeg_log'));
 
             // Create overall playlist
