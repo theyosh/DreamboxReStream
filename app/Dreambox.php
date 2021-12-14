@@ -248,6 +248,7 @@ class Dreambox extends Model
                     // Create a single regex line for matching excluding bouquets
                     $exclude_bouquets = '/' . implode('|',array_map('trim',explode(',',strtolower($this->exclude_bouquets)))) . '/';
 
+                    DB::beginTransaction();
                     foreach($data->services as $bouquet_data)
                     {
                         preg_match('/\\"(?P<bouquet>.*)\\"/', $bouquet_data->servicereference, $matches);
@@ -267,6 +268,7 @@ class Dreambox extends Model
                             $seen_bouqets[] = $bouquet->id;
                         }
                     }
+                    DB::commit();
                 }
                 catch (Exception $e)
                 {
@@ -337,6 +339,8 @@ class Dreambox extends Model
                 $start = microtime(true);
                 $position = 0;
                 $seen_channels = [];
+
+                DB::beginTransaction();
                 foreach($data->services as $channel_data)
                 {
                     if ($channel_data->program <= 0 || '' == $channel_data->servicename) continue;
@@ -352,6 +356,7 @@ class Dreambox extends Model
                     $channel->loadIcon($this);
                     $seen_channels[] = $channel->id;
                 }
+                DB::commit();
                 // Clean up outdated/non existing channels
                $this->channels()->whereNotIn('id' ,function($query){
                     $query->select('channel_id')->from('bouquet_channel');
@@ -411,6 +416,7 @@ class Dreambox extends Model
                     $existing_channels[$channel->service] = $channel;
                 }
 
+                DB::beginTransaction();
                 foreach($data->events as $program_data)
                 {
                     if ('' == $program_data->title || '' == $program_data->begin_timestamp) continue;
@@ -424,6 +430,7 @@ class Dreambox extends Model
                          'description' => $program_data->longdesc]
                     );
                 }
+                DB::commit();
             }
             catch (Exception $e)
             {
@@ -493,6 +500,7 @@ class Dreambox extends Model
                     $existing_programs[$program->channel->name . '|' . $program->name . '|' . $program->start->timestamp] = $program;
                 }
 
+                DB::beginTransaction();
                 foreach($data->events as $program_data)
                 {
                     if ('' == $program_data->title || '' == $program_data->begin_timestamp) continue;
@@ -507,6 +515,7 @@ class Dreambox extends Model
                          'description' => $program_data->longdesc]
                     );
                 }
+                DB::commit();
             }
             catch (Exception $e)
             {
@@ -562,6 +571,7 @@ class Dreambox extends Model
                     $existing_channels[$channel->servicename] = $channel;
                 }
 
+                DB::beginTransaction();
                 foreach($data->movies as $recording_data)
                 {
                     if ($recording_data->eventname == 'epg.dat') continue;
@@ -592,6 +602,7 @@ class Dreambox extends Model
 
                     $seen_recordings[] = $recording->service;
                 }
+                DB::commit();
             }
             catch (Exception $e)
             {
