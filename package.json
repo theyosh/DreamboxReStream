@@ -22,7 +22,8 @@
         "sass-loader": "^12.3.0",
         "trim": ">=0.0.3",
         "underscore": "^1.13.2",
-        "vue-template-compiler": "^2.6.14"
+        "vue-template-compiler": "^2.6.14",
+        "node-forge": ">=1.0.0"
     },
     "dependencies": {
         "autolinker": "^3.14.3",
