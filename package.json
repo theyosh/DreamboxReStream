@@ -18,7 +18,7 @@
         "lodash": "^4.17.21",
         "popper.js": "^1.12",
         "resolve-url-loader": "^4.0.0",
-        "sass": "^1.45.1",
+        "sass": "^1.48.0",
         "sass-loader": "^12.3.0",
         "trim": ">=0.0.3",
         "underscore": "^1.13.2",
