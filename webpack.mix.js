@@ -24,8 +24,8 @@ mix.js('resources/js/app.js', 'public/js')
     .styles('node_modules/videojs-contextmenu-ui/dist/videojs-contextmenu-ui.css','public/css/videojs-contextmenu-ui.min.css')
     .copy('node_modules/videojs-contextmenu-ui/dist/videojs-contextmenu-ui.min.js','public/js/videojs-contextmenu-ui.min.js')
 
-    .styles('node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css','public/css/videojs-http-source-selector.min.css')
-    .copy('node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js','public/js/videojs-http-source-selector.min.js')
+    .styles('node_modules/videojs-http-source-selector-2/dist/videojs-http-source-selector.css','public/css/videojs-http-source-selector.min.css')
+    .copy('node_modules/videojs-http-source-selector-2/dist/videojs-http-source-selector.min.js','public/js/videojs-http-source-selector.min.js')
     .copy('node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js','public/js/videojs-contrib-quality-levels.min.js')
 
     .styles('node_modules/videojs-dvr/dist/videojs-dvr.css','public/css/videojs-dvr.min.css')

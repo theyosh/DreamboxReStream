@@ -16,25 +16,26 @@
         "jquery": "^3.6.0",
         "laravel-mix": "^6.0.37",
         "lodash": "^4.17.21",
+        "node-forge": ">=1.0.0",
         "popper.js": "^1.12",
         "resolve-url-loader": "^4.0.0",
         "sass": "^1.48.0",
         "sass-loader": "^12.3.0",
         "trim": ">=0.0.3",
         "underscore": "^1.13.2",
-        "vue-template-compiler": "^2.6.14",
-        "node-forge": ">=1.0.0"
+        "vue-template-compiler": "^2.6.14"
     },
     "dependencies": {
         "autolinker": "^3.14.3",
         "moment": "^2.29.1",
+        "npm": "^8.5.1",
         "nprogress": "^0.2.0",
-        "video.js": "^7.15.4",
+        "video.js": "^7.17.0",
         "videojs-airplay": "^1.1.1",
-        "videojs-contextmenu-ui": "^5.2.0",
+        "videojs-contextmenu-ui": "^6.0.0",
         "videojs-contrib-quality-levels": "^2.1.0",
         "videojs-dvr": "^1.4.0",
-        "videojs-http-source-selector": "^1.1.6",
+        "videojs-http-source-selector-2": "^1.1.10",
         "videojs-titleoverlay": "^1.1.0"
     }
 }

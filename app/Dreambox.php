@@ -419,7 +419,7 @@ class Dreambox extends Model
                 DB::beginTransaction();
                 foreach($data->events as $program_data)
                 {
-                    if ('' == $program_data->title || '' == $program_data->begin_timestamp) continue;
+                    if ('' == $program_data->title || '' == $program_data->begin_timestamp || !in_array($program_data->sref, $existing_channels)) continue;
                     $channel = $existing_channels[$program_data->sref];
 
                     $channel->programs()->updateOrCreate(
