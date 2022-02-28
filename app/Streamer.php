@@ -15,7 +15,7 @@ class Streamer
 
     const bitrates = [
                         'FullHD' =>  ['name' => 'Full HD',
-                                      'video_bitrate' => 3000,
+                                      'video_bitrate' => 4000,
                                       'width' =>  1920,
                                       'height' => 1080,
                                       'framerate'=> 25,
@@ -23,7 +23,7 @@ class Streamer
                                       'h264' => '-profile:v high -level 4.1 -pixel_format nv12'],
 
                         'HDReady' => ['name' => 'HD Ready',
-                                      'video_bitrate' => 1500,
+                                      'video_bitrate' => 2000,
                                       'width' =>  1280,
                                       'height' => 720,
                                       'framerate'=> 25,
@@ -31,7 +31,7 @@ class Streamer
                                       'h264' => '-profile:v high -level 4.0 -pixel_format nv12'],
 
                         'SD'      => ['name' => 'SD',
-                                      'video_bitrate' => 800,
+                                      'video_bitrate' => 1000,
                                       'width' =>  854,
                                       'height' => 480,
                                       'framerate'=> 25,
@@ -274,7 +274,7 @@ class Streamer
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = $this->executable . ' -hide_banner -vsync 1 -hwaccel cuvid -c:v h264_cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -hwaccel cuvid -c:v h264_cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
