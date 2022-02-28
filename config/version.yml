@@ -4,19 +4,19 @@ blade-directive: version
 current:
   label: ''
   major: 3
-  minor: 1
+  minor: 2
   patch: 0
   git_absorb: git-local
-  prerelease: 66-g6e28948
+  prerelease: 136-g4e280f0
   buildmetadata: ''
   commit: e01722
   timestamp:
-    year: 2020
-    month: 10
-    day: 18
-    hour: 14
-    minute: 22
-    second: 55
+    year: 2022
+    month: 2
+    day: 28
+    hour: 11
+    minute: 1
+    second: 56
     timezone: UTC
 commit:
   mode: git-local
