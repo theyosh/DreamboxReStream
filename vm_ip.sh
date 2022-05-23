@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sleep 5
+sleep 3
 DATE="May 23th, 2022"
 IP=`ip addr | grep inet | sed 's/[ ]\+//' | cut -d" " -f 2 | grep -v 127.0.0 | grep -v ::1/128 | grep -v fe80 | sed 's@/.*@@'`
 HOST=`hostname`
