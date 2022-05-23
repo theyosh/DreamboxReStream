@@ -101,11 +101,10 @@ class Streamer
             $this->encoder_type = 'nvidia';
             $this->executable = base_path() . '/nvidia/ffmpeg';
         }
-        elseif (file_exists('/dev/dri/renderD128'))
-        {
-            $this->encoder_type = 'vaapi';
-        }
-
+//        elseif (file_exists('/dev/dri/renderD128'))
+//        {
+//            $this->encoder_type = 'vaapi';
+//        }
     }
 
     private function auto_killer($streamer_pid)
@@ -274,7 +273,7 @@ class Streamer
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = $this->executable . ' -hide_banner -hwaccel cuvid -c:v h264_cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -re -hwaccel cuvid -c:v h264_cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
@@ -355,7 +354,7 @@ class Streamer
                     $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2",BANDWIDTH=' . round( $bitrate['audio_bitrate'] * 1024);
                 }
                 // Audio
-                $cmd .= '  -map 0:a:' . $stream_map['audio'] . ' -c:a aac -ac 2 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
+                $cmd .= '  -map 0:a:' . $stream_map['audio'] . '? -c:a aac -ac 2 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
 
                 // HLS Output
                 $cmd .= ' -f hls -strftime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');

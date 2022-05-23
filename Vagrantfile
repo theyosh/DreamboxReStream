@@ -1,6 +1,5 @@
-
 Vagrant.configure("2") do |config|
-  config.vm.box = "generic/ubuntu2004"
+  config.vm.box = "debian/bullseye64"
   config.vm.define "DreamboxReStream"
   config.vm.hostname = "dreamboxrestream.box"
   config.vm.network "public_network"
@@ -15,5 +14,4 @@ Vagrant.configure("2") do |config|
    v.memory = 2048
    v.cpus = 2
   end
-
 end
