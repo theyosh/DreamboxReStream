@@ -28,7 +28,7 @@
     "dependencies": {
         "autolinker": "^3.15.0",
         "moment": "^2.29.2",
-        "npm": "^8.5.2",
+        "npm": "^8.11.0",
         "nprogress": "^0.2.0",
         "video.js": "^7.17.0",
         "videojs-airplay": "^1.1.1",
