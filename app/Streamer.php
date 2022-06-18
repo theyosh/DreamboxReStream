@@ -203,11 +203,15 @@ class Streamer
     public function status($autokiller = true)
     {
         $status = ['source' => null, 'service' => null, 'encoder' => null];
-        $process_data = trim(shell_exec("ps ax | grep ffmpeg | grep -v grep"));
-        $re = '/^(?P<pid>\d+).*ffmpeg(-nvidia)? (?P<encoder>vaapi|cuvid)?.*-i (?P<source>http:\/\/[^ ]+(:\d+)?\/(file\?file=)?(?P<service>[^ ]+))/m';
-        preg_match_all($re, $process_data, $matches, PREG_SET_ORDER);
-        if ($matches && stripos($this->source_url,$matches[0]['source']) == 0)
+        $process_data = shell_exec("ps ax | grep ffmpeg | grep -v grep");
+
+        if ($process_data)
         {
+          $process_data = trim($process_data);
+          $re = '/^(?P<pid>\d+).*ffmpeg(-nvidia)? (?P<encoder>vaapi|cuvid)?.*-i (?P<source>http:\/\/[^ ]+(:\d+)?\/(file\?file=)?(?P<service>[^ ]+))/m';
+          preg_match_all($re, $process_data, $matches, PREG_SET_ORDER);
+          if ($matches && stripos($this->source_url,$matches[0]['source']) == 0)
+          {
             $status['source'] = $matches[0]['source'];
             $status['service'] = $matches[0]['service'];
             $status['pid'] = $matches[0]['pid'];
@@ -221,7 +225,9 @@ class Streamer
                 $status['encoder'] = $matches[0]['encoder'];
             }
             return $status;
+          }
         }
+
         return false;
     }
 

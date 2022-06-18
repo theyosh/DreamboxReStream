@@ -242,12 +242,13 @@ class Dreambox extends Model
                     {
                         $existing_bouquets[$bouquet->service] = $bouquet;
                     }
-                    Log::debug('load_bouquets(): Loaded ' . sizeof($existing_bouquets) . ' known bouquets in ' . (microtime(true) - $start) . ' seconds');
+                    Log::debug('load_bouquets(): Loaded ' . sizeof($existing_bouquets) . ' known bouquets from DB in ' . (microtime(true) - $start) . ' seconds');
                     $position = 0;
                     $seen_bouqets = [];
                     // Create a single regex line for matching excluding bouquets
                     $exclude_bouquets = '/' . implode('|',array_map('trim',explode(',',strtolower($this->exclude_bouquets)))) . '/';
 
+                    $start = microtime(true);
                     DB::beginTransaction();
                     foreach($data->services as $bouquet_data)
                     {
@@ -269,6 +270,8 @@ class Dreambox extends Model
                         }
                     }
                     DB::commit();
+                    Log::debug('load_bouquets(): Added ' . sizeof($seen_bouqets) . ' new bouquets from DB in ' . (microtime(true) - $start) . ' seconds');
+
                 }
                 catch (Exception $e)
                 {
@@ -320,7 +323,7 @@ class Dreambox extends Model
                          'auth'  => [$this->username, $this->password],
                          'query' => ['sRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
             ]);
-            Log::debug('load_channels(): Got bouquet ' . $bouquet->name . ' data from url \'/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
+            Log::debug('load_channels(): Got bouquet \'' . $bouquet->name . '\' data from url \'/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (Exception $e)
         {
@@ -358,7 +361,7 @@ class Dreambox extends Model
                 }
                 DB::commit();
                 // Clean up outdated/non existing channels
-               $this->channels()->whereNotIn('id' ,function($query){
+                $this->channels()->whereNotIn('id' ,function($query){
                     $query->select('channel_id')->from('bouquet_channel');
                 })->delete();
                 Log::debug('load_channels(): Loaded new ' . sizeof($seen_channels) . ' channels, total channels ' . $this->channels()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
@@ -394,7 +397,7 @@ class Dreambox extends Model
                          'auth'  => [$this->username, $this->password],
                          'query' => ['bRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
             ]);
-            Log::debug('load_programs(): Got bouquet ' . $bouquet->name . ' data from url \'/api/epg' . ('now' == $type ? 'now' : 'next') . '?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
+            Log::debug('load_programs(): Got bouquet ' . $bouquet->name . ' data from url \'/api/epg' . ('now' == $type ? 'now' : 'next') . '?bRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
         }
         catch (Exception $e)
         {
@@ -416,10 +419,14 @@ class Dreambox extends Model
                     $existing_channels[$channel->service] = $channel;
                 }
 
+                Log::debug('load_programs(): Loaded ' . sizeof($existing_channels) . ' known channels from DB');
+                $start = microtime(true);
+                $program_counter = 0;
+                $channel_filter = array_keys($existing_channels);
                 DB::beginTransaction();
                 foreach($data->events as $program_data)
                 {
-                    if ('' == $program_data->title || '' == $program_data->begin_timestamp || !in_array($program_data->sref, $existing_channels)) continue;
+                    if ('' == $program_data->title || '' == $program_data->begin_timestamp || !in_array($program_data->sref, $channel_filter)) continue;
                     $channel = $existing_channels[$program_data->sref];
 
                     $channel->programs()->updateOrCreate(
@@ -429,8 +436,10 @@ class Dreambox extends Model
                          'stop' => $program_data->begin_timestamp + $program_data->duration_sec,
                          'description' => $program_data->longdesc]
                     );
+                    $program_counter++;
                 }
                 DB::commit();
+                Log::debug('load_programs(): Loaded ' . $program_counter . ' programs into DB in ' . (microtime(true) - $start) . ' seconds');
             }
             catch (Exception $e)
             {
@@ -568,7 +577,7 @@ class Dreambox extends Model
                 $existing_channels = [];
                 foreach($this->channels()->get() as $channel)
                 {
-                    $existing_channels[$channel->servicename] = $channel;
+                    $existing_channels[$channel->name] = $channel;
                 }
 
                 DB::beginTransaction();
@@ -595,7 +604,7 @@ class Dreambox extends Model
                          'filesize' => $recording_data->filesize]
                     );
 
-                    if (in_array($recording_data->servicename, $existing_channels))
+                    if (in_array($recording_data->servicename, array_keys($existing_channels)))
                     {
                         $existing_channels[$recording_data->servicename]->recordings()->save($recording);
                     }

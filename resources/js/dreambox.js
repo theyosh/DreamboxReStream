@@ -192,15 +192,15 @@ function update_channel(channel_data) {
     channel.find('.program-next span.name').html(channel_data.nextprogram.name);
   }
 
-  channel.prev().find('.epg').text('EPG (' + (channel_data.programs_count ?  channel_data.programs_count : channel_data.programs.length) + ')');
+  channel.prev().find('.epg').text('EPG (' + (channel_data.programs_count ? channel_data.programs_count : '') + ')');
   if (channel_data.picon) {
     channel.css('background-image', 'url("' + channel_data.picon + '")');
   }
 }
 
 function update_recording(recording_data) {
-  let recording = $('a[data-type="recording"][data-id="' + recording_data.id + '"]');
-  let now = 'recorded: ' + moment(+moment.utc(recording_data.start)).format('LLLL');
+  const recording = $('a[data-type="recording"][data-id="' + recording_data.id + '"]');
+  const now = 'recorded: ' + moment(+moment.utc(recording_data.start)).format('LLLL');
 
   recording.find('h5').html(recording_data.name);
   recording.find('.program-now').html(now);

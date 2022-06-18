@@ -133,7 +133,7 @@ function init_video_player() {
     content: [{
         // A plain old link.
         href: 'https://github.com/theyosh/DreamboxReStream',
-        label: '<img src=\'{{ URL::asset('images/dreamboxrestream_icon.png') }}\' class="img-fluid rounded"><br />Dreambox ReStream<br /><small>@version</small>'
+        label: 'Dreambox ReStream @version'
       },{
         // A link with a listener. Its `href` will automatically be `#`.
         label: 'Ambilight',
@@ -588,7 +588,7 @@ $(function(){
   init_stream_actions();
   // Set the max fixed height
   set_bouquets_height();
-  // Load the rest of streambox restream data
+  // Load the rest of dreambox restream data
   @if ($dreambox->is_online())
   start_dreambox();
   @else
