@@ -101,6 +101,9 @@
                       @if ($channel->is_hd)
                       <small class="badge badge-dark hd">{{ __('HD') }}</small>
                       @endif
+                      @if ($channel->is_4k)
+                      <small class="badge badge-dark hd">{{ __('4K') }}</small>
+                      @endif
                     </span>
                     <a href="#" data-type="channel" data-id="{{ $channel->id }}" class="list-group-item list-group-item-action channel{{ $channel->id }}" @if ($channel->picon) style="background-image: url('{{$channel->picon}}');" @endif >
                       <div class="d-flex w-100 justify-content-between">

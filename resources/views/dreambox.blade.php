@@ -197,6 +197,8 @@ function load_other_bouquets() {
             meta.append($('<button>').addClass('btn badge badge-warning epg').attr('data-channel',channel_data.id).html('<small>EPG</small>'));
             if (channel_data.is_hd) {
               meta.append($('<small>').addClass('badge badge-dark hd').text('HD'))
+            } else if (channel_data.is_4k) {
+              meta.append($('<small>').addClass('badge badge-dark hd').text('4K'))
             }
 
             channel = $('<a>').addClass('list-group-item list-group-item-action').attr({'data-type': 'channel', 'data-id' : channel_data.id, 'href':'#'});

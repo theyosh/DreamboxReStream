@@ -17,7 +17,7 @@ class Channel extends Model
     //
     protected $fillable = ['name', 'service', 'position', 'picon'];
 
-    protected $appends = array('currentprogram','nextprogram','is_hd');
+    protected $appends = array('currentprogram','nextprogram','is_hd', 'is_4k');
 
     private $now_next;
 
@@ -53,6 +53,11 @@ class Channel extends Model
     public function getIsHdAttribute()
     {
         return strpos($this->service, '1:0:19:') === 0;
+    }
+
+    public function getIs4KAttribute()
+    {
+        return strpos($this->service, '1:0:1F:') === 0;
     }
 
     public function loadIcon($dreambox)
