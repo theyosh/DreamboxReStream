@@ -237,6 +237,8 @@ function load_recordings() {
           let meta = $('<span>').addClass('program-meta');
           if (recording_data.channel != null && recording_data.channel.is_hd) {
             meta.append($('<small>').addClass('badge badge-dark hd').text('HD'))
+          } else if (channel_data.is_4k) {
+            meta.append($('<small>').addClass('badge badge-dark hd').text('4K'))
           }
 
           recording = $('<a>').addClass('list-group-item list-group-item-action').attr({'data-type': 'recording', 'data-id' : recording_data.id, 'href':'#'});

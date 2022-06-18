@@ -135,6 +135,9 @@
                       @if ($recording->channel && $recording->channel->is_hd)
                       <small class="badge badge-dark hd">HD</small>
                       @endif
+                      @if ($channel->is_4k)
+                      <small class="badge badge-dark hd">{{ __('4K') }}</small>
+                      @endif
                     </span>
                     <a href="#" data-type="recording" data-id="{{ $recording->id }}" class="list-group-item list-group-item-action recording{{ $recording->id }}" @if ($recording->channel && $recording->channel->picon) style="background-image: url('{{$recording->channel->picon}}');" @endif >
                       <div class="d-flex w-100 justify-content-between">
