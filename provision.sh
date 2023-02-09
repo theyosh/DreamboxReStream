@@ -1,9 +1,8 @@
 #!/bin/bash
 
 apt-get -y update && apt-get -y full-upgrade
-apt-get install ca-certificates apt-transport-https software-properties-common unzip -y
+apt-get -y install ca-certificates apt-transport-https software-properties-common unzip lsb-release ca-certificates
 wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-apt install apt-transport-https lsb-release ca-certificates
 sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 apt-get -y update && apt-get -y install git nginx-light php8.1-fpm php8.1-cli php8.1-mbstring php8.1-xml php8.1-sqlite3 php8.1-zip ffmpeg ntp
 

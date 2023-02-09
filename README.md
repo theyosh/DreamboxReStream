@@ -21,6 +21,7 @@ If you have Vagrant installed already, then you can skip the installation below 
 ```sh
 git clone https://github.com/theyosh/DreamboxReStream.git
 cd DreamboxReStream
+vagrant plugin install vagrant-vbguest
 vagrant up
 ```
 and everything will be installed and configured.

@@ -15,19 +15,21 @@ class CreateProgramsTable extends Migration
     {
         Schema::create('programs', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('epg_id');
+            $table->integer('channel_id');
 
             $table->string('name',100);
             $table->timestamp('start');
             $table->timestamp('stop');
             $table->text('description');
 
-            $table->integer('channel_id');
-
             $table->timestamps();
 
             $table->foreign('channel_id')
                   ->references('id')->on('channels')
                   ->onDelete('cascade');
+
+            $table->unique(['epg_id', 'channel_id']);
 
         });
     }

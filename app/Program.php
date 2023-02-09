@@ -35,5 +35,10 @@ class Program extends Model
         return $this->belongsTo('App\Channel');
     }
 
+    // public function channels()
+    // {
+    //     return $this->belongsToMany('App\Channel')->orderBy('start');
+    // }
+
 
 }

@@ -52,7 +52,7 @@ class Dreambox extends Model
             ]);
             Log::debug('zap_first(): Got data from url \'/api/zap\' in ' . (microtime(true) - $start) . ' seconds');
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             Log::exception('zap_first(): Exception zapping: ' . $e);
             $this->status = null;
@@ -92,7 +92,7 @@ class Dreambox extends Model
                 ]);
             }
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             return false;
         }
@@ -160,7 +160,7 @@ class Dreambox extends Model
                 $this->status = json_decode($response->getBody()->getContents());
 
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
                 print_r($e);
             }
@@ -204,7 +204,7 @@ class Dreambox extends Model
 
         $update = false;
 
-        // For now we only load the dreambox once a day. Programm data is loaded normal.
+        // For now we only load the dreambox once a day. Program data is loaded normal.
         if (Carbon::now()->floatDiffInHours(Carbon::parse($this->updated_at)) > 24 || $this->bouquets()->count() == 0) {
             $update = true;
             $client = new GuzzleHttp\Client([
@@ -212,24 +212,16 @@ class Dreambox extends Model
                                 'timeout'  => $this->guzzle_http_timeout,
                             ]);
 
-            // if (config('app.debug'))
-            // {
-            //     start_measure('load_bouquets','Dreambox loading bouquets');
-            // }
             try
             {
                 $start = microtime(true);
                 $response = $client->request('GET', '/api/getservices',['auth' => [$this->username, $this->password]]);
-                Log::debug('load_bouquets(): Got data from url \'/api/getservices\' in ' . (microtime(true) - $start) . ' seconds');
+                Log::debug('load_bouquets(): Got data from url \'http://' . $this->hostname . ':' . $this->port . '/api/getservices\' in ' . (microtime(true) - $start) . ' seconds');
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
                 return false;
             }
-            // if (config('app.debug'))
-            // {
-            //     stop_measure('load_bouquets');
-            // }
 
             if (200 == $response->getStatusCode())
             {
@@ -273,13 +265,13 @@ class Dreambox extends Model
                     Log::debug('load_bouquets(): Added ' . sizeof($seen_bouqets) . ' new bouquets from DB in ' . (microtime(true) - $start) . ' seconds');
 
                 }
-                catch (Exception $e)
+                catch (\Exception $e)
                 {
                     print_r($e);
                 }
                 // Clean up outdated bouquets
                 $this->bouquets()->whereNotIn('id',$seen_bouqets)->delete();
-               // Log::debug('load_bouquets(): Loaded new ' . sizeof($seen_channels) . ' bouquets, total bouquets ' . $this->bouquets()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
+                Log::debug('load_bouquets(): Loaded new ' . sizeof($seen_channels) . ' bouquets, total bouquets ' . $this->bouquets()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
 
             }
             $this->touch();
@@ -311,10 +303,6 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        // if (config('app.debug'))
-        // {
-        //     start_measure('load_channels','Dreambox loading channels in bouquet ' . $bouquet->name);
-        // }
         try
         {
             Log::debug('load_channels(): Start....');
@@ -323,16 +311,12 @@ class Dreambox extends Model
                          'auth'  => [$this->username, $this->password],
                          'query' => ['sRef' => '1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet']
             ]);
-            Log::debug('load_channels(): Got bouquet \'' . $bouquet->name . '\' data from url \'/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
+            Log::debug('load_channels(): Got bouquet \'' . $bouquet->name . '\' data from url \'http://' . $this->hostname . ':' . $this->port . '/api/getservices?sRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             return false;
         }
-        // if (config('app.debug'))
-        // {
-        //     stop_measure('load_channels');
-        // }
 
         if (200 == $response->getStatusCode())
         {
@@ -342,6 +326,8 @@ class Dreambox extends Model
                 $start = microtime(true);
                 $position = 0;
                 $seen_channels = [];
+
+                Log::debug('load_channels(): Processing ' . sizeof($data->services) . ' services');
 
                 DB::beginTransaction();
                 foreach($data->services as $channel_data)
@@ -361,12 +347,10 @@ class Dreambox extends Model
                 }
                 DB::commit();
                 // Clean up outdated/non existing channels
-                $this->channels()->whereNotIn('id' ,function($query){
-                    $query->select('channel_id')->from('bouquet_channel');
-                })->delete();
+                $this->channels()->whereNotIn('id', $seen_channels)->delete();
                 Log::debug('load_channels(): Loaded new ' . sizeof($seen_channels) . ' channels, total channels ' . $this->channels()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
                 print_r($e);
             }
@@ -385,11 +369,6 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-
-        // if (config('app.debug'))
-        // {
-        //     start_measure('load_programs','Dreambox loading programs (' . $type . ') in bouquet ' . $bouquet->name);
-        // }
         try
         {
             $start = microtime(true);
@@ -399,14 +378,10 @@ class Dreambox extends Model
             ]);
             Log::debug('load_programs(): Got bouquet ' . $bouquet->name . ' data from url \'/api/epg' . ('now' == $type ? 'now' : 'next') . '?bRef=1:7:1:0:0:0:0:0:0:0:FROM%20BOUQUET%20%22' . $bouquet->service . '%22%20ORDER%20BY%20bouquet\' in ' . (microtime(true) - $start) . ' seconds');
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             return false;
         }
-        // if (config('app.debug'))
-        // {
-        //     stop_measure('load_programs');
-        // }
 
         if (200 == $response->getStatusCode())
         {
@@ -429,7 +404,7 @@ class Dreambox extends Model
                     if ('' == $program_data->title || '' == $program_data->begin_timestamp || !in_array($program_data->sref, $channel_filter)) continue;
                     $channel = $existing_channels[$program_data->sref];
 
-                    $channel->programs()->updateOrCreate(
+                    $program = $channel->programs()->updateOrCreate(
                         ['epg_id' => $program_data->id],
                         ['name' => $program_data->title,
                          'start' => $program_data->begin_timestamp,
@@ -441,7 +416,7 @@ class Dreambox extends Model
                 DB::commit();
                 Log::debug('load_programs(): Loaded ' . $program_counter . ' programs into DB in ' . (microtime(true) - $start) . ' seconds');
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
                 print_r($e);
             }
@@ -467,18 +442,13 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        // Reload the data when less then 50% of epg limit time is left....
-
         $last_program = $channel->programs()->orderBy('start', 'desc')->first();
+        // Reload the data when less then 50% of epg limit time is left....
         if ($last_program != null && Carbon::now()->floatDiffInHours(Carbon::parse($last_program['stop'])) > ($this->epg_limit / 2.0))
         {
             return;
         }
 
-        // if (config('app.debug'))
-        // {
-        //     start_measure('load_epg','Dreambox loading EPG in channel ' . $channel->name);
-        // }
         try
         {
             $start = microtime(true);
@@ -488,27 +458,16 @@ class Dreambox extends Model
             ]);
             Log::debug('load_epg(): Got program data ' . $channel->name . ' data from url \'/api/epgservice?sRef=' . $channel->service . '\' in ' . (microtime(true) - $start) . ' seconds');
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             return false;
         }
-        // if (config('app.debug'))
-        // {
-        //     stop_measure('load_epg');
-        // }
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
-
-                $existing_programs = [];
-                foreach($this->programs()->get() as $program)
-                {
-                    $existing_programs[$program->channel->name . '|' . $program->name . '|' . $program->start->timestamp] = $program;
-                }
-
                 DB::beginTransaction();
                 foreach($data->events as $program_data)
                 {
@@ -518,7 +477,8 @@ class Dreambox extends Model
 
                     $channel->programs()->updateOrCreate(
                         ['epg_id' => $program_data->id],
-                        ['name' => $program_data->title,
+                        ['channel_id' => $channel->id,
+                         'name' => $program_data->title,
                          'start' => $program_data->begin_timestamp,
                          'stop' => $program_data->begin_timestamp + $program_data->duration_sec,
                          'description' => $program_data->longdesc]
@@ -526,9 +486,9 @@ class Dreambox extends Model
                 }
                 DB::commit();
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
-                print_r($e);
+              return false;
             }
         }
     }
@@ -545,33 +505,20 @@ class Dreambox extends Model
                             'timeout'  => $this->guzzle_http_timeout,
                         ]);
 
-        // if (config('app.debug'))
-        // {
-        //     start_measure('load_recordings','Dreambox loading recordings');
-        // }
         try
         {
             $response = $client->request('GET', '/api/movielist',['auth' => [$this->username, $this->password]]);
         }
-        catch (Exception $e)
+        catch (\Exception $e)
         {
             return false;
         }
-        // if (config('app.debug'))
-        // {
-        //     stop_measure('load_recordings');
-        // }
 
         if (200 == $response->getStatusCode())
         {
             try
             {
                 $data = json_decode($response->getBody()->getContents());
-                $existing_recordings = [];
-                foreach($this->recordings()->get() as $recording)
-                {
-                    $existing_recordings[$recording->service] = $recording;
-                }
                 $seen_recordings = [];
 
                 $existing_channels = [];
@@ -585,7 +532,11 @@ class Dreambox extends Model
                 {
                     if ($recording_data->eventname == 'epg.dat') continue;
 
-                    $duration = explode(':',$recording_data->length);
+                    // Cleanup data. Make sure we have always numbers to work with
+                    $duration = array_map(function($item) {
+                        return is_numeric($item) ? (int)$item : 0;
+                    }, explode(':',$recording_data->length));
+
                     if (count($duration) == 2)
                     {
                         $duration = ($duration[0] * 60) + $duration[1];
@@ -604,22 +555,32 @@ class Dreambox extends Model
                          'filesize' => $recording_data->filesize]
                     );
 
+                    $channel_name = null;
                     if (in_array($recording_data->servicename, array_keys($existing_channels)))
                     {
-                        $existing_channels[$recording_data->servicename]->recordings()->save($recording);
+                        $channel_name = $recording_data->servicename;
+                    }
+                    elseif (in_array(preg_replace('/[ ]+hd/i','',$recording_data->servicename), array_keys($existing_channels)))
+                    {
+                        $channel_name = preg_replace('/[ ]+hd/i','',$recording_data->servicename);
+                    }
+
+                    if ($channel_name !== null)
+                    {
+                        $existing_channels[$channel_name]->recordings()->save($recording);
                     }
 
                     $seen_recordings[] = $recording->service;
                 }
                 DB::commit();
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
                 print_r($e);
             }
         }
         // Clean up outdated recordings
-        $this->recordings()->whereNotIn('service',$seen_recordings)->delete();
+        $this->recordings()->whereNotIn('service', $seen_recordings)->delete();
     }
 
     static public function execute($pCommand,$pLogLocation = '',$pWait = false)
@@ -677,6 +638,7 @@ class Dreambox extends Model
 
     public function bouquets()
     {
+        // TODO: Add filter based on $this->exclude_bouquets
         return $this->hasMany('App\Bouquet')->withCount('channels')->orderBy('position');
     }
 
@@ -687,7 +649,7 @@ class Dreambox extends Model
 
     public function programs()
     {
-        return $this->hasManyThrough('App\Program', 'App\Channel')->with('channel')->where('stop','>',Carbon::now())->orderBy('start');
+      return $this->hasManyThrough('App\Program', 'App\Channel')->where('stop','>',Carbon::now())->orderBy('start');
     }
 
     public function recordings()

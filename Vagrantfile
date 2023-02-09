@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/bullseye64"
+  config.vm.box = "debian/buster64"
   config.vm.define "DreamboxReStream"
   config.vm.hostname = "dreamboxrestream.box"
   config.vm.network "public_network"
@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "./", "/home/vagrant/dreamboxrestream", :mount_options => ["dmode=775", "fmode=664"], :owner => 'vagrant', :group => 'www-data'
 
   config.vm.provider "virtualbox" do |v|
-   v.memory = 1024
+   v.memory = 2048
    v.cpus = 2
   end
 end
