@@ -15,7 +15,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col text-center">
-          <h3>@yield('title') <small class="text-muted">@version</small></h3>
+          <h3>@yield('title') <small class="text-muted">@version('version-only')</small></h3>
           <div class="alert alert-danger" id="offline_message" role="alert" style="display:none">
             <h4 class="alert-heading">{{ __('Offline!') }}</h4>
             <div>{{ __('Your dreambox is offline. Please check your network connections or') }} <a href="/dreambox/{{$dreambox->id}}/setup" title="{{ __('Click to enter the setup page') }}">{{ __('setup') }}</a>.</div>
@@ -100,8 +100,7 @@
                       </button>
                       @if ($channel->is_hd)
                       <small class="badge badge-dark hd">{{ __('HD') }}</small>
-                      @endif
-                      @if ($channel->is_4k)
+                      @elseif ($channel->is_4k)
                       <small class="badge badge-dark hd">{{ __('4K') }}</small>
                       @endif
                     </span>
@@ -132,11 +131,12 @@
                 <div class="list-group">
                 @foreach ($dreambox->recordings as $recording)
                     <span class="program-meta">
-                      @if ($recording->channel && $recording->channel->is_hd)
-                      <small class="badge badge-dark hd">HD</small>
-                      @endif
-                      @if ($channel->is_4k)
-                      <small class="badge badge-dark hd">{{ __('4K') }}</small>
+                      @if ($recording->channel)
+                        @if ($recording->channel->is_hd)
+                        <small class="badge badge-dark hd">HD</small>
+                        @elseif ($recording->channel->is_4k)
+                        <small class="badge badge-dark hd">{{ __('4K') }}</small>
+                        @endif
                       @endif
                     </span>
                     <a href="#" data-type="recording" data-id="{{ $recording->id }}" class="list-group-item list-group-item-action recording{{ $recording->id }}" @if ($recording->channel && $recording->channel->picon) style="background-image: url('{{$recording->channel->picon}}');" @endif >

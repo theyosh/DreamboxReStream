@@ -205,7 +205,7 @@ class Dreambox extends Model
         $update = false;
 
         // For now we only load the dreambox once a day. Program data is loaded normal.
-        if (Carbon::now()->floatDiffInHours(Carbon::parse($this->updated_at)) > 24 || $this->bouquets()->count() == 0) {
+//        if (Carbon::now()->floatDiffInHours(Carbon::parse($this->updated_at)) > 24 || $this->bouquets()->count() == 0) {
             $update = true;
             $client = new GuzzleHttp\Client([
                                 'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
@@ -271,11 +271,11 @@ class Dreambox extends Model
                 }
                 // Clean up outdated bouquets
                 $this->bouquets()->whereNotIn('id',$seen_bouqets)->delete();
-                Log::debug('load_bouquets(): Loaded new ' . sizeof($seen_channels) . ' bouquets, total bouquets ' . $this->bouquets()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
+                Log::debug('load_bouquets(): Loaded new ' . sizeof($seen_bouqets) . ' bouquets, total bouquets ' . $this->bouquets()->count() . ' known channels in ' . (microtime(true) - $start) . ' seconds');
 
             }
             $this->touch();
-        }
+//        }
 
         foreach($this->bouquets as $bouquet)
         {
@@ -477,8 +477,7 @@ class Dreambox extends Model
 
                     $channel->programs()->updateOrCreate(
                         ['epg_id' => $program_data->id],
-                        ['channel_id' => $channel->id,
-                         'name' => $program_data->title,
+                        ['name' => $program_data->title,
                          'start' => $program_data->begin_timestamp,
                          'stop' => $program_data->begin_timestamp + $program_data->duration_sec,
                          'description' => $program_data->longdesc]

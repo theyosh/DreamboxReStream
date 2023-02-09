@@ -4,7 +4,7 @@ blade-directive: version
 current:
   label: ''
   major: 3
-  minor: 2
+  minor: 3
   patch: 0
   git_absorb: git-local
   prerelease: 162-gd47f170
