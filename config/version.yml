@@ -7,14 +7,14 @@ current:
   minor: 3
   patch: 0
   git_absorb: git-local
-  prerelease: 162-gd47f170
+  prerelease: 169-g84eb680
   buildmetadata: ''
   commit: e01722
   timestamp:
-    year: 2022
+    year: 2023
     month: 2
-    day: 28
-    hour: 11
+    day: 9
+    hour: 22
     minute: 1
     second: 56
     timezone: UTC
