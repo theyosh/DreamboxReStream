@@ -46,6 +46,7 @@ su -c 'php artisan key:generate' -s /bin/bash vagrant
 su -c 'php artisan migrate' -s /bin/bash vagrant
 su -c 'php artisan storage:link' -s /bin/bash vagrant
 su -c 'php artisan version:absorb' -s /bin/bash vagrant
+su -c 'php artisan version:timestamp' -s /bin/bash vagrant
 
 rm /etc/issue.net
 ln -s /etc/issue /etc/issue.net
