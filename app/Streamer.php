@@ -279,7 +279,7 @@ class Streamer
             elseif ('nvidia' == $this->encoder_type)
             {
                 // NVIDIA
-                $cmd = $this->executable . ' -hide_banner -re -hwaccel cuvid -c:v h264_cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
+                $cmd = $this->executable . ' -hide_banner -re -hwaccel cuvid -hwaccel_output_format cuda -i ' . $this->source_url;
             }
             elseif ('omx' == $this->encoder_type)
             {
@@ -319,7 +319,7 @@ class Streamer
                     elseif ('nvidia' == $this->encoder_type)
                     {
                         // NVIDIA
-                        $cmd .= ' -vf yadif_cuda,fps=' . $bitrate['framerate'] . ',scale_npp=' . $bitrate['width'] . ':' . $bitrate['height'] . ':interp_algo=super';
+                        $cmd .= ' -vf yadif_cuda,fps=' . $bitrate['framerate'] . ',scale_cuda=' . $bitrate['width'] . ':' . $bitrate['height'] . ':format=yuv420p';
                     }
                     elseif ('omx' == $this->encoder_type)
                     {

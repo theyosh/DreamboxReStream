@@ -1,5 +1,19 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
-dreambox@theyosh.nl - ©2006 - 2019
+dreambox@theyosh.nl - ©2006 - 2023
+
+version 3.3.0 (10-02-2023)
+ * 4K and UHD source support
+ * Updated libraries
+ * Fixed Vagrant support
+
+version 3.2.0 (28-02-2022)
+ * Updated libraries
+ * Better GPU hardware detection
+ * Speedup GUI loading
+ * Security updates
+
+version 3.1.0 (27-09-2020)
+ * Maintenance release
 
 version 3.0.0 (05-10-2019)
  * Fully rewritten application in Laravel PHP Framework (https://laravel.com/)

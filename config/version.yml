@@ -4,10 +4,10 @@ blade-directive: version
 current:
   label: ''
   major: 3
-  minor: 3
+  minor: 2
   patch: 0
   git_absorb: git-local
-  prerelease: 169-g84eb680
+  prerelease: 34-g72969c0
   buildmetadata: ''
   commit: e01722
   timestamp:
@@ -29,7 +29,7 @@ git:
   branch: refs/heads/master
   repository: ''
   version:
-    local: 'git describe'
+    local: 'git describe --tags'
     remote: 'git ls-remote {$repository} | grep tags/ | grep -v {} | cut -d / -f 3 | sort --version-sort | tail -1'
     matcher: '/^(?P<label>[v|V]*[er]*[sion]*)[\.|\s]*(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/'
   timestamp:

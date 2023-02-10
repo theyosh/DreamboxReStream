@@ -45,6 +45,7 @@ sed -i -e 's@DB_DATABASE=.*@DB_DATABASE='`pwd`'/database/restream\.sqlite@g' .en
 su -c 'php artisan key:generate' -s /bin/bash vagrant
 su -c 'php artisan migrate' -s /bin/bash vagrant
 su -c 'php artisan storage:link' -s /bin/bash vagrant
+su -c 'php artisan version:absorb' -s /bin/bash vagrant
 
 rm /etc/issue.net
 ln -s /etc/issue /etc/issue.net
