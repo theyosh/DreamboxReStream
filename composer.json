@@ -2,30 +2,29 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
+    "minimum-stability" : "stable",
     "keywords": [
         "framework",
         "laravel"
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.3",
-        "fideloper/proxy": "^4.4.1",
-        "fruitcake/laravel-cors": "^2.0.4",
+        "php": ">=8.0.2",
+        "fruitcake/laravel-cors": "^3.0.0",
         "guzzlehttp/guzzle": "^7.4.0",
-        "laravel/framework": "^8.69.0",
+        "laravel/framework": "^9.0",
         "laravel/tinker": "^2.6.2",
-        "laravel/ui": "^3.3.1",
+        "laravel/ui": "^4.2.0",
         "laravelcollective/html": "^6.2.1",
         "pragmarx/version": "^1.3.0",
-        "vemcogroup/laravel-translation": "^3.0.4"
+        "vemcogroup/laravel-translation": "^3.0.4",
+        "spatie/laravel-ignition": "^1.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6.4",
-        "facade/ignition": "^2.16.0",
-        "fzaninotto/faker": "^1.9.2",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10.0",
-        "phpunit/phpunit": "^9.5.10"
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.0"
     },
     "config": {
         "optimize-autoloader": true,
@@ -49,7 +48,6 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
