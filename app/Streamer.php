@@ -263,8 +263,10 @@ class Streamer
                 start_measure('start_stream','Starting transcoding');
             }
 
-            // Playlist header
-            $main_playlist[] = '#EXTM3U';
+            // Playlist header + main audio
+            $main_playlist = ['#EXTM3U',
+            '#EXT-X-VERSION:3',
+            '#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="aac",LANGUAGE="en",NAME="audio",URI="' . Str::slug($this->source_name . '_audio', '_') . '.m3u8"'];
 
             if ('software' == $this->encoder_type)
             {
@@ -301,7 +303,7 @@ class Streamer
                 }
                 if (isset($bitrate['video_bitrate']))
                 {
-                    // Video
+                    // Video only!
                     $cmd .= ' -map 0:v:' . $stream_map['video'];
 
                     // Scale resolution
@@ -351,25 +353,22 @@ class Streamer
                         $cmd .= ' -c:v h264_omx -bf 2 -b:v ' . $bitrate['video_bitrate'] . 'k -minrate ' . $bitrate['video_bitrate'] . 'k -maxrate ' . $bitrate['video_bitrate'] . 'k -bufsize ' . ($this->buffer_time * $bitrate['video_bitrate']) . 'k -r ' . $bitrate['framerate']  . ' -g ' . ($bitrate['framerate']*2);
                     }
 
-                    $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2, avc1.64001f",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'];
-
+                    $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2, avc1.64001f",BANDWIDTH=' . round( ($bitrate['video_bitrate'] + $bitrate['audio_bitrate']) * 1024) . ',RESOLUTION=' . $bitrate['width'] . 'x' . $bitrate['height'] . ',AUDIO="aac"';
                 }
-                else
-                {
-                    // Audio only track
-                    $main_playlist[] = '#EXT-X-STREAM-INF:PROGRAM-ID=1,CODECS="mp4a.40.2",BANDWIDTH=' . round( $bitrate['audio_bitrate'] * 1024);
-                }
-                // Audio
-                $cmd .= '  -map 0:a:' . $stream_map['audio'] . '? -c:a aac -ac 2 -b:a ' . $bitrate['audio_bitrate'] . 'k -ar 48000';
-
                 // HLS Output
                 $cmd .= ' -f hls -strftime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_' . $bitrate_name, '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8');
 
-                // Main playlist info
+                // Bitrate playlist name
                 $main_playlist[] = Str::slug($this->source_name . '_' . $bitrate_name, '_') . '.m3u8';
 
                 $bitrate_counter++;
             }
+
+            // Add single bitrate main audio
+            $cmd .= '  -map 0:a:' . $stream_map['audio'] . '? -c:a aac -ac 2 -b:a 128k -ar 48000';
+
+            // HLS Output
+            $cmd .= ' -f hls -strftime 1 -hls_time ' . $this->chunktime . ' -hls_list_size ' . round($this->dvrlength / $this->chunktime) . ' -hls_segment_type mpegts -hls_flags +delete_segments -hls_segment_filename \'' . storage_path('app/public/stream') . '/' . Str::slug($this->source_name . '_audio', '_')  . '_%s.ts\' ' . storage_path('app/public/stream/' . Str::slug($this->source_name . '_audio', '_') . '.m3u8');
 
             // Delete old/previous files
             Storage::makeDirectory('public/stream/');
