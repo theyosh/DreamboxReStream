@@ -7,7 +7,6 @@
   <link href="{{ URL::asset('css/videojs.airplay.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('css/videojs-contextmenu-ui.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('css/videojs-http-source-selector.min.css') }}" rel="stylesheet">
-  <link href="{{ URL::asset('css/videojs-dvr.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -18,7 +17,6 @@
   <script type="text/javascript" src="{{ URL::asset('js/videojs-contextmenu-ui.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/videojs-contrib-quality-levels.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/videojs-http-source-selector.min.js') }}"></script>
-  <script type="text/javascript" src="{{ URL::asset('js/videojs-dvr.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/dreambox.min.js') }}"></script>
 @endpush
 
@@ -64,6 +62,9 @@
 
     </style>
 <script type="text/javascript">
+
+
+
 const dreambox_id = {{$dreambox->id}};
 let channel_refresh_list = {};
 let channel_refresh_timer = null;
@@ -127,7 +128,7 @@ function init_video_player() {
     fontSize: '1.5em',
   });
 
-  dreambox_player.dvr();
+//  dreambox_player.dvr();
 
   dreambox_player.contextmenuUI({
     content: [{
@@ -161,27 +162,18 @@ function init_video_player() {
     },5 * 1000);
   });
 
-  dreambox_player.qualityLevels();
   dreambox_player.httpSourceSelector();
+  dreambox_player.getChild('ControlBar').addChild('button', {
+        controlText: 'Kill streamer',
+        className: 'vjs-icon-cancel',
 
-  var button = videojs.getComponent('Button');
-  var closeButton = videojs.extend(button, {
-    constructor: function() {
-      button.apply(this, arguments);
-      this.controlText("Stop streamer");
-      this.addClass("vjs-icon-cancel");
-    },
-    handleClick: function() {
-      // Call to stop the streamer....
-      dreambox_player.pause();
-      this.removeClass("online");
-      $.post('{{ route('stop_streaming', ['dreambox' => $dreambox->id])}}',function(data){
-        console.log(data);
-      });
-    }
-  });
-  videojs.registerComponent('closeButton', closeButton);
-  dreambox_player.getChild('controlBar').addChild('closeButton', {});
+        clickHandler: function(event) {
+            videojs.log('Clicked');
+            dreambox_player.pause();
+            this.removeClass("online");
+            $.post('{{ route('stop_streaming', ['dreambox' => $dreambox->id])}}',function(data){ });
+        }
+    });
 }
 
 function load_other_bouquets() {

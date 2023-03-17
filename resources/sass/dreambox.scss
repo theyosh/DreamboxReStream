@@ -74,7 +74,6 @@ div.media.program-info img {
   width: 55%;
   height: 70%;
 }
-
 .test-screen p {
   font-size: 3em;
   text-align: center;
@@ -86,12 +85,17 @@ div.media.program-info img {
   1px 1px 0 #000;
 }
 
-.vjs-button.vjs-icon-cancel {
-    display: none;
-}
-.vjs-button.vjs-icon-cancel.online{
-    display:block;
+.vjs-button.vjs-icon-cancel::before {
+    font-size: 1.8em;
+    line-height: 1.67;
 }
 .vjs-button.vjs-icon-cancel.online::before {
-    color: #00bc8c;
+    color: #ff0000;
+}
+
+.vjs-button.vjs-icon-cancel.online:focus:before,
+.vjs-button.vjs-icon-cancel.online:hover:before,
+.vjs-button.vjs-icon-cancel:focus:before,
+.vjs-button.vjs-icon-cancel:hover:before{
+    text-shadow: none;
 }

@@ -7,7 +7,6 @@
   <link href="{{ URL::asset('css/videojs.airplay.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('css/videojs-contextmenu-ui.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('css/videojs-http-source-selector.min.css') }}" rel="stylesheet">
-  <link href="{{ URL::asset('css/videojs-dvr.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -18,7 +17,6 @@
   <script type="text/javascript" src="{{ URL::asset('js/videojs-contextmenu-ui.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/videojs-contrib-quality-levels.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/videojs-http-source-selector.min.js') }}"></script>
-  <script type="text/javascript" src="{{ URL::asset('js/videojs-dvr.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/dreambox.min.js') }}"></script>
 @endpush
 

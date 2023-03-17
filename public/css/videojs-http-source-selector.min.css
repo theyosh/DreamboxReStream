@@ -1,1 +1,1 @@
-.video-js.vjs-http-source-selector{display:block}.vjs-http-source-selector .vjs-icon-placeholder::before{font-family:VideoJS;font-weight:400;font-style:normal;content:"\f110"}
+/*! videojs-http-source-selector v1.1.7 ~~ https://github.com/FreeTubeApp/videojs-http-source-selector ~~ MIT License */.video-js.vjs-http-source-selector{display:block}.vjs-http-source-selector>.vjs-menu-button>.vjs-icon-placeholder::before{font-family:VideoJS;font-weight:400;font-style:normal;content:"\f110"}

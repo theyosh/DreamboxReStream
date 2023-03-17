@@ -11,8 +11,6 @@
     "/css/videojs-http-source-selector.min.css": "/css/videojs-http-source-selector.min.css",
     "/js/videojs-http-source-selector.min.js": "/js/videojs-http-source-selector.min.js",
     "/js/videojs-contrib-quality-levels.min.js": "/js/videojs-contrib-quality-levels.min.js",
-    "/css/videojs-dvr.min.css": "/css/videojs-dvr.min.css",
-    "/js/videojs-dvr.min.js": "/js/videojs-dvr.min.js",
     "/js/videojs-titleoverlay.min.js": "/js/videojs-titleoverlay.min.js",
     "/js/videojs.airplay.min.js": "/js/videojs.airplay.min.js",
     "/css/videojs.airplay.min.css": "/css/videojs.airplay.min.css",

@@ -1,5 +1,5 @@
 /*!
-  * Bootstrap v4.6.2 (https://getbootstrap.com/)
+  * Bootstrap v5.2.3 (https://getbootstrap.com/)
   * Copyright 2011-2022 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
   */
@@ -16,6 +16,13 @@
  */
 
 /*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <http://feross.org>
+ * @license  MIT
+ */
+
+/*!
  * jQuery JavaScript Library v3.6.4
  * https://jquery.com/
  *
@@ -28,6 +35,8 @@
  *
  * Date: 2023-03-08T15:28Z
  */
+
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 /**
  * @license

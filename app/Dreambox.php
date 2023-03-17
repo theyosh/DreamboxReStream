@@ -405,7 +405,7 @@ class Dreambox extends Model
                     $channel = $existing_channels[$program_data->sref];
 
                     $program = $channel->programs()->updateOrCreate(
-                        ['epg_id' => $program_data->id],
+                        ['epg_id' => $program_data->id, 'channel_id' => $channel->id],
                         ['name' => $program_data->title,
                          'start' => $program_data->begin_timestamp,
                          'stop' => $program_data->begin_timestamp + $program_data->duration_sec,
