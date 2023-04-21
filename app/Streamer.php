@@ -399,7 +399,7 @@ class Streamer
             {
                 Storage::put('public/stream/'.Str::slug($this->source_name, '_') . '.m3u8', implode("\n",$main_playlist));
             }
-            $current_status = $this->status(false);
+            $current_status = $this->status(true);
             if (config('app.debug'))
             {
                 stop_measure('start_stream');
