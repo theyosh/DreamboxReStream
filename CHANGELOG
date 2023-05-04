@@ -1,6 +1,13 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
 dreambox@theyosh.nl - ©2006 - 2023
 
+version 3.4.0 (04-05-2023)
+ * Upgrade to Laravel 9
+ * Switch to a single audio track and removed audio per video bitrate
+ * Fixed duplicate key constrain on updating channel programs
+ * Updated libraries
+ * Code cleanup
+
 version 3.3.0 (10-02-2023)
  * 4K and UHD source support
  * Updated libraries

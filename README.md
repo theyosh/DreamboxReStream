@@ -48,6 +48,8 @@ sed -i -e 's@DB_DATABASE=.*@DB_DATABASE='`pwd`'/database/restream\.sqlite@g' .en
 php artisan key:generate
 php artisan migrate
 php artisan storage:link
+php artisan version:absorb
+php artisan version:timestamp
 ```
 ### Configure NGINX
 ```sh

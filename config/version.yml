@@ -4,7 +4,7 @@ blade-directive: version
 current:
   label: ''
   major: 3
-  minor: 3
+  minor: 4
   patch: 0
   git_absorb: git-local
   prerelease: ''
@@ -12,9 +12,9 @@ current:
   commit: e01722
   timestamp:
     year: 2023
-    month: 2
-    day: 10
-    hour: 9
+    month: 5
+    day: 4
+    hour: 20
     minute: 50
     second: 46
     timezone: UTC
