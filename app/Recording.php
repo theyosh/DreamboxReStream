@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Recording extends Model
 {
     //
-    protected $fillable = ['name', 'service', 'start', 'stop','description', 'filesize'];
+    protected $fillable = ['name', 'service', 'start', 'stop', 'description', 'filesize'];
 
 
     protected $appends = array('duration');
@@ -16,7 +16,6 @@ class Recording extends Model
     {
         return $this->stop->diffInSeconds($this->start);
     }
-
 
     /**
      * The attributes that should be mutated to dates.

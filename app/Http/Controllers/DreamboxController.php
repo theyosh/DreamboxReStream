@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App;
-Use App\Dreambox;
-Use App\Channel;
-Use App\Streamer;
-Use App\Recording;
+use App\Dreambox;
+use App\Channel;
+use App\Streamer;
+use App\Recording;
 
 class DreamboxController extends Controller
 {
@@ -16,13 +16,10 @@ class DreamboxController extends Controller
     public function index()
     {
         $dreambox = Dreambox::first();
-        if ($dreambox)
-        {
+        if ($dreambox) {
             App::setLocale($dreambox->interface_language); // Stupid Laraval is not capable if handling language sessions... so every request tell again what you want... rubbish!
-            return view('index',['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
-        }
-        else
-        {
+            return view('index', ['dreambox' => $dreambox->loadCount(['bouquets', 'channels', 'programs', 'recordings'])]);
+        } else {
             return redirect()->route('new_dreambox');
         }
     }
@@ -44,7 +41,7 @@ class DreamboxController extends Controller
         $dreambox->is_online();
         $dreambox->load_bouquets(false);
         App::setLocale($dreambox->interface_language); // Stupid Laraval is not capable if handling language sessions... so every request tell again what you want... rubbish!
-        return view('dreambox', ['dreambox' => $dreambox->loadCount(['bouquets','channels','programs','recordings'])]);
+        return view('dreambox', ['dreambox' => $dreambox->loadCount(['bouquets', 'channels', 'programs', 'recordings'])]);
     }
 
     public function load(Dreambox $dreambox)
@@ -54,7 +51,7 @@ class DreamboxController extends Controller
         return $dreambox->loadMissing('bouquets.channels');
     }
 
-    public function epg(Dreambox $dreambox,Channel $channel)
+    public function epg(Dreambox $dreambox, Channel $channel)
     {
         $dreambox->is_online();
         $dreambox->load_epg($channel);
@@ -68,7 +65,7 @@ class DreamboxController extends Controller
         return $dreambox->recordings->loadMissing('channel');
     }
 
-    public function show_epg(Dreambox $dreambox,Channel $channel)
+    public function show_epg(Dreambox $dreambox, Channel $channel)
     {
         $dreambox->is_online();
         $dreambox->load_epg($channel);
@@ -81,7 +78,7 @@ class DreamboxController extends Controller
         $dreambox->stop();
     }
 
-    public function stream(Dreambox $dreambox,Channel $channel)
+    public function stream(Dreambox $dreambox, Channel $channel)
     {
         $dreambox->is_online();
         $channel['stream'] = $dreambox->stream($channel);
@@ -89,7 +86,7 @@ class DreamboxController extends Controller
         return $channel;
     }
 
-    public function stream_recording(Dreambox $dreambox,Recording $recording)
+    public function stream_recording(Dreambox $dreambox, Recording $recording)
     {
         $dreambox->is_online();
         $recording->loadMissing('channel');
@@ -117,7 +114,7 @@ class DreamboxController extends Controller
         ]);
 
         $dreambox = Dreambox::create($request->all());
-        return ['message' => 'Dreambox is created. Will reload now...','url' => route('show_dreambox',['dreambox' => $dreambox->id])];
+        return ['message' => 'Dreambox is created. Will reload now...', 'url' => route('show_dreambox', ['dreambox' => $dreambox->id])];
     }
 
     public function update(Request $request, Dreambox $dreambox)
@@ -132,15 +129,15 @@ class DreamboxController extends Controller
             'dvr_length' => 'integer|min:0|max:900',
         ]);
         $dreambox->update($request->all());
-        return ['message' => 'Dreambox is updated. Will reload now...','url' => route('show_dreambox',['dreambox' => $dreambox->id])];
+        return ['message' => 'Dreambox is updated. Will reload now...', 'url' => route('show_dreambox', ['dreambox' => $dreambox->id])];
     }
 
     public function purge(Dreambox $dreambox)
     {
-        $dreambox->bouquets()->each(function($bouquet) {
+        $dreambox->bouquets()->each(function ($bouquet) {
             $bouquet->delete();
         });
-        return redirect(route('show_dreambox',['dreambox' => $dreambox->id]));
+        return redirect(route('show_dreambox', ['dreambox' => $dreambox->id]));
     }
 
     public function delete(Dreambox $dreambox)
@@ -150,4 +147,3 @@ class DreamboxController extends Controller
         return response()->json(null, 204);
     }
 }
-

@@ -16,7 +16,6 @@ class Program extends Model
         return $this->stop->diffInSeconds($this->start);
     }
 
-
     /**
      * The attributes that should be mutated to dates.
      *
@@ -34,11 +33,5 @@ class Program extends Model
     {
         return $this->belongsTo('App\Channel');
     }
-
-    // public function channels()
-    // {
-    //     return $this->belongsToMany('App\Channel')->orderBy('start');
-    // }
-
 
 }
