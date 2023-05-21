@@ -1,4 +1,6 @@
 {
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
     "/css/nprogress.min.css": "/css/nprogress.min.css",
     "/js/nprogress.min.js": "/js/nprogress.min.js",
     "/css/video-js.min.css": "/css/video-js.min.css",
@@ -14,6 +16,7 @@
     "/css/videojs.airplay.min.css": "/css/videojs.airplay.min.css",
     "/js/autolinker.min.js": "/js/autolinker.min.js",
     "/js/silvermine-videojs-chromecast.min.js": "/js/silvermine-videojs-chromecast.min.js",
+    "/css/silvermine-videojs-chromecast.min.css": "/css/silvermine-videojs-chromecast.min.css",
     "/images/dreamboxrestream_icon.png": "/images/dreamboxrestream_icon.png",
     "/images/ic_cast_black_24dp.png": "/images/ic_cast_black_24dp.png",
     "/images/ic_cast_blue_24dp.png": "/images/ic_cast_blue_24dp.png",
