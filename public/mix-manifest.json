@@ -1,6 +1,4 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css",
     "/css/nprogress.min.css": "/css/nprogress.min.css",
     "/js/nprogress.min.js": "/js/nprogress.min.js",
     "/css/video-js.min.css": "/css/video-js.min.css",
@@ -15,5 +13,19 @@
     "/js/videojs.airplay.min.js": "/js/videojs.airplay.min.js",
     "/css/videojs.airplay.min.css": "/css/videojs.airplay.min.css",
     "/js/autolinker.min.js": "/js/autolinker.min.js",
+    "/js/silvermine-videojs-chromecast.min.js": "/js/silvermine-videojs-chromecast.min.js",
+    "/images/dreamboxrestream_icon.png": "/images/dreamboxrestream_icon.png",
+    "/images/ic_cast_black_24dp.png": "/images/ic_cast_black_24dp.png",
+    "/images/ic_cast_blue_24dp.png": "/images/ic_cast_blue_24dp.png",
+    "/images/ic_cast_connected_black_24dp.png": "/images/ic_cast_connected_black_24dp.png",
+    "/images/ic_cast_connected_blue_24dp.png": "/images/ic_cast_connected_blue_24dp.png",
+    "/images/ic_cast_connected_grey_24dp.png": "/images/ic_cast_connected_grey_24dp.png",
+    "/images/ic_cast_connected_white_24dp.png": "/images/ic_cast_connected_white_24dp.png",
+    "/images/ic_cast_grey_24dp.png": "/images/ic_cast_grey_24dp.png",
+    "/images/ic_cast_white_24dp.png": "/images/ic_cast_white_24dp.png",
+    "/images/mask4-left.png": "/images/mask4-left.png",
+    "/images/mask4-right.png": "/images/mask4-right.png",
+    "/images/old_tv.png": "/images/old_tv.png",
+    "/images/test_screen.gif": "/images/test_screen.gif",
     "/js/dreambox.min.js": "/js/dreambox.min.js"
 }

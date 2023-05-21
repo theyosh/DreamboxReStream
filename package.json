@@ -26,6 +26,7 @@
         "vue-template-compiler": "^2.7.0"
     },
     "dependencies": {
+        "@silvermine/videojs-chromecast": "^1.4.1",
         "autolinker": "^4.0.0",
         "moment": "^2.29.2",
         "npm": "^9.6.2",

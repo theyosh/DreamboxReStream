@@ -35,4 +35,8 @@ mix.js('resources/js/app.js', 'public/js')
 
     .copy('node_modules/autolinker/dist/autolinker.min.js','public/js/autolinker.min.js')
 
+    .scripts('node_modules/@silvermine/videojs-chromecast/dist/silvermine-videojs-chromecast.js','public/js/silvermine-videojs-chromecast.min.js')
+    .styles('node_modules/@silvermine/videojs-chromecast/dist/silvermine-videojs-chromecast.css','public/css/silvermine-videojs-chromecast.min.css')
+    .copy('node_modules/@silvermine/videojs-chromecast/dist/images','public/images')
+
     .scripts('resources/js/dreambox.js', 'public/js/dreambox.min.js');

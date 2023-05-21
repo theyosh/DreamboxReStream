@@ -7,6 +7,7 @@
   <link href="{{ URL::asset('css/videojs.airplay.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('css/videojs-contextmenu-ui.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('css/videojs-http-source-selector.min.css') }}" rel="stylesheet">
+  <link href="{{ URL::asset('css/silvermine-videojs-chromecast.min.css') }}" rel="stylesheet">
 @endpush
 
 @push('scripts')
@@ -17,6 +18,8 @@
   <script type="text/javascript" src="{{ URL::asset('js/videojs-contextmenu-ui.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/videojs-contrib-quality-levels.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::asset('js/videojs-http-source-selector.min.js') }}"></script>
+  <script type="text/javascript" src="{{ URL::asset('js/silvermine-videojs-chromecast.min.js') }}"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
   <script type="text/javascript" src="{{ URL::asset('js/dreambox.min.js') }}"></script>
 @endpush
 
@@ -24,47 +27,7 @@
 @endsection
 
 @section('javascript')
-    <style>
-        #ambilightModal .modal-content,
-        #ambilightModal .modal-body,
-        #ambilightModal .embed-responsive.embed-responsive-16by9
-        {
-            overflow: visible !important;
-        }
-
-        #ambilightModal .modal-body {
-            padding: 0.1rem !important;
-        }
-
-			.ambilight-left,
-			.ambilight-right {
-				position: absolute;
-				width: 400px;
-				height: 200%;
-                z-index: -1;
-
-				-webkit-transition: opacity 0.2s linear;
-				-moz-transition: opacity 0.2s linear;
-				-ms-transition: opacity 0.2s linear;
-				-o-transition: opacity 0.2s linear;
-				transition: opacity 0.2s linear;
-			}
-
-			.ambilight-left {
-				left: -350px;
-				top: -53%;
-			}
-
-			.ambilight-right {
-				right: -350px;
-				top: -51%;
-			}
-
-    </style>
 <script type="text/javascript">
-
-
-
 const dreambox_id = {{$dreambox->id}};
 let channel_refresh_list = {};
 let channel_refresh_timer = null;
@@ -113,10 +76,12 @@ function init_video_player() {
         overrideNative: true,
       }
     },
+    techOrder: [ 'chromecast', 'html5' ], // You may have more Tech, such as Flash or HLS
     autoplay: 'any',
     plugins: {
         'airplayButton' : {},
         'httpSourceSelector': {'default' : 'auto'},
+        'chromecast': {}
     }
   });
   dreambox_player.source = null;
