@@ -34,7 +34,7 @@
         "video.js": "^8.0.4",
         "videojs-airplay": "^1.1.1",
         "videojs-contextmenu-ui": "^7.0.0",
-        "videojs-contrib-quality-levels": "^3.0.0",
+        "videojs-contrib-quality-levels": "^4.0.0",
         "videojs-http-quality-selector": "^1.2.1",
         "videojs-http-source-selector": "github:FreeTubeApp/videojs-http-source-selector",
         "videojs-titleoverlay": "^1.1.0"
