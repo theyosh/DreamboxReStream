@@ -1,11 +1,12 @@
 #!/bin/bash
 
 sleep 3
-DATE="May 23th, 2022"
+DATE="May 21th, 2024"
 IP=`ip addr | grep inet | sed 's/[ ]\+//' | cut -d" " -f 2 | grep -v 127.0.0 | grep -v ::1/128 | grep -v fe80 | sed 's@/.*@@'`
+IP="127.0.0.1"
 HOST=`hostname`
 REGHOST=`dig +short ${HOST}`
-URL="http://${HOST}"
+URL="http://${IP}:8088"
 #if [ "${REGHOST}" != "${IP}" ]; then
 #  URL="http://${IP}"
 #fi

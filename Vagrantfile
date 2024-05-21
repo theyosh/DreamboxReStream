@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/buster64"
+  config.vm.box = "debian/bookworm64"
   config.vm.define "DreamboxReStream"
   config.vm.hostname = "dreamboxrestream.box"
   config.vm.network "public_network"

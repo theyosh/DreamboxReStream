@@ -1,10 +1,12 @@
 #!/bin/bash
 
 apt-get -y update && apt-get -y full-upgrade
-apt-get -y install ca-certificates apt-transport-https software-properties-common unzip lsb-release ca-certificates
-wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-apt-get -y update && apt-get -y install git nginx-light php8.1-fpm php8.1-cli php8.1-mbstring php8.1-xml php8.1-sqlite3 php8.1-zip ffmpeg ntp
+apt-get -y install --no-install-recommends software-properties-common
+sudo add-apt-repository ppa:ondrej/php
+sudo add-apt-repository ppa:ondrej/nginx-mainline
+apt-get -y update && apt-get -y install git nginx-light php-fpm php-cli php-mbstring php-xml php-sqlite3 php-zip php-curl ffmpeg ntp
+apt-get purge software-properties-common
+apt-get --purge auto-remove
 
 usermod -G vagrant -a www-data
 usermod -G www-data -a vagrant
@@ -50,5 +52,6 @@ su -c 'php artisan version:timestamp' -s /bin/bash vagrant
 
 rm /etc/issue.net
 ln -s /etc/issue /etc/issue.net
-sh -c echo '@reboot /home/vagrant/dreamboxrestream/vm_ip.sh' >> /var/spool/cron/crontabs/root
-
+sh -c echo '@reboot sh /home/vagrant/dreamboxrestream/vm_ip.sh' >> /var/spool/cron/crontabs/root
+sh /home/vagrant/dreamboxrestream/vm_ip.sh
+cat /etc/issue.net
