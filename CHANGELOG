@@ -1,5 +1,11 @@
 Dreambox ReStream Change Log - https://theyosh.nl/projects/dreambox-restream -
-dreambox@theyosh.nl - ©2006 - 2023
+dreambox@theyosh.nl - ©2006 - 2024
+
+version 3.5.0 (02-08-2024)
+ * Added multi audio tracks
+ * Add Chromecast support
+ * Updated all libraries
+ * Code cleanup
 
 version 3.4.0 (04-05-2023)
  * Upgrade to Laravel 9
