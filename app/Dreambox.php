@@ -48,10 +48,6 @@ class Dreambox extends Model
             'timeout' => $this->guzzle_http_timeout,
         ]);
 
-        // if (config('app.debug'))
-        // {
-        //     start_measure('zap_first','Zapping Dreambox to right channel');
-        // }
         try {
             $start = microtime(true);
             $response = $client->request('GET', '/api/zap', [
@@ -64,10 +60,7 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
-        // if (config('app.debug'))
-        // {
-        //     stop_measure('zap_first');
-        // }
+
         return 200 == $response->getStatusCode();
     }
 
@@ -77,10 +70,7 @@ class Dreambox extends Model
             'base_uri' => 'http://' . $this->hostname . ':' . $this->port,
             'timeout' => $this->guzzle_http_timeout,
         ]);
-        // if (config('app.debug'))
-        // {
-        //     start_measure('load_playlist','Get streaming url from playlist');
-        // }
+
         try {
             if ($source instanceof Channel) {
                 $response = $client->request('GET', '/web/stream.m3u', [
@@ -124,10 +114,6 @@ class Dreambox extends Model
             'timeout' => $this->guzzle_http_timeout,
         ]);
 
-        // if (config('app.debug'))
-        // {
-        //     start_measure('is_online','Dreambox online check');
-        // }
         try {
             $start = microtime(true);
             $response = $client->request('GET', '/api/about', ['auth' => [$this->username, $this->password]]);
@@ -140,10 +126,6 @@ class Dreambox extends Model
             $this->status = null;
             return false;
         }
-        // if (config('app.debug'))
-        // {
-        //     stop_measure('is_online');
-        // }
 
         if (200 == $response->getStatusCode()) {
             try {

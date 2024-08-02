@@ -9,9 +9,9 @@ class Program extends Model
 {
     protected $fillable = ['epg_id', 'name', 'start', 'stop', 'description'];
 
-    protected $appends = array('duration');
+    protected $appends = ['duration'];
 
-    public function getdurationAttribute()
+    public function getDurationAttribute()
     {
         return $this->stop->diffInSeconds($this->start);
     }

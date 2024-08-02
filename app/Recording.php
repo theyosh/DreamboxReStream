@@ -10,9 +10,9 @@ class Recording extends Model
     protected $fillable = ['name', 'service', 'start', 'stop', 'description', 'filesize'];
 
 
-    protected $appends = array('duration');
+    protected $appends = ['duration'];
 
-    public function getdurationAttribute()
+    public function getDurationAttribute()
     {
         return $this->stop->diffInSeconds($this->start);
     }

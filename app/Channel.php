@@ -16,12 +16,12 @@ class Channel extends Model
     //
     protected $fillable = ['name', 'service', 'position', 'picon'];
 
-    protected $appends = array('currentprogram', 'nextprogram', 'is_hd', 'is_4k');
+    protected $appends = ['currentprogram', 'nextprogram', 'is_hd', 'is_4k'];
 
     private $now_next;
 
     // Caching function to get the data only once from the database...
-    private function get_now_and_next_programs()
+    private function getNowAndNextPrograms()
     {
         $this->now_next = ['now' => null, 'next' => null];
         $programs = $this->programs()->where('stop', '>', Carbon::now())->limit(2)->get();
@@ -33,7 +33,7 @@ class Channel extends Model
     public function getCurrentProgramAttribute()
     {
         if (! isset($this->now_next)) {
-            $this->get_now_and_next_programs();
+            $this->getNowAndNextPrograms();
         }
         return $this->now_next['now'];
     }
@@ -41,7 +41,7 @@ class Channel extends Model
     public function getNextProgramAttribute()
     {
         if (! isset($this->now_next)) {
-            $this->get_now_and_next_programs();
+            $this->getNowAndNextPrograms();
         }
         return $this->now_next['next'];
 
