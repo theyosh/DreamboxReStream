@@ -331,7 +331,7 @@ class Streamer
 
         $streams = [];
         foreach ($probe->streams as $stream) {
-            if (!array_key_exists($stream->codec_type, $data)) {
+            if (!property_exists($stream, 'codec_type') || !array_key_exists($stream->codec_type, $data)) {
                 continue;
             }
             $data[$stream->codec_type][] = ['index' => $stream->index, 'name' =>
