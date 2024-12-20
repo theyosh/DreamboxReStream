@@ -24,7 +24,7 @@
         "barryvdh/laravel-debugbar": "^3.14.9",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^7.11.0",
-        "phpunit/phpunit": "^10.5.38"
+        "phpunit/phpunit": "^10.5.39"
     },
     "config": {
         "optimize-autoloader": true,
